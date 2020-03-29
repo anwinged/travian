@@ -1,0 +1,27 @@
+#!/bin/bash
+
+set -eu
+
+source .env
+
+HOST_CACHE_DIR=$PWD/var/docker-cache/.npm
+CONTAINER_CACHE_DIR=/tmp/.npm
+
+mkdir -p ${HOST_CACHE_DIR}
+
+TTY=
+if [ -t 1 ] ; then
+	TTY=--tty
+fi
+
+docker run \
+    --rm \
+    --interactive \
+    ${TTY} \
+    --init \
+    --user "$UID:$(id -g)" \
+    --volume "$PWD:/app" \
+    --env npm_config_cache="${CONTAINER_CACHE_DIR}" \
+    --workdir /app \
+    ${NODE_IMAGE} \
+    npm "$@"

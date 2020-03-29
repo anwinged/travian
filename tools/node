@@ -1,0 +1,21 @@
+#!/bin/bash
+
+set -eu
+
+source .env
+
+TTY=
+if [ -t 1 ] ; then
+	TTY=--tty
+fi
+
+docker run \
+    --rm \
+    --interactive \
+    ${TTY} \
+    --init \
+    --user "$(id -u):$(id -g)" \
+    --volume "$PWD:/app" \
+    --workdir /app \
+    ${NODE_IMAGE} \
+    node "$@"

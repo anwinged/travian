@@ -1,0 +1,16 @@
+#!/bin/bash
+
+set -eu
+
+source .env
+
+docker run \
+    --rm \
+    --interactive \
+    --tty \
+    --init \
+    --user "$(id -u):$(id -g)" \
+    --volume "$PWD:/app" \
+    --workdir /app \
+    ${NODE_IMAGE} \
+    ./node_modules/.bin/tsc "$@"

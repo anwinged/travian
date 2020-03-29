@@ -1,0 +1,8 @@
+.idea/
+.nyc_output/
+dist/
+coverage/
+node_modules/
+test-results/
+var/
+.npmrc

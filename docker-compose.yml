@@ -1,0 +1,11 @@
+version: '3.6'
+
+services:
+  server:
+    image: abiosoft/caddy:1.0.3-no-stats
+    volumes:
+      - ./server/Caddyfile:/etc/Caddyfile:ro
+      - ./dist:/srv:ro
+    ports:
+      - 49876:49876
+    restart: unless-stopped
