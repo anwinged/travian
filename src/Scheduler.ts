@@ -3,7 +3,7 @@ import UpgradeBuildingTask from './Task/UpgradeBuildingTask';
 import GoToBuildingAction from './Action/GoToBuildingAction';
 import UpgradeBuildingAction from './Action/UpgradeBuildingAction';
 import { TryLaterError } from './Errors';
-import { TaskQueue, State, ImmutableState } from './Storage/TaskQueue';
+import { TaskQueue, ImmutableState } from './Storage/TaskQueue';
 import ActionQueue from './Storage/ActionQueue';
 import { Args, Command } from './Common';
 import TaskQueueRenderer from './TaskQueueRenderer';
@@ -99,7 +99,7 @@ export default class Scheduler {
         try {
             await action.run(args);
         } catch (e) {
-            console.warn('ACTION ERROR', e);
+            console.warn('ACTION ABORTED', e.message);
             if (e instanceof TryLaterError) {
                 console.warn('TRY AFTER', e.seconds);
                 this.actionQueue.clear();
