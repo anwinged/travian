@@ -3,13 +3,13 @@ export function sleep(ms: number) {
 }
 
 export async function sleepShort() {
-    let ms = 2000 + Math.random() * 1000;
+    let ms = 3000 + Math.random() * 1000;
     console.log('SLEEP SHORT', Math.round(ms));
     return await sleep(ms);
 }
 
 export async function sleepLong() {
-    let ms = 30_000 + Math.random() * 120_000;
+    let ms = 120_000 + Math.random() * 300_000;
     console.log('SLEEP LONG', Math.round(ms));
     return await sleep(ms);
 }

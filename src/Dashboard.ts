@@ -1,5 +1,5 @@
 import * as URLParse from 'url-parse';
-import { markPage, sleepShort } from './utils';
+import { markPage, sleep, sleepShort } from './utils';
 import { v4 as uuid } from 'uuid';
 import Scheduler from './Scheduler';
 import UpgradeBuildingTask from './Task/UpgradeBuildingTask';
@@ -16,13 +16,22 @@ export default class Dashboard {
     }
 
     async run() {
+        await this.load();
+        await sleep(1000);
+
         const p = new URLParse(window.location.href, true);
         console.log('PARSED LOCATION', p);
 
-        await sleepShort();
-
         markPage('Dashboard', this.version);
         new TaskQueueRenderer().render(this.scheduler.taskState());
+
+        if (p.pathname === '/dorf1.php') {
+            this.showSlotIds('buildingSlot');
+        }
+
+        if (p.pathname === '/dorf2.php') {
+            this.showSlotIds('aid');
+        }
 
         if (p.pathname === '/build.php') {
             console.log('BUILD PAGE DETECTED');
@@ -38,5 +47,26 @@ export default class Dashboard {
                 return false;
             });
         }
+    }
+
+    private showSlotIds(prefix: string) {
+        jQuery('.level.colorLayer').each((idx, el) => {
+            let num = '';
+            el.classList.forEach(cls => {
+                if (cls.startsWith(prefix)) {
+                    num = cls.substr(prefix.length);
+                }
+            });
+            const t = jQuery(el)
+                .find('.labelLayer')
+                .text();
+            jQuery(el)
+                .find('.labelLayer')
+                .text(num + ':' + t);
+        });
+    }
+
+    private async load() {
+        return new Promise(resolve => jQuery(resolve));
     }
 }

@@ -8,15 +8,22 @@ import ActionQueue from './Storage/ActionQueue';
 import { Args, Command } from './Common';
 import TaskQueueRenderer from './TaskQueueRenderer';
 
+enum SleepType {
+    Long,
+    Short,
+}
+
 export default class Scheduler {
     private readonly version: string;
     private taskQueue: TaskQueue;
     private actionQueue: ActionQueue;
+    private sleepType: SleepType;
 
     constructor(version: string) {
         this.version = version;
         this.taskQueue = new TaskQueue();
         this.actionQueue = new ActionQueue();
+        this.sleepType = SleepType.Short;
     }
 
     async run() {
@@ -24,7 +31,7 @@ export default class Scheduler {
         markPage('Executor', this.version);
         new TaskQueueRenderer().render(this.taskQueue.state());
         while (true) {
-            await sleepLong();
+            await this.sleep();
             const actionItem = this.popAction();
             this.log('POP ACTION ITEM', actionItem);
             if (actionItem !== null) {
@@ -34,7 +41,7 @@ export default class Scheduler {
                     await this.runAction(action, actionItem.args);
                 }
             } else {
-                const taskItem = this.popTask();
+                const taskItem = this.getTask();
                 this.log('POP TASK ITEM', taskItem);
                 if (taskItem !== null) {
                     const task = this.createTask(taskItem);
@@ -45,6 +52,19 @@ export default class Scheduler {
                 }
             }
         }
+    }
+
+    private async sleep() {
+        if (this.sleepType === SleepType.Long) {
+            await sleepLong();
+        } else {
+            await sleepShort();
+        }
+        this.sleepType = SleepType.Short;
+    }
+
+    private nextSleepLong() {
+        this.sleepType = SleepType.Long;
     }
 
     taskState(): ImmutableState {
@@ -65,7 +85,11 @@ export default class Scheduler {
         this.actionQueue.assign(actions);
     }
 
-    private popTask(): Command | null {
+    completeCurrentTask() {
+        this.taskQueue.next();
+    }
+
+    private getTask(): Command | null {
         return this.taskQueue.current() || this.taskQueue.next();
     }
 
@@ -92,7 +116,7 @@ export default class Scheduler {
             return new GoToBuildingAction();
         }
         if (actionItem.name === UpgradeBuildingAction.NAME) {
-            return new UpgradeBuildingAction();
+            return new UpgradeBuildingAction(this);
         }
         return null;
     }
@@ -106,6 +130,7 @@ export default class Scheduler {
                 console.warn('TRY AFTER', e.seconds);
                 this.actionQueue.clear();
                 this.taskQueue.postpone(e.seconds);
+                this.nextSleepLong();
             }
         }
     }
