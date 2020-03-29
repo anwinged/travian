@@ -1,19 +1,19 @@
 import { markPage, sleepLong, sleepShort } from './utils';
-import { Queue, QueueItem } from './Queue';
 import UpgradeBuildingTask from './Task/UpgradeBuildingTask';
 import GoToBuildingAction from './Action/GoToBuildingAction';
 import UpgradeBuildingAction from './Action/UpgradeBuildingAction';
-
-const ACTION_QUEUE = 'action_queue';
-const TASK_QUEUE = 'task_queue';
+import { TryLaterError } from './Errors';
+import TaskQueue from './Storage/TaskQueue';
+import ActionQueue from './Storage/ActionQueue';
+import { Args, Command } from './Common';
 
 export default class Scheduler {
-    taskQueue: Queue;
-    actionQueue: Queue;
+    taskQueue: TaskQueue;
+    actionQueue: ActionQueue;
 
     constructor() {
-        this.taskQueue = new Queue(TASK_QUEUE);
-        this.actionQueue = new Queue(ACTION_QUEUE);
+        this.taskQueue = new TaskQueue();
+        this.actionQueue = new ActionQueue();
     }
 
     async run() {
@@ -27,7 +27,7 @@ export default class Scheduler {
                 const action = this.createAction(actionItem);
                 this.log('POP ACTION', action);
                 if (action) {
-                    await action.run(actionItem.args);
+                    await this.runAction(action, actionItem.args);
                 }
             } else {
                 const taskItem = this.popTask();
@@ -43,25 +43,25 @@ export default class Scheduler {
         }
     }
 
-    pushTask(task: QueueItem): void {
+    pushTask(task: Command): void {
         this.log('PUSH TASK', task);
         this.taskQueue.push(task);
     }
 
-    pushAction(action: QueueItem): void {
+    pushAction(action: Command): void {
         this.log('PUSH ACTION', action);
         this.actionQueue.push(action);
     }
 
-    private popTask() {
-        const taskItem = this.taskQueue.pop();
-        if (taskItem === null) {
-            return null;
-        }
-        return taskItem;
+    scheduleActions(actions: Array<Command>): void {
+        this.actionQueue.assign(actions);
     }
 
-    private createTask(taskItem: QueueItem) {
+    private popTask(): Command | null {
+        return this.taskQueue.current() || this.taskQueue.next();
+    }
+
+    private createTask(taskItem: Command) {
         switch (taskItem.name) {
             case UpgradeBuildingTask.NAME:
                 return new UpgradeBuildingTask(this);
@@ -72,14 +72,14 @@ export default class Scheduler {
 
     private popAction() {
         const actionItem = this.actionQueue.pop();
-        if (actionItem === null) {
+        if (actionItem === undefined) {
             return null;
         }
         this.log('UNKNOWN ACTION', actionItem.name);
         return actionItem;
     }
 
-    private createAction(actionItem: QueueItem) {
+    private createAction(actionItem: Command) {
         if (actionItem.name === GoToBuildingAction.NAME) {
             return new GoToBuildingAction();
         }
@@ -89,7 +89,18 @@ export default class Scheduler {
         return null;
     }
 
+    private async runAction(action, args: Args) {
+        try {
+            await action.run(args);
+        } catch (e) {
+            console.warn('ACTION ERROR', e);
+            if (e instanceof TryLaterError) {
+                console.warn('TRY AFTER', e.seconds);
+            }
+        }
+    }
+
     private log(...args) {
-        console.log('SCHEDULER', ...args);
+        console.log('SCHEDULER:', ...args);
     }
 }

@@ -1,7 +1,7 @@
 import Scheduler from '../Scheduler';
 import GoToBuildingAction from '../Action/GoToBuildingAction';
 import UpgradeBuildingAction from '../Action/UpgradeBuildingAction';
-import { QueueItem } from '../Queue';
+import { Args, Command } from '../Common';
 
 export default class UpgradeBuildingTask {
     static NAME = 'upgrade_building';
@@ -11,11 +11,11 @@ export default class UpgradeBuildingTask {
         this.scheduler = scheduler;
     }
 
-    run(args) {
+    run(args: Args) {
         console.log('RUN', UpgradeBuildingTask.NAME, 'with', args);
-        this.scheduler.pushAction(new QueueItem(GoToBuildingAction.NAME, args));
-        this.scheduler.pushAction(
-            new QueueItem(UpgradeBuildingAction.NAME, args)
-        );
+        this.scheduler.scheduleActions([
+            new Command(GoToBuildingAction.NAME, args),
+            new Command(UpgradeBuildingAction.NAME, args),
+        ]);
     }
 }

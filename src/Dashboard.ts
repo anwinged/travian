@@ -1,9 +1,9 @@
 import * as URLParse from 'url-parse';
 import { markPage, sleepShort } from './utils';
 import { v4 as uuid } from 'uuid';
-import { QueueItem } from './Queue';
 import Scheduler from './Scheduler';
 import UpgradeBuildingTask from './Task/UpgradeBuildingTask';
+import { Command } from './Common';
 
 export default class Dashboard {
     private scheduler: Scheduler;
@@ -27,7 +27,7 @@ export default class Dashboard {
                 `<div style="padding: 8px"><a id="${id}" href="#">В очередь</a></div>`
             );
             jQuery(`#${id}`).on('click', () => {
-                const queueItem = new QueueItem(UpgradeBuildingTask.NAME, {
+                const queueItem = new Command(UpgradeBuildingTask.NAME, {
                     id: p.query['id'],
                 });
                 this.scheduler.pushTask(queueItem);
