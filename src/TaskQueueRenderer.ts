@@ -16,12 +16,19 @@ export default class TaskQueueRenderer {
                 padding: '8px 6px',
             });
         if (state.current) {
+            let cmd = state.current.cmd;
             ul.append(
-                jQuery('<li></li>').text('Current: ' + state.current.cmd.name)
+                jQuery('<li></li>').text(
+                    'Current: ' + cmd.name + ' ' + JSON.stringify(cmd.args)
+                )
             );
         }
         state.items.forEach(c => {
-            ul.append(jQuery('<li></li>').text(c.cmd.name));
+            ul.append(
+                jQuery('<li></li>').text(
+                    c.cmd.name + ' ' + JSON.stringify(c.cmd.args)
+                )
+            );
         });
 
         const el = jQuery(`#${ID}`);
