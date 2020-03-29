@@ -1,6 +1,8 @@
-import { sleep } from './utils';
-import { Queue } from './Queue';
-import GoToMainAction from './Action/GoToMainAction';
+import { sleepLong } from './utils';
+import { Queue, QueueItem } from './Queue';
+import UpgradeBuildingTask from './Task/UpgradeBuildingTask';
+import GoToBuildingAction from './Action/GoToBuildingAction';
+import UpgradeBuildingAction from './Action/UpgradeBuildingAction';
 
 const ACTION_QUEUE = 'action_queue';
 const TASK_QUEUE = 'task_queue';
@@ -16,39 +18,76 @@ export default class Scheduler {
 
     async run() {
         while (true) {
-            const action = this.popAction();
-            console.log('POP ACTION', action);
-            if (action !== null) {
-                await action.run();
+            await sleepLong();
+            const actionItem = this.popAction();
+            this.log('POP ACTION ITEM', actionItem);
+            if (actionItem !== null) {
+                const action = this.createAction(actionItem);
+                this.log('POP ACTION', action);
+                if (action) {
+                    await action.run(actionItem.args);
+                }
             } else {
-                const task = this.popTask();
-                console.log('POP TASK', task);
-                if (task !== null) {
-                    // do task
+                const taskItem = this.popTask();
+                this.log('POP TASK ITEM', taskItem);
+                if (taskItem !== null) {
+                    const task = this.createTask(taskItem);
+                    this.log('POP TASK', task);
+                    if (task !== null) {
+                        task.run(taskItem.args);
+                    }
                 }
             }
-            const waitTime = Math.random() * 5000;
-            console.log('WAIT', waitTime);
-            await sleep(waitTime);
         }
     }
 
+    pushTask(task: QueueItem): void {
+        this.log('PUSH TASK', task);
+        this.taskQueue.push(task);
+    }
+
+    pushAction(action: QueueItem): void {
+        this.log('PUSH ACTION', action);
+        this.actionQueue.push(action);
+    }
+
     private popTask() {
-        const item = this.taskQueue.pop();
-        if (item === null) {
+        const taskItem = this.taskQueue.pop();
+        if (taskItem === null) {
             return null;
         }
+        return taskItem;
+    }
+
+    private createTask(taskItem: QueueItem) {
+        switch (taskItem.name) {
+            case UpgradeBuildingTask.NAME:
+                return new UpgradeBuildingTask(this);
+        }
+        this.log('UNKNOWN TASK', taskItem.name);
         return null;
     }
 
     private popAction() {
-        const item = this.actionQueue.pop();
-        if (item === null) {
+        const actionItem = this.actionQueue.pop();
+        if (actionItem === null) {
             return null;
         }
-        if (item.name === 'go_to_main') {
-            return new GoToMainAction();
+        this.log('UNKNOWN ACTION', actionItem.name);
+        return actionItem;
+    }
+
+    private createAction(actionItem: QueueItem) {
+        if (actionItem.name === GoToBuildingAction.NAME) {
+            return new GoToBuildingAction();
+        }
+        if (actionItem.name === UpgradeBuildingAction.NAME) {
+            return new UpgradeBuildingAction();
         }
         return null;
+    }
+
+    private log(...args) {
+        console.log('SCHEDULER', ...args);
     }
 }

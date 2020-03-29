@@ -27,7 +27,7 @@ export class Queue {
         }
         const first = items.shift();
 
-        localStorage.setItem(this.name, JSON.stringify(items));
+        this.flush(items);
 
         if (first === undefined) {
             return null;
@@ -41,7 +41,12 @@ export class Queue {
         const items = serialized
             ? (JSON.parse(serialized) as Array<QueueItem>)
             : [];
-        const first = items.push(item);
+        items.push(item);
+        this.flush(items);
+    }
+
+    private flush(items) {
+        console.log('SET NEW QUEUE', this.name, items);
         localStorage.setItem(this.name, JSON.stringify(items));
     }
 }

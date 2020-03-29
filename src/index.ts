@@ -1,5 +1,6 @@
 import ModeDetector from './ModeDetector';
 import Scheduler from './Scheduler';
+import Dashboard from './Dashboard';
 
 const md = new ModeDetector();
 if (md.isAuto()) {
@@ -9,4 +10,6 @@ if (md.isAuto()) {
     scheduler.run();
 } else {
     console.log('NORMAL MODE');
+    const dashboard = new Dashboard(new Scheduler());
+    dashboard.run();
 }
