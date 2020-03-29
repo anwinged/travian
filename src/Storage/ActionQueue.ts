@@ -35,6 +35,10 @@ export default class ActionQueue {
         this.flushState(new State(items));
     }
 
+    clear(): void {
+        this.flushState(new State([]));
+    }
+
     private getState(): State {
         const serialized = localStorage.getItem(QUEUE_NAME);
         if (serialized === null) {

@@ -37,6 +37,16 @@ class State {
         }
         return new State(first, items);
     }
+
+    postpone(ds: number): State {
+        const current = this.current;
+        let items = this.items.slice();
+        if (current) {
+            const cmd = new CommandWithTime(current.cmd, current.ts + ds);
+            items.push(cmd);
+        }
+        return new State(null, items);
+    }
 }
 
 export default class TaskQueue {
@@ -56,6 +66,15 @@ export default class TaskQueue {
         let current = state.current ? state.current.cmd : null;
         this.flushState(state);
         return current;
+    }
+
+    postpone(ds: number) {
+        const state = this.getState().postpone(ds);
+        this.flushState(state);
+    }
+
+    state(): State {
+        return this.getState();
     }
 
     private defaultTs(): number {

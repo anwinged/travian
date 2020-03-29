@@ -96,6 +96,8 @@ export default class Scheduler {
             console.warn('ACTION ERROR', e);
             if (e instanceof TryLaterError) {
                 console.warn('TRY AFTER', e.seconds);
+                this.actionQueue.clear();
+                this.taskQueue.postpone(e.seconds);
             }
         }
     }
