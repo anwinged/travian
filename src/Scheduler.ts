@@ -1,4 +1,4 @@
-import { sleepLong } from './utils';
+import { markPage, sleepLong, sleepShort } from './utils';
 import { Queue, QueueItem } from './Queue';
 import UpgradeBuildingTask from './Task/UpgradeBuildingTask';
 import GoToBuildingAction from './Action/GoToBuildingAction';
@@ -17,6 +17,8 @@ export default class Scheduler {
     }
 
     async run() {
+        await sleepShort();
+        markPage('Executor');
         while (true) {
             await sleepLong();
             const actionItem = this.popAction();

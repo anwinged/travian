@@ -1,5 +1,5 @@
 import * as URLParse from 'url-parse';
-import { sleep } from './utils';
+import { markPage, sleepShort } from './utils';
 import { v4 as uuid } from 'uuid';
 import { QueueItem } from './Queue';
 import Scheduler from './Scheduler';
@@ -13,14 +13,12 @@ export default class Dashboard {
     }
 
     async run() {
-        jQuery('body').append(
-            '<div style="position: absolute; top: 0; left: 0; background-color: white">Dashboard</div>'
-        );
-
         const p = new URLParse(window.location.href, true);
         console.log('PARSED LOCATION', p);
 
-        await sleep(5000);
+        await sleepShort();
+
+        markPage('Dashboard');
 
         if (p.pathname === '/build.php') {
             console.log('BUILD PAGE DETECTED');
