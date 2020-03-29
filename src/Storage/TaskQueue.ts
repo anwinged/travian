@@ -11,7 +11,7 @@ class CommandWithTime {
     }
 }
 
-class State {
+export class State {
     current: CommandWithTime | null;
     items: Array<CommandWithTime>;
     constructor(
@@ -49,7 +49,7 @@ class State {
     }
 }
 
-export default class TaskQueue {
+export class TaskQueue {
     push(cmd: Command, ts: number | null = null) {
         this.log('PUSH TASK', cmd, ts);
         const state = this.getState();

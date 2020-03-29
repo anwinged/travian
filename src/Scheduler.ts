@@ -3,9 +3,10 @@ import UpgradeBuildingTask from './Task/UpgradeBuildingTask';
 import GoToBuildingAction from './Action/GoToBuildingAction';
 import UpgradeBuildingAction from './Action/UpgradeBuildingAction';
 import { TryLaterError } from './Errors';
-import TaskQueue from './Storage/TaskQueue';
+import { TaskQueue, State } from './Storage/TaskQueue';
 import ActionQueue from './Storage/ActionQueue';
 import { Args, Command } from './Common';
+import TaskQueueRenderer from './TaskQueueRenderer';
 
 export default class Scheduler {
     taskQueue: TaskQueue;
@@ -19,6 +20,7 @@ export default class Scheduler {
     async run() {
         await sleepShort();
         markPage('Executor');
+        new TaskQueueRenderer().render(this.taskQueue.state());
         while (true) {
             await sleepLong();
             const actionItem = this.popAction();

@@ -9,7 +9,7 @@ export async function sleepShort() {
 }
 
 export async function sleepLong() {
-    let ms = 10000 + Math.random() * 10000;
+    let ms = 30000 + Math.random() * 30000;
     console.log('SLEEP LONG', Math.round(ms));
     return await sleep(ms);
 }
