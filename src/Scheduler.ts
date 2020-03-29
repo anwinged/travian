@@ -3,14 +3,14 @@ import UpgradeBuildingTask from './Task/UpgradeBuildingTask';
 import GoToBuildingAction from './Action/GoToBuildingAction';
 import UpgradeBuildingAction from './Action/UpgradeBuildingAction';
 import { TryLaterError } from './Errors';
-import { TaskQueue, State } from './Storage/TaskQueue';
+import { TaskQueue, State, ImmutableState } from './Storage/TaskQueue';
 import ActionQueue from './Storage/ActionQueue';
 import { Args, Command } from './Common';
 import TaskQueueRenderer from './TaskQueueRenderer';
 
 export default class Scheduler {
-    taskQueue: TaskQueue;
-    actionQueue: ActionQueue;
+    private taskQueue: TaskQueue;
+    private actionQueue: ActionQueue;
 
     constructor() {
         this.taskQueue = new TaskQueue();
@@ -43,6 +43,10 @@ export default class Scheduler {
                 }
             }
         }
+    }
+
+    taskState(): ImmutableState {
+        return this.taskQueue.state();
     }
 
     pushTask(task: Command): void {

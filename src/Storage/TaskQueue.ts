@@ -49,6 +49,15 @@ export class State {
     }
 }
 
+export class ImmutableState {
+    readonly current: CommandWithTime | null;
+    readonly items: Array<CommandWithTime>;
+    constructor(state: State) {
+        this.current = state.current;
+        this.items = state.items;
+    }
+}
+
 export class TaskQueue {
     push(cmd: Command, ts: number | null = null) {
         this.log('PUSH TASK', cmd, ts);
@@ -73,8 +82,8 @@ export class TaskQueue {
         this.flushState(state);
     }
 
-    state(): State {
-        return this.getState();
+    state(): ImmutableState {
+        return new ImmutableState(this.getState());
     }
 
     private defaultTs(): number {

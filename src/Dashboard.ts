@@ -4,6 +4,7 @@ import { v4 as uuid } from 'uuid';
 import Scheduler from './Scheduler';
 import UpgradeBuildingTask from './Task/UpgradeBuildingTask';
 import { Command } from './Common';
+import TaskQueueRenderer from './TaskQueueRenderer';
 
 export default class Dashboard {
     private scheduler: Scheduler;
@@ -19,6 +20,7 @@ export default class Dashboard {
         await sleepShort();
 
         markPage('Dashboard');
+        new TaskQueueRenderer().render(this.scheduler.taskState());
 
         if (p.pathname === '/build.php') {
             console.log('BUILD PAGE DETECTED');

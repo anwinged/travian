@@ -1,9 +1,9 @@
-import { State } from './Storage/TaskQueue';
+import { ImmutableState } from './Storage/TaskQueue';
 
 const ID = 'id-832654376836436939356';
 
 export default class TaskQueueRenderer {
-    render(state: State) {
+    render(state: ImmutableState) {
         const ul = jQuery('<ul></ul>')
             .attr({ id: ID })
             .css({
