@@ -3,10 +3,13 @@ all: format build
 restart-server:
 	docker-compose restart
 
-build:
+write-version:
+	@echo $(shell date +'%Y%m%d-%H.%M.%S') > ./src/version.txt
+
+build: write-version
 	tools/npm run-script build:dev
 
-build-min:
+build-min: write-version
 	tools/npm run-script build
 
 format:

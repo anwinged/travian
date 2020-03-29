@@ -9,17 +9,19 @@ import { Args, Command } from './Common';
 import TaskQueueRenderer from './TaskQueueRenderer';
 
 export default class Scheduler {
+    private readonly version: string;
     private taskQueue: TaskQueue;
     private actionQueue: ActionQueue;
 
-    constructor() {
+    constructor(version: string) {
+        this.version = version;
         this.taskQueue = new TaskQueue();
         this.actionQueue = new ActionQueue();
     }
 
     async run() {
         await sleepShort();
-        markPage('Executor');
+        markPage('Executor', this.version);
         new TaskQueueRenderer().render(this.taskQueue.state());
         while (true) {
             await sleepLong();

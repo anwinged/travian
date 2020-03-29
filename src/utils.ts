@@ -14,7 +14,7 @@ export async function sleepLong() {
     return await sleep(ms);
 }
 
-export function markPage(text: string) {
+export function markPage(text: string, version: string) {
     jQuery('body').append(
         '<div style="' +
             'position: absolute; ' +
@@ -25,6 +25,8 @@ export function markPage(text: string) {
             'padding: 8px 6px; ' +
             'color: black">' +
             text +
+            ' ' +
+            version +
             '</div>'
     );
 }

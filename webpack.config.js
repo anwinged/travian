@@ -2,7 +2,7 @@ const path = require('path');
 
 module.exports = (env = {}) => ({
     mode: env.production ? 'production' : 'development',
-    entry: path.resolve(__dirname, 'src/index.ts'),
+    entry: path.resolve(__dirname, 'src/index.js'),
     output: {
         filename: env.production ? 'travian.min.js' : 'travian.js',
         path: path.resolve(__dirname, 'dist'),

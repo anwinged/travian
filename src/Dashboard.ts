@@ -7,9 +7,11 @@ import { Command } from './Common';
 import TaskQueueRenderer from './TaskQueueRenderer';
 
 export default class Dashboard {
+    private readonly version: string;
     private scheduler: Scheduler;
 
-    constructor(scheduler: Scheduler) {
+    constructor(version: string, scheduler: Scheduler) {
+        this.version = version;
         this.scheduler = scheduler;
     }
 
@@ -19,7 +21,7 @@ export default class Dashboard {
 
         await sleepShort();
 
-        markPage('Dashboard');
+        markPage('Dashboard', this.version);
         new TaskQueueRenderer().render(this.scheduler.taskState());
 
         if (p.pathname === '/build.php') {
