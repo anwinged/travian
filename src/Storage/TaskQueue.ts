@@ -57,6 +57,7 @@ export class TaskQueue {
     postpone(id: TaskId, deltaSeconds: number) {
         const [task, items] = this.shiftTask(id);
         if (task) {
+            this.log('POSTPONE', task);
             items.push(task.withTime(task.ts + deltaSeconds));
         }
         this.flushItems(items);
@@ -75,7 +76,15 @@ export class TaskQueue {
 
     private getItems(): TaskList {
         const serialized = localStorage.getItem(QUEUE_NAME);
-        return serialized !== null ? (JSON.parse(serialized) as TaskList) : [];
+        const storedItems =
+            serialized !== null
+                ? (JSON.parse(serialized) as Array<{ [key: string]: any }>)
+                : [];
+        const items: TaskList = [];
+        storedItems.forEach(obj => {
+            items.push(new Task(obj.id || uniqId(), +obj.ts, obj.cmd));
+        });
+        return items;
     }
 
     private flushItems(items: TaskList): void {
