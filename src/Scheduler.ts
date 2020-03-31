@@ -31,7 +31,11 @@ export default class Scheduler {
     async run() {
         await sleepShort();
         markPage('Executor', this.version);
-        new TaskQueueRenderer().render(this.taskQueue.seeItems());
+
+        setInterval(() => {
+            this.log('RENDER TASK QUEUE');
+            new TaskQueueRenderer().render(this.taskQueue.seeItems());
+        }, 1000);
 
         while (true) {
             await this.doLoopStep();
