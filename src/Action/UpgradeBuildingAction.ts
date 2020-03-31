@@ -1,9 +1,10 @@
-import Action from './Action';
+import ActionController from './ActionController';
 import { Args } from '../Common';
 import { TryLaterError } from '../Errors';
 import Scheduler from '../Scheduler';
+import { Task } from '../Storage/TaskQueue';
 
-export default class UpgradeBuildingAction extends Action {
+export default class UpgradeBuildingAction extends ActionController {
     static NAME = 'upgrade_building';
     private scheduler: Scheduler;
 
@@ -12,12 +13,12 @@ export default class UpgradeBuildingAction extends Action {
         this.scheduler = scheduler;
     }
 
-    async run(args: Args): Promise<any> {
+    async run(args: Args, task: Task): Promise<any> {
         const btn = jQuery(
             '.upgradeButtonsContainer .section1 button.green.build'
         );
         if (btn.length === 1) {
-            this.scheduler.completeCurrentTask();
+            this.scheduler.completeTask(task.id);
             btn.trigger('click');
         } else {
             throw new TryLaterError(60, 'No upgrade button, try later');

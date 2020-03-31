@@ -1,12 +1,14 @@
-import { markPage, sleepLong, sleepShort } from './utils';
+import { markPage, sleepLong, sleepShort, timestamp } from './utils';
 import UpgradeBuildingTask from './Task/UpgradeBuildingTask';
 import GoToBuildingAction from './Action/GoToBuildingAction';
 import UpgradeBuildingAction from './Action/UpgradeBuildingAction';
 import { TryLaterError } from './Errors';
-import { TaskQueue, ImmutableState } from './Storage/TaskQueue';
+import { TaskQueue, TaskList, Task, TaskId } from './Storage/TaskQueue';
 import ActionQueue from './Storage/ActionQueue';
 import { Args, Command } from './Common';
 import TaskQueueRenderer from './TaskQueueRenderer';
+import ActionController from './Action/ActionController';
+import TaskController from './Task/TaskController';
 
 enum SleepType {
     Long,
@@ -29,29 +31,51 @@ export default class Scheduler {
     async run() {
         await sleepShort();
         markPage('Executor', this.version);
-        new TaskQueueRenderer().render(this.taskQueue.state());
+        new TaskQueueRenderer().render(this.taskQueue.seeItems());
+
         while (true) {
-            await this.sleep();
-            const actionItem = this.popAction();
-            this.log('POP ACTION ITEM', actionItem);
-            if (actionItem !== null) {
-                const action = this.createAction(actionItem);
-                this.log('POP ACTION', action);
-                if (action) {
-                    await this.runAction(action, actionItem.args);
-                }
-            } else {
-                const taskItem = this.getTask();
-                this.log('POP TASK ITEM', taskItem);
-                if (taskItem !== null) {
-                    const task = this.createTask(taskItem);
-                    this.log('POP TASK', task);
-                    if (task !== null) {
-                        task.run(taskItem.args);
-                    }
-                }
-            }
+            await this.doLoopStep();
         }
+    }
+
+    private async doLoopStep() {
+        await this.sleep();
+        const currentTs = timestamp();
+        const taskCommand = this.taskQueue.get(currentTs);
+
+        // текущего таска нет, очищаем очередь действий по таску
+        if (taskCommand === undefined) {
+            this.log('NO ACTIVE TASK');
+            this.actionQueue.clear();
+            return;
+        }
+
+        const actionCommand = this.popActionCommand();
+
+        this.log('CURRENT TASK', taskCommand);
+        this.log('CURRENT ACTION', actionCommand);
+
+        if (actionCommand) {
+            return await this.processActionCommand(actionCommand, taskCommand);
+        }
+
+        if (taskCommand) {
+            return await this.processTaskCommand(taskCommand);
+        }
+    }
+
+    private async processActionCommand(cmd: Command, task: Task) {
+        const actionController = this.createActionControllerByName(cmd.name);
+        this.log('PROCESS ACTION CTR', actionController);
+        if (actionController) {
+            await this.runAction(actionController, cmd.args, task);
+        }
+    }
+
+    private async processTaskCommand(task: Task) {
+        const taskController = this.createTaskControllerByName(task.cmd.name);
+        this.log('PROCESS TASK CTR', taskController, task);
+        taskController?.run(task);
     }
 
     private async sleep() {
@@ -67,69 +91,64 @@ export default class Scheduler {
         this.sleepType = SleepType.Long;
     }
 
-    taskState(): ImmutableState {
-        return this.taskQueue.state();
+    getTaskItems(): TaskList {
+        return this.taskQueue.seeItems();
     }
 
-    pushTask(task: Command): void {
+    completeTask(id: TaskId) {
+        this.taskQueue.complete(id);
+    }
+
+    scheduleTask(task: Command): void {
         this.log('PUSH TASK', task);
-        this.taskQueue.push(task);
-    }
-
-    pushAction(action: Command): void {
-        this.log('PUSH ACTION', action);
-        this.actionQueue.push(action);
+        this.taskQueue.push(task, timestamp());
     }
 
     scheduleActions(actions: Array<Command>): void {
         this.actionQueue.assign(actions);
     }
 
-    completeCurrentTask() {
-        this.taskQueue.next();
-    }
-
-    private getTask(): Command | null {
-        return this.taskQueue.current() || this.taskQueue.next();
-    }
-
-    private createTask(taskItem: Command) {
-        switch (taskItem.name) {
+    private createTaskControllerByName(
+        taskName: string
+    ): TaskController | undefined {
+        switch (taskName) {
             case UpgradeBuildingTask.NAME:
                 return new UpgradeBuildingTask(this);
         }
-        this.log('UNKNOWN TASK', taskItem.name);
-        return null;
+        this.log('UNKNOWN TASK', taskName);
+        return undefined;
     }
 
-    private popAction() {
+    private popActionCommand(): Command | undefined {
         const actionItem = this.actionQueue.pop();
         if (actionItem === undefined) {
-            return null;
+            return undefined;
         }
         this.log('UNKNOWN ACTION', actionItem.name);
         return actionItem;
     }
 
-    private createAction(actionItem: Command) {
-        if (actionItem.name === GoToBuildingAction.NAME) {
+    private createActionControllerByName(
+        actonName: string
+    ): ActionController | undefined {
+        if (actonName === GoToBuildingAction.NAME) {
             return new GoToBuildingAction();
         }
-        if (actionItem.name === UpgradeBuildingAction.NAME) {
+        if (actonName === UpgradeBuildingAction.NAME) {
             return new UpgradeBuildingAction(this);
         }
-        return null;
+        return undefined;
     }
 
-    private async runAction(action, args: Args) {
+    private async runAction(action: ActionController, args: Args, task: Task) {
         try {
-            await action.run(args);
+            await action.run(args, task);
         } catch (e) {
             console.warn('ACTION ABORTED', e.message);
             if (e instanceof TryLaterError) {
                 console.warn('TRY AFTER', e.seconds);
                 this.actionQueue.clear();
-                this.taskQueue.postpone(e.seconds);
+                this.taskQueue.postpone(task.id, e.seconds);
                 this.nextSleepLong();
             }
         }

@@ -1,6 +1,5 @@
 import * as URLParse from 'url-parse';
-import { markPage, sleep, sleepShort } from './utils';
-import { v4 as uuid } from 'uuid';
+import { markPage, sleep, uniqId } from './utils';
 import Scheduler from './Scheduler';
 import UpgradeBuildingTask from './Task/UpgradeBuildingTask';
 import { Command } from './Common';
@@ -23,7 +22,7 @@ export default class Dashboard {
         console.log('PARSED LOCATION', p);
 
         markPage('Dashboard', this.version);
-        new TaskQueueRenderer().render(this.scheduler.taskState());
+        new TaskQueueRenderer().render(this.scheduler.getTaskItems());
 
         if (p.pathname === '/dorf1.php') {
             this.showSlotIds('buildingSlot');
@@ -35,7 +34,7 @@ export default class Dashboard {
 
         if (p.pathname === '/build.php') {
             console.log('BUILD PAGE DETECTED');
-            const id = uuid();
+            const id = uniqId();
             jQuery('.upgradeButtonsContainer .section1').append(
                 `<div style="padding: 8px"><a id="${id}" href="#">В очередь</a></div>`
             );
@@ -43,7 +42,7 @@ export default class Dashboard {
                 const queueItem = new Command(UpgradeBuildingTask.NAME, {
                     id: p.query['id'],
                 });
-                this.scheduler.pushTask(queueItem);
+                this.scheduler.scheduleTask(queueItem);
                 return false;
             });
         }

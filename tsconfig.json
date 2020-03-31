@@ -6,7 +6,7 @@
     "target": "es5",
     "module": "commonjs",
     "strictNullChecks": true,
-    "types": ["node", "url-parse", "jquery", "uuid", "mocha", "chai"]
+    "types": ["node", "url-parse", "jquery", "nanoid", "mocha", "chai"]
   },
   "include": [
     "./src/**/*"

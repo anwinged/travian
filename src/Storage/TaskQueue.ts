@@ -1,110 +1,88 @@
 import { Command } from '../Common';
+import { uniqId } from '../utils';
 
-const QUEUE_NAME = 'task_queue:v2';
+const QUEUE_NAME = 'task_queue:v3';
 
-class CommandWithTime {
-    readonly cmd: Command;
+export type TaskId = string;
+
+function uniqTaskId(): TaskId {
+    return uniqId();
+}
+
+export class Task {
+    readonly id: TaskId;
     readonly ts: number;
-    constructor(cmd: Command, ts: number) {
-        this.cmd = cmd;
+    readonly cmd: Command;
+    constructor(id: TaskId, ts: number, cmd: Command) {
+        this.id = id;
         this.ts = ts;
+        this.cmd = cmd;
+    }
+
+    withTime(ts: number): Task {
+        return new Task(this.id, ts, this.cmd);
     }
 }
 
-export class State {
-    current: CommandWithTime | null;
-    items: Array<CommandWithTime>;
-    constructor(
-        current: CommandWithTime | null,
-        items: Array<CommandWithTime>
-    ) {
-        items.sort((x: CommandWithTime, y: CommandWithTime) => x.ts - y.ts);
-        this.current = current;
-        this.items = items;
-    }
-
-    push(cmd: Command, ts: number): State {
-        const items = this.items.slice();
-        items.push(new CommandWithTime(cmd, ts));
-        return new State(this.current, items);
-    }
-
-    next(): State {
-        const items = this.items.slice();
-        const first = items.shift();
-        if (first === undefined) {
-            return new State(null, []);
-        }
-        return new State(first, items);
-    }
-
-    postpone(ds: number): State {
-        const current = this.current;
-        let items = this.items.slice();
-        if (current) {
-            const cmd = new CommandWithTime(current.cmd, current.ts + ds);
-            items.push(cmd);
-        }
-        return new State(null, items);
-    }
-}
-
-export class ImmutableState {
-    readonly current: CommandWithTime | null;
-    readonly items: Array<CommandWithTime>;
-    constructor(state: State) {
-        this.current = state.current;
-        this.items = state.items;
-    }
-}
+export type TaskList = Array<Task>;
 
 export class TaskQueue {
-    push(cmd: Command, ts: number | null = null) {
-        this.log('PUSH TASK', cmd, ts);
-        const state = this.getState();
-        this.flushState(state.push(cmd, ts || this.defaultTs()));
+    private static normalize(items: TaskList): TaskList {
+        return items.sort((x, y) => x.ts - y.ts);
     }
 
-    current(): Command | null {
-        let current = this.getState().current;
-        return current ? current.cmd : null;
+    push(cmd: Command, ts: number): Task {
+        const id = uniqTaskId();
+        const task = new Task(id, ts, cmd);
+        this.log('PUSH TASK', id, ts, cmd);
+        let items = this.getItems();
+        items.push(task);
+        this.flushItems(items);
+        return task;
     }
 
-    next(): Command | null {
-        let state = this.getState().next();
-        let current = state.current ? state.current.cmd : null;
-        this.flushState(state);
-        return current;
-    }
-
-    postpone(ds: number) {
-        const state = this.getState().postpone(ds);
-        this.flushState(state);
-    }
-
-    state(): ImmutableState {
-        return new ImmutableState(this.getState());
-    }
-
-    private defaultTs(): number {
-        return Math.floor(Date.now() / 1000);
-    }
-
-    private getState(): State {
-        const serialized = localStorage.getItem(QUEUE_NAME);
-        if (serialized === null) {
-            return new State(null, []);
+    get(ts: number): Task | undefined {
+        const readyItems = this.getItems().filter(t => t.ts <= ts);
+        if (readyItems.length === 0) {
+            return undefined;
         }
-
-        const s = JSON.parse(serialized) as State;
-
-        this.log('STATE', s);
-
-        return new State(s.current, s.items);
+        return readyItems[0];
     }
 
-    private flushState(state: State): void {
-        localStorage.setItem(QUEUE_NAME, JSON.stringify(state));
+    complete(id: TaskId) {
+        const [_, items] = this.shiftTask(id);
+        this.flushItems(items);
+    }
+
+    postpone(id: TaskId, deltaSeconds: number) {
+        const [task, items] = this.shiftTask(id);
+        if (task) {
+            items.push(task.withTime(task.ts + deltaSeconds));
+        }
+        this.flushItems(items);
+    }
+
+    seeItems(): TaskList {
+        return this.getItems();
+    }
+
+    private shiftTask(id: TaskId): [Task | undefined, TaskList] {
+        const items = this.getItems();
+        const task = items.find(t => t.id === id);
+        const tail = items.filter(t => t.id !== id);
+        return [task, tail];
+    }
+
+    private getItems(): TaskList {
+        const serialized = localStorage.getItem(QUEUE_NAME);
+        return serialized !== null ? (JSON.parse(serialized) as TaskList) : [];
+    }
+
+    private flushItems(items: TaskList): void {
+        localStorage.setItem(
+            QUEUE_NAME,
+            JSON.stringify(TaskQueue.normalize(items))
+        );
     }
 
     private log(...args) {

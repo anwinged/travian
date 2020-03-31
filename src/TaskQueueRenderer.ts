@@ -1,9 +1,10 @@
-import { ImmutableState } from './Storage/TaskQueue';
+import { TaskList } from './Storage/TaskQueue';
+import { uniqId } from './utils';
 
-const ID = 'id-832654376836436939356';
+const ID = uniqId();
 
 export default class TaskQueueRenderer {
-    render(state: ImmutableState) {
+    render(tasks: TaskList) {
         const ul = jQuery('<ul></ul>')
             .attr({ id: ID })
             .css({
@@ -15,18 +16,16 @@ export default class TaskQueueRenderer {
                 'z-index': '9999',
                 padding: '8px 6px',
             });
-        if (state.current) {
-            let cmd = state.current.cmd;
+        tasks.forEach(task => {
             ul.append(
                 jQuery('<li></li>').text(
-                    'Current: ' + cmd.name + ' ' + JSON.stringify(cmd.args)
-                )
-            );
-        }
-        state.items.forEach(c => {
-            ul.append(
-                jQuery('<li></li>').text(
-                    c.cmd.name + ' ' + JSON.stringify(c.cmd.args)
+                    task.ts +
+                        ' ' +
+                        task.cmd.name +
+                        ' ' +
+                        JSON.stringify(task.cmd.args) +
+                        ' ' +
+                        task.id
                 )
             );
         });

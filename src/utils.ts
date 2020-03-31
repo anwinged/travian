@@ -1,3 +1,7 @@
+import { customAlphabet } from 'nanoid';
+
+const smallIdGenerator = customAlphabet('1234567890abcdef', 6);
+
 export function sleep(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -12,6 +16,14 @@ export async function sleepLong() {
     let ms = 120_000 + Math.random() * 300_000;
     console.log('SLEEP LONG', Math.round(ms));
     return await sleep(ms);
+}
+
+export function uniqId(): string {
+    return 'id' + smallIdGenerator();
+}
+
+export function timestamp(): number {
+    return Math.floor(Date.now() / 1000);
 }
 
 export function markPage(text: string, version: string) {
