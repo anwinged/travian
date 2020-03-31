@@ -1,7 +1,13 @@
 import { TaskList } from './Storage/TaskQueue';
 import { uniqId } from './utils';
+import dateFormat = require('dateformat');
 
 const ID = uniqId();
+
+function formatDate(ts: number) {
+    const d = new Date(ts * 1000);
+    return dateFormat(d, 'HH:MM:ss');
+}
 
 export default class TaskQueueRenderer {
     render(tasks: TaskList) {
@@ -19,7 +25,7 @@ export default class TaskQueueRenderer {
         tasks.forEach(task => {
             ul.append(
                 jQuery('<li></li>').text(
-                    task.ts +
+                    formatDate(task.ts) +
                         ' ' +
                         task.cmd.name +
                         ' ' +

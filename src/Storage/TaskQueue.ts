@@ -54,11 +54,11 @@ export class TaskQueue {
         this.flushItems(items);
     }
 
-    postpone(id: TaskId, deltaSeconds: number) {
+    postpone(id: TaskId, newTs: number) {
         const [task, items] = this.shiftTask(id);
         if (task) {
             this.log('POSTPONE', task);
-            items.push(task.withTime(task.ts + deltaSeconds));
+            items.push(task.withTime(newTs));
         }
         this.flushItems(items);
     }

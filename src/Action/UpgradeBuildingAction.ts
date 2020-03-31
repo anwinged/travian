@@ -21,7 +21,7 @@ export default class UpgradeBuildingAction extends ActionController {
             this.scheduler.completeTask(task.id);
             btn.trigger('click');
         } else {
-            throw new TryLaterError(60, 'No upgrade button, try later');
+            throw new TryLaterError(5 * 60, 'No upgrade button, try later');
         }
         return null;
     }
