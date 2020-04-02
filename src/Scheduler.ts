@@ -26,6 +26,7 @@ export default class Scheduler {
         await sleepShort();
         markPage('Executor', this.version);
 
+        this.renderTaskQueue();
         setInterval(() => this.renderTaskQueue(), 5000);
 
         while (true) {
