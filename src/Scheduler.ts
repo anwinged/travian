@@ -1,4 +1,4 @@
-import { markPage, sleepLong, sleepShort, timestamp } from './utils';
+import { markPage, sleepShort, timestamp } from './utils';
 import UpgradeBuildingTask from './Task/UpgradeBuildingTask';
 import GoToBuildingAction from './Action/GoToBuildingAction';
 import UpgradeBuildingAction from './Action/UpgradeBuildingAction';
@@ -9,41 +9,38 @@ import { Args, Command } from './Common';
 import TaskQueueRenderer from './TaskQueueRenderer';
 import ActionController from './Action/ActionController';
 import TaskController from './Task/TaskController';
-
-enum SleepType {
-    Long,
-    Short,
-}
+import GoToPageAction from './Action/GoToPageAction';
+import CheckBuildingRemainingTimeAction from './Action/CheckBuildingRemainingTimeAction';
 
 export default class Scheduler {
     private readonly version: string;
     private taskQueue: TaskQueue;
     private actionQueue: ActionQueue;
-    private sleepType: SleepType;
 
     constructor(version: string) {
         this.version = version;
         this.taskQueue = new TaskQueue();
         this.actionQueue = new ActionQueue();
-        this.sleepType = SleepType.Short;
     }
 
     async run() {
         await sleepShort();
         markPage('Executor', this.version);
 
-        setInterval(() => {
-            this.log('RENDER TASK QUEUE');
-            new TaskQueueRenderer().render(this.taskQueue.seeItems());
-        }, 1000);
+        setInterval(() => this.renderTaskQueue(), 5000);
 
         while (true) {
             await this.doLoopStep();
         }
     }
 
+    private renderTaskQueue() {
+        this.log('RENDER TASK QUEUE');
+        new TaskQueueRenderer().render(this.taskQueue.seeItems());
+    }
+
     private async doLoopStep() {
-        await this.sleep();
+        await sleepShort();
         const currentTs = timestamp();
         const taskCommand = this.taskQueue.get(currentTs);
 
@@ -68,31 +65,20 @@ export default class Scheduler {
         }
     }
 
+    private async processTaskCommand(task: Task) {
+        const taskController = this.createTaskControllerByName(task.cmd.name);
+        this.log('PROCESS TASK CONTROLLER', taskController, task);
+        if (taskController) {
+            taskController.run(task);
+        }
+    }
+
     private async processActionCommand(cmd: Command, task: Task) {
         const actionController = this.createActionControllerByName(cmd.name);
-        this.log('PROCESS ACTION CTR', actionController);
+        this.log('PROCESS ACTION CONTROLLER', cmd.name, actionController);
         if (actionController) {
             await this.runAction(actionController, cmd.args, task);
         }
-    }
-
-    private async processTaskCommand(task: Task) {
-        const taskController = this.createTaskControllerByName(task.cmd.name);
-        this.log('PROCESS TASK CTR', taskController, task);
-        taskController?.run(task);
-    }
-
-    private async sleep() {
-        if (this.sleepType === SleepType.Long) {
-            await sleepLong();
-        } else {
-            await sleepShort();
-        }
-        this.sleepType = SleepType.Short;
-    }
-
-    private nextSleepLong() {
-        this.sleepType = SleepType.Long;
     }
 
     getTaskItems(): TaskList {
@@ -119,7 +105,7 @@ export default class Scheduler {
             case UpgradeBuildingTask.NAME:
                 return new UpgradeBuildingTask(this);
         }
-        this.log('UNKNOWN TASK', taskName);
+        this.logError('TASK NOT FOUND', taskName);
         return undefined;
     }
 
@@ -128,7 +114,6 @@ export default class Scheduler {
         if (actionItem === undefined) {
             return undefined;
         }
-        this.log('UNKNOWN ACTION', actionItem.name);
         return actionItem;
     }
 
@@ -141,6 +126,13 @@ export default class Scheduler {
         if (actonName === UpgradeBuildingAction.NAME) {
             return new UpgradeBuildingAction(this);
         }
+        if (actonName === GoToPageAction.NAME) {
+            return new GoToPageAction();
+        }
+        if (actonName === CheckBuildingRemainingTimeAction.NAME) {
+            return new CheckBuildingRemainingTimeAction();
+        }
+        this.logError('ACTION NOT FOUND', actonName);
         return undefined;
     }
 
@@ -153,12 +145,15 @@ export default class Scheduler {
                 console.warn('TRY', task.id, 'AFTER', e.seconds);
                 this.actionQueue.clear();
                 this.taskQueue.postpone(task.id, timestamp() + e.seconds);
-                this.nextSleepLong();
             }
         }
     }
 
     private log(...args) {
         console.log('SCHEDULER:', ...args);
+    }
+
+    private logError(...args) {
+        console.error(...args);
     }
 }
