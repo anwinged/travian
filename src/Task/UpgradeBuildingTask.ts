@@ -1,7 +1,6 @@
 import Scheduler from '../Scheduler';
-import GoToBuildingAction from '../Action/GoToBuildingAction';
 import UpgradeBuildingAction from '../Action/UpgradeBuildingAction';
-import { Command } from '../Common';
+import { Args, Command } from '../Common';
 import { Task } from '../Storage/TaskQueue';
 import TaskController from './TaskController';
 import GoToPageAction from '../Action/GoToPageAction';
@@ -18,11 +17,14 @@ export default class UpgradeBuildingTask extends TaskController {
 
     run(task: Task) {
         console.log('RUN', UpgradeBuildingTask.NAME, 'with', task);
-        const args = { ...task.cmd.args, taskId: task.id };
+        const args: Args = { ...task.cmd.args, taskId: task.id };
         this.scheduler.scheduleActions([
             new Command(GoToPageAction.NAME, { ...args, path: '/dorf1.php' }),
             new Command(CheckBuildingRemainingTimeAction.NAME, args),
-            new Command(GoToBuildingAction.NAME, args),
+            new Command(GoToPageAction.NAME, {
+                ...args,
+                path: '/build.php?id=' + args.id,
+            }),
             new Command(UpgradeBuildingAction.NAME, args),
         ]);
     }

@@ -1,6 +1,5 @@
 import { markPage, sleepShort, timestamp } from './utils';
 import UpgradeBuildingTask from './Task/UpgradeBuildingTask';
-import GoToBuildingAction from './Action/GoToBuildingAction';
 import UpgradeBuildingAction from './Action/UpgradeBuildingAction';
 import { TryLaterError } from './Errors';
 import { TaskQueue, TaskList, Task, TaskId } from './Storage/TaskQueue';
@@ -120,9 +119,6 @@ export default class Scheduler {
     private createActionControllerByName(
         actonName: string
     ): ActionController | undefined {
-        if (actonName === GoToBuildingAction.NAME) {
-            return new GoToBuildingAction();
-        }
         if (actonName === UpgradeBuildingAction.NAME) {
             return new UpgradeBuildingAction(this);
         }
