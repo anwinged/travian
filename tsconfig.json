@@ -1,9 +1,8 @@
 {
   "compilerOptions": {
     "outDir": "./dist",
-    "lib": ["es6", "dom"],
     "allowJs": true,
-    "target": "es5",
+    "target": "ES2018",
     "module": "commonjs",
     "strictNullChecks": true,
     "types": ["node", "url-parse", "jquery", "nanoid", "mocha", "chai"]
