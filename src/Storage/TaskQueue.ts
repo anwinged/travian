@@ -49,6 +49,12 @@ export class TaskQueue {
         return readyItems[0];
     }
 
+    modify(predicate: (t: Task) => boolean, modifier: (t: Task) => Task) {
+        const [matched, other] = this.split(predicate);
+        const modified = matched.map(modifier);
+        this.flushItems(modified.concat(other));
+    }
+
     complete(id: TaskId) {
         const [_, items] = this.shiftTask(id);
         this.flushItems(items);
@@ -68,10 +74,21 @@ export class TaskQueue {
     }
 
     private shiftTask(id: TaskId): [Task | undefined, TaskList] {
-        const items = this.getItems();
-        const task = items.find(t => t.id === id);
-        const tail = items.filter(t => t.id !== id);
-        return [task, tail];
+        const [a, b] = this.split(t => t.id === id);
+        return [a.shift(), b];
+    }
+
+    private split(predicate: (t: Task) => boolean): [TaskList, TaskList] {
+        const matched: TaskList = [];
+        const other: TaskList = [];
+        this.getItems().forEach(t => {
+            if (predicate(t)) {
+                matched.push(t);
+            } else {
+                other.push(t);
+            }
+        });
+        return [matched, other];
     }
 
     private getItems(): TaskList {

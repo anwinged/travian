@@ -1,5 +1,5 @@
 import * as URLParse from 'url-parse';
-import { markPage, sleepShort, uniqId } from './utils';
+import { markPage, uniqId, waitForLoad } from './utils';
 import Scheduler from './Scheduler';
 import UpgradeBuildingTask from './Task/UpgradeBuildingTask';
 import { Command } from './Common';
@@ -15,8 +15,7 @@ export default class Dashboard {
     }
 
     async run() {
-        await this.load();
-        await sleepShort();
+        await waitForLoad();
 
         const p = new URLParse(window.location.href, true);
         this.log('PARSED LOCATION', p);
@@ -75,10 +74,6 @@ export default class Dashboard {
                 .find('.labelLayer')
                 .text(num + ':' + t);
         });
-    }
-
-    private async load() {
-        return new Promise(resolve => jQuery(resolve));
     }
 
     private log(...args) {

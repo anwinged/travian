@@ -1,7 +1,7 @@
 import { markPage, sleepShort, timestamp } from './utils';
 import UpgradeBuildingTask from './Task/UpgradeBuildingTask';
 import UpgradeBuildingAction from './Action/UpgradeBuildingAction';
-import { TryLaterError } from './Errors';
+import { BuildingQueueFullError, TryLaterError } from './Errors';
 import { TaskQueue, TaskList, Task, TaskId } from './Storage/TaskQueue';
 import ActionQueue from './Storage/ActionQueue';
 import { Args, Command } from './Common';
@@ -142,6 +142,14 @@ export default class Scheduler {
                 console.warn('TRY', task.id, 'AFTER', e.seconds);
                 this.actionQueue.clear();
                 this.taskQueue.postpone(task.id, timestamp() + e.seconds);
+            }
+            if (e instanceof BuildingQueueFullError) {
+                console.warn('BUILDING QUEUE FULL, TRY ALL AFTER', e.seconds);
+                this.actionQueue.clear();
+                this.taskQueue.modify(
+                    t => t.cmd.name === UpgradeBuildingTask.NAME,
+                    t => t.withTime(timestamp() + e.seconds)
+                );
             }
         }
     }

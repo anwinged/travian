@@ -1,7 +1,7 @@
 import ActionController from './ActionController';
 import { Args } from '../Common';
 import { Task } from '../Storage/TaskQueue';
-import { TryLaterError } from '../Errors';
+import { BuildingQueueFullError } from '../Errors';
 
 export default class CheckBuildingRemainingTimeAction extends ActionController {
     static NAME = 'check_building_remaining_time';
@@ -11,7 +11,7 @@ export default class CheckBuildingRemainingTimeAction extends ActionController {
         if (timer.length === 1) {
             const remainingSeconds = Number(timer.attr('value'));
             if (remainingSeconds > 0) {
-                throw new TryLaterError(
+                throw new BuildingQueueFullError(
                     remainingSeconds + 1,
                     'Building queue is full'
                 );

@@ -18,6 +18,10 @@ export async function sleepLong() {
     return await sleep(ms);
 }
 
+export async function waitForLoad() {
+    return new Promise(resolve => jQuery(resolve));
+}
+
 export function uniqId(): string {
     return 'id' + smallIdGenerator();
 }
