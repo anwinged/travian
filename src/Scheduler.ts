@@ -1,7 +1,11 @@
 import { markPage, sleepShort, timestamp } from './utils';
 import UpgradeBuildingTask from './Task/UpgradeBuildingTask';
 import UpgradeBuildingAction from './Action/UpgradeBuildingAction';
-import { BuildingQueueFullError, TryLaterError } from './Errors';
+import {
+    AbortTaskError,
+    BuildingQueueFullError,
+    TryLaterError,
+} from './Errors';
 import { TaskQueue, TaskList, Task, TaskId } from './Storage/TaskQueue';
 import ActionQueue from './Storage/ActionQueue';
 import { Args, Command } from './Common';
@@ -10,16 +14,24 @@ import ActionController from './Action/ActionController';
 import TaskController from './Task/TaskController';
 import GoToPageAction from './Action/GoToPageAction';
 import CheckBuildingRemainingTimeAction from './Action/CheckBuildingRemainingTimeAction';
+import SendOnAdventureTask from './Task/SendOnAdventureTask';
+import GrabHeroAttributesAction from './Action/GrabHeroAttributesAction';
+import { GameState } from './Storage/GameState';
+import CompleteTaskAction from './Action/CompleteTaskAction';
+import SendOnAdventureAction from './Action/SendOnAdventureAction';
+import ClickButtonAction from './Action/ClickButtonAction';
 
 export default class Scheduler {
     private readonly version: string;
     private taskQueue: TaskQueue;
     private actionQueue: ActionQueue;
+    private gameState: GameState;
 
     constructor(version: string) {
         this.version = version;
         this.taskQueue = new TaskQueue();
         this.actionQueue = new ActionQueue();
+        this.gameState = new GameState();
     }
 
     async run() {
@@ -27,7 +39,10 @@ export default class Scheduler {
         markPage('Executor', this.version);
 
         this.renderTaskQueue();
-        setInterval(() => this.renderTaskQueue(), 5000);
+        setInterval(() => this.renderTaskQueue(), 5 * 1000);
+
+        this.scheduleHeroAdventure();
+        setInterval(() => this.scheduleHeroAdventure(), 3600 * 1000);
 
         while (true) {
             await this.doLoopStep();
@@ -37,6 +52,15 @@ export default class Scheduler {
     private renderTaskQueue() {
         this.log('RENDER TASK QUEUE');
         new TaskQueueRenderer().render(this.taskQueue.seeItems());
+    }
+
+    private scheduleHeroAdventure() {
+        if (!this.taskQueue.hasNamed(SendOnAdventureTask.NAME)) {
+            this.taskQueue.push(
+                new Command(SendOnAdventureTask.NAME, {}),
+                timestamp()
+            );
+        }
     }
 
     private async doLoopStep() {
@@ -51,7 +75,7 @@ export default class Scheduler {
             return;
         }
 
-        const actionCommand = this.popActionCommand();
+        const actionCommand = this.actionQueue.pop();
 
         this.log('CURRENT TASK', taskCommand);
         this.log('CURRENT ACTION', actionCommand);
@@ -67,7 +91,7 @@ export default class Scheduler {
 
     private async processTaskCommand(task: Task) {
         const taskController = this.createTaskControllerByName(task.cmd.name);
-        this.log('PROCESS TASK CONTROLLER', taskController, task);
+        this.log('PROCESS TASK', task.cmd.name, task, taskController);
         if (taskController) {
             taskController.run(task);
         }
@@ -75,7 +99,7 @@ export default class Scheduler {
 
     private async processActionCommand(cmd: Command, task: Task) {
         const actionController = this.createActionControllerByName(cmd.name);
-        this.log('PROCESS ACTION CONTROLLER', cmd.name, actionController);
+        this.log('PROCESS ACTION', cmd.name, actionController);
         if (actionController) {
             await this.runAction(actionController, cmd.args, task);
         }
@@ -104,30 +128,36 @@ export default class Scheduler {
         switch (taskName) {
             case UpgradeBuildingTask.NAME:
                 return new UpgradeBuildingTask(this);
+            case SendOnAdventureTask.NAME:
+                return new SendOnAdventureTask(this);
         }
         this.logError('TASK NOT FOUND', taskName);
         return undefined;
     }
 
-    private popActionCommand(): Command | undefined {
-        const actionItem = this.actionQueue.pop();
-        if (actionItem === undefined) {
-            return undefined;
-        }
-        return actionItem;
-    }
-
     private createActionControllerByName(
         actonName: string
     ): ActionController | undefined {
-        if (actonName === UpgradeBuildingAction.NAME) {
-            return new UpgradeBuildingAction(this);
-        }
         if (actonName === GoToPageAction.NAME) {
             return new GoToPageAction();
         }
+        if (actonName === ClickButtonAction.NAME) {
+            return new ClickButtonAction();
+        }
+        if (actonName === CompleteTaskAction.NAME) {
+            return new CompleteTaskAction(this);
+        }
+        if (actonName === UpgradeBuildingAction.NAME) {
+            return new UpgradeBuildingAction();
+        }
         if (actonName === CheckBuildingRemainingTimeAction.NAME) {
             return new CheckBuildingRemainingTimeAction();
+        }
+        if (actonName === GrabHeroAttributesAction.NAME) {
+            return new GrabHeroAttributesAction(this.gameState);
+        }
+        if (actonName === SendOnAdventureAction.NAME) {
+            return new SendOnAdventureAction(this.gameState);
         }
         this.logError('ACTION NOT FOUND', actonName);
         return undefined;
@@ -138,14 +168,17 @@ export default class Scheduler {
             await action.run(args, task);
         } catch (e) {
             console.warn('ACTION ABORTED', e.message);
+            this.actionQueue.clear();
+            if (e instanceof AbortTaskError) {
+                console.warn('ABORT TASK', e.id);
+                this.completeTask(e.id);
+            }
             if (e instanceof TryLaterError) {
                 console.warn('TRY', task.id, 'AFTER', e.seconds);
-                this.actionQueue.clear();
                 this.taskQueue.postpone(task.id, timestamp() + e.seconds);
             }
             if (e instanceof BuildingQueueFullError) {
                 console.warn('BUILDING QUEUE FULL, TRY ALL AFTER', e.seconds);
-                this.actionQueue.clear();
                 this.taskQueue.modify(
                     t => t.cmd.name === UpgradeBuildingTask.NAME,
                     t => t.withTime(timestamp() + e.seconds)

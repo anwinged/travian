@@ -30,6 +30,10 @@ export function timestamp(): number {
     return Math.floor(Date.now() / 1000);
 }
 
+export function trimPrefix(text: string, prefix: string): string {
+    return text.startsWith(prefix) ? text.substr(prefix.length) : text;
+}
+
 export function markPage(text: string, version: string) {
     jQuery('body').append(
         '<div style="' +

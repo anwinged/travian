@@ -49,6 +49,15 @@ export class TaskQueue {
         return readyItems[0];
     }
 
+    has(predicate: (t: Task) => boolean): boolean {
+        const [matched, _] = this.split(predicate);
+        return matched.length > 0;
+    }
+
+    hasNamed(name: string): boolean {
+        return this.has(t => t.cmd.name === name);
+    }
+
     modify(predicate: (t: Task) => boolean, modifier: (t: Task) => Task) {
         const [matched, other] = this.split(predicate);
         const modified = matched.map(modifier);

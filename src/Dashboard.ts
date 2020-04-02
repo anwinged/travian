@@ -1,5 +1,5 @@
 import * as URLParse from 'url-parse';
-import { markPage, uniqId, waitForLoad } from './utils';
+import { markPage, trimPrefix, uniqId, waitForLoad } from './utils';
 import Scheduler from './Scheduler';
 import UpgradeBuildingTask from './Task/UpgradeBuildingTask';
 import { Command } from './Common';
