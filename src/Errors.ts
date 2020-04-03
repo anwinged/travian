@@ -21,7 +21,8 @@ export class AbortTaskError extends Error {
 export class TryLaterError extends Error {
     readonly seconds: number;
     readonly taskId: TaskId;
-    constructor(seconds: number, taskId: TaskId, msg: string = '') {
+
+    constructor(taskId: TaskId, seconds: number, msg: string = '') {
         super(msg);
         this.taskId = taskId;
         this.seconds = seconds;
@@ -32,7 +33,8 @@ export class TryLaterError extends Error {
 export class BuildingQueueFullError extends Error {
     readonly seconds: number;
     readonly taskId: TaskId;
-    constructor(seconds: number, taskId: TaskId, msg: string = '') {
+
+    constructor(taskId: TaskId, seconds: number, msg: string = '') {
         super(msg);
         this.taskId = taskId;
         this.seconds = seconds;

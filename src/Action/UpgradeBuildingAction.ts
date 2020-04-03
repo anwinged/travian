@@ -11,7 +11,11 @@ export class UpgradeBuildingAction extends ActionController {
         );
 
         if (btn.length !== 1) {
-            throw new TryLaterError(5 * 60, 'No upgrade button, try later');
+            throw new TryLaterError(
+                task.id,
+                15 * 60,
+                'No upgrade button, try later'
+            );
         }
 
         btn.trigger('click');
