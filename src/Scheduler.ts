@@ -1,25 +1,18 @@
 import { markPage, sleepShort, timestamp } from './utils';
 import UpgradeBuildingTask from './Task/UpgradeBuildingTask';
-import UpgradeBuildingAction from './Action/UpgradeBuildingAction';
 import {
     AbortTaskError,
     BuildingQueueFullError,
     TryLaterError,
 } from './Errors';
-import { TaskQueue, TaskList, Task, TaskId } from './Storage/TaskQueue';
+import { Task, TaskId, TaskList, TaskQueue } from './Storage/TaskQueue';
 import ActionQueue from './Storage/ActionQueue';
 import { Args, Command } from './Common';
 import TaskQueueRenderer from './TaskQueueRenderer';
-import ActionController from './Action/ActionController';
+import { ActionController, createAction } from './Action/ActionController';
 import TaskController from './Task/TaskController';
-import GoToPageAction from './Action/GoToPageAction';
-import CheckBuildingRemainingTimeAction from './Action/CheckBuildingRemainingTimeAction';
 import SendOnAdventureTask from './Task/SendOnAdventureTask';
-import GrabHeroAttributesAction from './Action/GrabHeroAttributesAction';
 import { GameState } from './Storage/GameState';
-import CompleteTaskAction from './Action/CompleteTaskAction';
-import SendOnAdventureAction from './Action/SendOnAdventureAction';
-import ClickButtonAction from './Action/ClickButtonAction';
 
 export default class Scheduler {
     private readonly version: string;
@@ -91,7 +84,12 @@ export default class Scheduler {
 
     private async processTaskCommand(task: Task) {
         const taskController = this.createTaskControllerByName(task.cmd.name);
-        this.log('PROCESS TASK', task.cmd.name, task, taskController);
+        this.log(
+            'PROCESS TASK',
+            taskController?.constructor.name,
+            task,
+            taskController
+        );
         if (taskController) {
             taskController.run(task);
         }
@@ -99,7 +97,11 @@ export default class Scheduler {
 
     private async processActionCommand(cmd: Command, task: Task) {
         const actionController = this.createActionControllerByName(cmd.name);
-        this.log('PROCESS ACTION', cmd.name, actionController);
+        this.log(
+            'PROCESS ACTION',
+            actionController?.constructor.name,
+            actionController
+        );
         if (actionController) {
             await this.runAction(actionController, cmd.args, task);
         }
@@ -136,31 +138,14 @@ export default class Scheduler {
     }
 
     private createActionControllerByName(
-        actonName: string
+        actionName: string
     ): ActionController | undefined {
-        if (actonName === GoToPageAction.NAME) {
-            return new GoToPageAction();
+        const action = createAction(actionName, this.gameState, this);
+        if (!action) {
+            this.logError('ACTION NOT FOUND', actionName);
+            return undefined;
         }
-        if (actonName === ClickButtonAction.NAME) {
-            return new ClickButtonAction();
-        }
-        if (actonName === CompleteTaskAction.NAME) {
-            return new CompleteTaskAction(this);
-        }
-        if (actonName === UpgradeBuildingAction.NAME) {
-            return new UpgradeBuildingAction();
-        }
-        if (actonName === CheckBuildingRemainingTimeAction.NAME) {
-            return new CheckBuildingRemainingTimeAction();
-        }
-        if (actonName === GrabHeroAttributesAction.NAME) {
-            return new GrabHeroAttributesAction(this.gameState);
-        }
-        if (actonName === SendOnAdventureAction.NAME) {
-            return new SendOnAdventureAction(this.gameState);
-        }
-        this.logError('ACTION NOT FOUND', actonName);
-        return undefined;
+        return action;
     }
 
     private async runAction(action: ActionController, args: Args, task: Task) {

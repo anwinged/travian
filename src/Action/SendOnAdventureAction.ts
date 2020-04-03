@@ -1,7 +1,6 @@
-import ActionController from './ActionController';
+import { ActionController, registerAction } from './ActionController';
 import { Args } from '../Common';
 import { Task } from '../Storage/TaskQueue';
-import { GameState } from '../Storage/GameState';
 import { trimPrefix } from '../utils';
 import { AbortTaskError } from '../Errors';
 
@@ -13,15 +12,8 @@ interface Adventure {
     level: number;
 }
 
-export default class SendOnAdventureAction extends ActionController {
-    static NAME = 'send_on_adventure';
-    private state: GameState;
-
-    constructor(state: GameState) {
-        super();
-        this.state = state;
-    }
-
+@registerAction
+export class SendOnAdventureAction extends ActionController {
     async run(args: Args, task: Task): Promise<any> {
         const adventures = this.findAdventures();
 

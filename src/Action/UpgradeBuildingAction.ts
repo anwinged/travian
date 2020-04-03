@@ -1,11 +1,10 @@
-import ActionController from './ActionController';
+import { ActionController, registerAction } from './ActionController';
 import { Args } from '../Common';
 import { TryLaterError } from '../Errors';
-import Scheduler from '../Scheduler';
 import { Task } from '../Storage/TaskQueue';
 
-export default class UpgradeBuildingAction extends ActionController {
-    static NAME = 'upgrade_building';
+@registerAction
+export class UpgradeBuildingAction extends ActionController {
     async run(args: Args, task: Task): Promise<any> {
         const btn = jQuery(
             '.upgradeButtonsContainer .section1 button.green.build'

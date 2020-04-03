@@ -1,11 +1,10 @@
-import ActionController from './ActionController';
+import { ActionController, registerAction } from './ActionController';
 import { Args } from '../Common';
 import { Task } from '../Storage/TaskQueue';
 import { BuildingQueueFullError } from '../Errors';
 
-export default class CheckBuildingRemainingTimeAction extends ActionController {
-    static NAME = 'check_building_remaining_time';
-
+@registerAction
+export class CheckBuildingRemainingTimeAction extends ActionController {
     async run(args: Args, task: Task): Promise<any> {
         const timer = jQuery('.buildDuration .timer');
         if (timer.length === 1) {

@@ -1,18 +1,10 @@
-import ActionController from './ActionController';
+import { ActionController, registerAction } from './ActionController';
 import { Args } from '../Common';
 import { Task } from '../Storage/TaskQueue';
 import { ActionError } from '../Errors';
-import { GameState } from '../Storage/GameState';
 
-export default class GrabHeroAttributesAction extends ActionController {
-    static NAME = 'grab_hero_attributes';
-    private state: GameState;
-
-    constructor(state: GameState) {
-        super();
-        this.state = state;
-    }
-
+@registerAction
+export class GrabHeroAttributesAction extends ActionController {
     async run(args: Args, task: Task): Promise<any> {
         const healthElement = jQuery(
             '#attributes .attribute.health .powervalue .value'

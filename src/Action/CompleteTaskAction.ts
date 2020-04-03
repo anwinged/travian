@@ -1,16 +1,9 @@
-import ActionController from './ActionController';
+import { ActionController, registerAction } from './ActionController';
 import { Args } from '../Common';
 import { Task } from '../Storage/TaskQueue';
-import Scheduler from '../Scheduler';
 
-export default class CompleteTaskAction extends ActionController {
-    static NAME = 'complete_task';
-    private scheduler: Scheduler;
-
-    constructor(scheduler: Scheduler) {
-        super();
-        this.scheduler = scheduler;
-    }
+@registerAction
+export class CompleteTaskAction extends ActionController {
     async run(args: Args, task: Task): Promise<any> {
         this.scheduler.completeTask(task.id);
     }
