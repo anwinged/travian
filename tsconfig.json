@@ -1,10 +1,12 @@
 {
   "compilerOptions": {
-    "outDir": "./dist",
     "allowJs": true,
-    "target": "ES2018",
+    "isolatedModules": true,
     "module": "commonjs",
+    "outDir": "./dist",
     "strictNullChecks": true,
+    "strictPropertyInitialization": true,
+    "target": "ES2018",
     "types": ["node", "url-parse", "jquery", "nanoid", "mocha", "chai"]
   },
   "include": [
