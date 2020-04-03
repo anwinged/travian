@@ -1,10 +1,6 @@
 import { markPage, sleepShort, timestamp } from './utils';
 import { UpgradeBuildingTask } from './Task/UpgradeBuildingTask';
-import {
-    AbortTaskError,
-    BuildingQueueFullError,
-    TryLaterError,
-} from './Errors';
+import { AbortTaskError, BuildingQueueFullError, TryLaterError } from './Errors';
 import { Task, TaskId, TaskList, TaskQueue } from './Storage/TaskQueue';
 import { ActionQueue } from './Storage/ActionQueue';
 import { Command } from './Common';
@@ -49,10 +45,7 @@ export class Scheduler {
 
     private scheduleHeroAdventure() {
         if (!this.taskQueue.hasNamed(SendOnAdventureTask.name)) {
-            this.taskQueue.push(
-                new Command(SendOnAdventureTask.name, {}),
-                timestamp()
-            );
+            this.taskQueue.push(new Command(SendOnAdventureTask.name, {}), timestamp());
         }
     }
 
@@ -75,10 +68,7 @@ export class Scheduler {
 
         try {
             if (actionCommand) {
-                return await this.processActionCommand(
-                    actionCommand,
-                    taskCommand
-                );
+                return await this.processActionCommand(actionCommand, taskCommand);
             }
 
             if (taskCommand) {

@@ -10,11 +10,7 @@ export class CheckBuildingRemainingTimeAction extends ActionController {
         if (timer.length === 1) {
             const remainingSeconds = Number(timer.attr('value'));
             if (remainingSeconds > 0) {
-                throw new BuildingQueueFullError(
-                    task.id,
-                    remainingSeconds + 1,
-                    'Building queue is full'
-                );
+                throw new BuildingQueueFullError(task.id, remainingSeconds + 1, 'Building queue is full');
             }
         }
     }

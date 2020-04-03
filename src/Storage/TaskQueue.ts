@@ -102,10 +102,7 @@ export class TaskQueue {
 
     private getItems(): TaskList {
         const serialized = localStorage.getItem(QUEUE_NAME);
-        const storedItems =
-            serialized !== null
-                ? (JSON.parse(serialized) as Array<{ [key: string]: any }>)
-                : [];
+        const storedItems = serialized !== null ? (JSON.parse(serialized) as Array<{ [key: string]: any }>) : [];
         const items: TaskList = [];
         storedItems.forEach(obj => {
             items.push(new Task(obj.id || uniqId(), +obj.ts, obj.cmd));
@@ -114,10 +111,7 @@ export class TaskQueue {
     }
 
     private flushItems(items: TaskList): void {
-        localStorage.setItem(
-            QUEUE_NAME,
-            JSON.stringify(TaskQueue.normalize(items))
-        );
+        localStorage.setItem(QUEUE_NAME, JSON.stringify(TaskQueue.normalize(items)));
     }
 
     private log(...args) {
