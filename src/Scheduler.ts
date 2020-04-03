@@ -1,5 +1,5 @@
 import { markPage, sleepShort, timestamp } from './utils';
-import UpgradeBuildingTask from './Task/UpgradeBuildingTask';
+import { UpgradeBuildingTask } from './Task/UpgradeBuildingTask';
 import {
     AbortTaskError,
     BuildingQueueFullError,
@@ -7,14 +7,14 @@ import {
 } from './Errors';
 import { Task, TaskId, TaskList, TaskQueue } from './Storage/TaskQueue';
 import ActionQueue from './Storage/ActionQueue';
-import { Args, Command } from './Common';
+import { Command } from './Common';
 import TaskQueueRenderer from './TaskQueueRenderer';
-import { ActionController, createAction } from './Action/ActionController';
-import TaskController from './Task/TaskController';
-import SendOnAdventureTask from './Task/SendOnAdventureTask';
+import { createAction } from './Action/ActionController';
+import { createTask } from './Task/TaskController';
+import { SendOnAdventureTask } from './Task/SendOnAdventureTask';
 import { GameState } from './Storage/GameState';
 
-export default class Scheduler {
+export class Scheduler {
     private readonly version: string;
     private taskQueue: TaskQueue;
     private actionQueue: ActionQueue;
@@ -48,9 +48,9 @@ export default class Scheduler {
     }
 
     private scheduleHeroAdventure() {
-        if (!this.taskQueue.hasNamed(SendOnAdventureTask.NAME)) {
+        if (!this.taskQueue.hasNamed(SendOnAdventureTask.name)) {
             this.taskQueue.push(
-                new Command(SendOnAdventureTask.NAME, {}),
+                new Command(SendOnAdventureTask.name, {}),
                 timestamp()
             );
         }
@@ -62,7 +62,7 @@ export default class Scheduler {
         const taskCommand = this.taskQueue.get(currentTs);
 
         // текущего таска нет, очищаем очередь действий по таску
-        if (taskCommand === undefined) {
+        if (!taskCommand) {
             this.log('NO ACTIVE TASK');
             this.actionQueue.clear();
             return;
@@ -73,38 +73,68 @@ export default class Scheduler {
         this.log('CURRENT TASK', taskCommand);
         this.log('CURRENT ACTION', actionCommand);
 
-        if (actionCommand) {
-            return await this.processActionCommand(actionCommand, taskCommand);
-        }
+        try {
+            if (actionCommand) {
+                return await this.processActionCommand(
+                    actionCommand,
+                    taskCommand
+                );
+            }
 
-        if (taskCommand) {
-            return await this.processTaskCommand(taskCommand);
-        }
-    }
-
-    private async processTaskCommand(task: Task) {
-        const taskController = this.createTaskControllerByName(task.cmd.name);
-        this.log(
-            'PROCESS TASK',
-            taskController?.constructor.name,
-            task,
-            taskController
-        );
-        if (taskController) {
-            taskController.run(task);
+            if (taskCommand) {
+                return await this.processTaskCommand(taskCommand);
+            }
+        } catch (e) {
+            this.handleError(e);
         }
     }
 
     private async processActionCommand(cmd: Command, task: Task) {
-        const actionController = this.createActionControllerByName(cmd.name);
-        this.log(
-            'PROCESS ACTION',
-            actionController?.constructor.name,
-            actionController
-        );
+        const actionController = createAction(cmd.name, this.gameState, this);
+        this.log('PROCESS ACTION', cmd.name, actionController);
         if (actionController) {
-            await this.runAction(actionController, cmd.args, task);
+            await actionController.run(cmd.args, task);
+        } else {
+            this.logError('ACTION NOT FOUND', cmd.name);
         }
+    }
+
+    private async processTaskCommand(task: Task) {
+        const taskController = createTask(task.cmd.name, this);
+        this.log('PROCESS TASK', task.cmd.name, task, taskController);
+        if (taskController) {
+            await taskController.run(task);
+        } else {
+            this.logError('TASK NOT FOUND', task.cmd.name);
+        }
+    }
+
+    private handleError(err: Error) {
+        this.logWarn('ACTION ABORTED', err.message);
+        this.actionQueue.clear();
+
+        if (err instanceof AbortTaskError) {
+            this.logWarn('ABORT TASK', err.taskId);
+            this.completeTask(err.taskId);
+            return;
+        }
+
+        if (err instanceof TryLaterError) {
+            this.logWarn('TRY', err.taskId, 'AFTER', err.seconds);
+            this.taskQueue.postpone(err.taskId, timestamp() + err.seconds);
+            return;
+        }
+
+        if (err instanceof BuildingQueueFullError) {
+            this.logWarn('BUILDING QUEUE FULL, TRY ALL AFTER', err.seconds);
+            this.taskQueue.modify(
+                t => t.cmd.name === UpgradeBuildingTask.name,
+                t => t.withTime(timestamp() + err.seconds)
+            );
+            return;
+        }
+
+        throw err;
     }
 
     getTaskItems(): TaskList {
@@ -124,59 +154,15 @@ export default class Scheduler {
         this.actionQueue.assign(actions);
     }
 
-    private createTaskControllerByName(
-        taskName: string
-    ): TaskController | undefined {
-        switch (taskName) {
-            case UpgradeBuildingTask.NAME:
-                return new UpgradeBuildingTask(this);
-            case SendOnAdventureTask.NAME:
-                return new SendOnAdventureTask(this);
-        }
-        this.logError('TASK NOT FOUND', taskName);
-        return undefined;
-    }
-
-    private createActionControllerByName(
-        actionName: string
-    ): ActionController | undefined {
-        const action = createAction(actionName, this.gameState, this);
-        if (!action) {
-            this.logError('ACTION NOT FOUND', actionName);
-            return undefined;
-        }
-        return action;
-    }
-
-    private async runAction(action: ActionController, args: Args, task: Task) {
-        try {
-            await action.run(args, task);
-        } catch (e) {
-            console.warn('ACTION ABORTED', e.message);
-            this.actionQueue.clear();
-            if (e instanceof AbortTaskError) {
-                console.warn('ABORT TASK', e.id);
-                this.completeTask(e.id);
-            }
-            if (e instanceof TryLaterError) {
-                console.warn('TRY', task.id, 'AFTER', e.seconds);
-                this.taskQueue.postpone(task.id, timestamp() + e.seconds);
-            }
-            if (e instanceof BuildingQueueFullError) {
-                console.warn('BUILDING QUEUE FULL, TRY ALL AFTER', e.seconds);
-                this.taskQueue.modify(
-                    t => t.cmd.name === UpgradeBuildingTask.NAME,
-                    t => t.withTime(timestamp() + e.seconds)
-                );
-            }
-        }
-    }
-
     private log(...args) {
         console.log('SCHEDULER:', ...args);
     }
 
+    private logWarn(...args) {
+        console.warn('SCHEDULER:', ...args);
+    }
+
     private logError(...args) {
-        console.error(...args);
+        console.error('SCHEDULER:', ...args);
     }
 }

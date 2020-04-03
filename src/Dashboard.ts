@@ -1,7 +1,7 @@
 import * as URLParse from 'url-parse';
-import { markPage, trimPrefix, uniqId, waitForLoad } from './utils';
-import Scheduler from './Scheduler';
-import UpgradeBuildingTask from './Task/UpgradeBuildingTask';
+import { markPage, uniqId, waitForLoad } from './utils';
+import { Scheduler } from './Scheduler';
+import { UpgradeBuildingTask } from './Task/UpgradeBuildingTask';
 import { Command } from './Common';
 import TaskQueueRenderer from './TaskQueueRenderer';
 
@@ -51,7 +51,7 @@ export default class Dashboard {
     }
 
     private onScheduleBuilding(id: string) {
-        const queueItem = new Command(UpgradeBuildingTask.NAME, {
+        const queueItem = new Command(UpgradeBuildingTask.name, {
             id,
         });
         this.scheduler.scheduleTask(queueItem);

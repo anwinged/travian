@@ -1,12 +1,11 @@
 import { Args } from '../Common';
 import { Task } from '../Storage/TaskQueue';
 import { GameState } from '../Storage/GameState';
-import Scheduler from '../Scheduler';
+import { Scheduler } from '../Scheduler';
 
 const actionMap: { [name: string]: Function | undefined } = {};
 
 export function registerAction(constructor: Function) {
-    console.log('REGISTER ACTION', constructor.name);
     actionMap[constructor.name] = constructor;
 }
 
