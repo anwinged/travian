@@ -4,6 +4,7 @@ import { Scheduler } from '../Scheduler';
 const taskMap: { [name: string]: Function | undefined } = {};
 
 export function registerTask(constructor: Function) {
+    console.log('REGISTER TASK', constructor.name);
     taskMap[constructor.name] = constructor;
 }
 

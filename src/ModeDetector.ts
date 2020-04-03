@@ -3,7 +3,7 @@ import * as URLParse from 'url-parse';
 const SESSION_KEY = 'travian_automation_mode';
 const SESSION_VALUE = 'command_execution';
 
-export default class ModeDetector {
+export class ModeDetector {
     isAuto(): boolean {
         return this.isAutoByLocation() || this.isAutoBySession();
     }

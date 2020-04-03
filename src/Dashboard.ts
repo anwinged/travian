@@ -3,9 +3,9 @@ import { markPage, uniqId, waitForLoad } from './utils';
 import { Scheduler } from './Scheduler';
 import { UpgradeBuildingTask } from './Task/UpgradeBuildingTask';
 import { Command } from './Common';
-import TaskQueueRenderer from './TaskQueueRenderer';
+import { TaskQueueRenderer } from './TaskQueueRenderer';
 
-export default class Dashboard {
+export class Dashboard {
     private readonly version: string;
     private scheduler: Scheduler;
 

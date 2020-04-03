@@ -9,7 +9,7 @@ function formatDate(ts: number) {
     return dateFormat(d, 'HH:MM:ss');
 }
 
-export default class TaskQueueRenderer {
+export class TaskQueueRenderer {
     render(tasks: TaskList) {
         const ul = jQuery('<ul></ul>')
             .attr({ id: ID })

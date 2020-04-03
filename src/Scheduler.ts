@@ -6,9 +6,9 @@ import {
     TryLaterError,
 } from './Errors';
 import { Task, TaskId, TaskList, TaskQueue } from './Storage/TaskQueue';
-import ActionQueue from './Storage/ActionQueue';
+import { ActionQueue } from './Storage/ActionQueue';
 import { Command } from './Common';
-import TaskQueueRenderer from './TaskQueueRenderer';
+import { TaskQueueRenderer } from './TaskQueueRenderer';
 import { createAction } from './Action/ActionController';
 import { createTask } from './Task/TaskController';
 import { SendOnAdventureTask } from './Task/SendOnAdventureTask';
@@ -95,7 +95,7 @@ export class Scheduler {
         if (actionController) {
             await actionController.run(cmd.args, task);
         } else {
-            this.logError('ACTION NOT FOUND', cmd.name);
+            this.logWarn('ACTION NOT FOUND', cmd.name);
         }
     }
 
@@ -105,7 +105,8 @@ export class Scheduler {
         if (taskController) {
             await taskController.run(task);
         } else {
-            this.logError('TASK NOT FOUND', task.cmd.name);
+            this.logWarn('TASK NOT FOUND', task.cmd.name);
+            this.taskQueue.complete(task.id);
         }
     }
 
@@ -134,6 +135,7 @@ export class Scheduler {
             return;
         }
 
+        this.logError(err.message);
         throw err;
     }
 

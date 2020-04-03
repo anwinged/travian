@@ -17,7 +17,7 @@ class State {
     }
 }
 
-export default class ActionQueue {
+export class ActionQueue {
     pop(): Command | undefined {
         const state = this.getState();
         const first = state.pop();
