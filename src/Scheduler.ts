@@ -47,7 +47,7 @@ export class Scheduler {
     private scheduleUniqTask(seconds: number, name: string, args: Args = {}) {
         const taskScheduler = () => {
             if (!this.taskQueue.hasNamed(name)) {
-                this.taskQueue.push(new Command(name, args), timestamp());
+                this.taskQueue.push(new Command(name, args), timestamp() + 10 * 60);
             }
         };
         taskScheduler();
