@@ -1,9 +1,9 @@
 import * as URLParse from 'url-parse';
-import { markPage, uniqId, waitForLoad } from './utils';
-import { Scheduler } from './Scheduler';
-import { UpgradeBuildingTask } from './Task/UpgradeBuildingTask';
-import { Command } from './Common';
-import { TaskQueueRenderer } from './TaskQueueRenderer';
+import { elClassId, markPage, waitForLoad } from '../utils';
+import { Scheduler } from '../Scheduler';
+import { UpgradeBuildingTask } from '../Task/UpgradeBuildingTask';
+import { TaskQueueRenderer } from '../TaskQueueRenderer';
+import { BuildPage } from './BuildPage';
 
 export class Dashboard {
     private readonly version: string;
@@ -33,15 +33,7 @@ export class Dashboard {
         }
 
         if (p.pathname === '/build.php') {
-            this.log('BUILD PAGE DETECTED');
-            const id = uniqId();
-            jQuery('.upgradeButtonsContainer .section1').append(
-                `<div style="padding: 8px"><a id="${id}" href="#">В очередь</a></div>`
-            );
-            jQuery(`#${id}`).on('click', evt => {
-                evt.preventDefault();
-                this.onScheduleBuilding(p.query.id || '');
-            });
+            new BuildPage(this.scheduler, Number(p.query.id)).run();
         }
     }
 
@@ -50,29 +42,24 @@ export class Dashboard {
         new TaskQueueRenderer().render(this.scheduler.getTaskItems());
     }
 
-    private onScheduleBuilding(id: string) {
-        const queueItem = new Command(UpgradeBuildingTask.name, {
-            id,
-        });
-        this.scheduler.scheduleTask(queueItem);
-        const n = new Notification(`Building ${id} scheduled`);
-        setTimeout(() => n && n.close(), 4000);
-    }
-
     private showSlotIds(prefix: string) {
+        const tasks = this.scheduler.getTaskItems();
         jQuery('.level.colorLayer').each((idx, el) => {
-            let num = '';
-            el.classList.forEach(cls => {
-                if (cls.startsWith(prefix)) {
-                    num = cls.substr(prefix.length);
-                }
-            });
-            const t = jQuery(el)
+            const buildId = elClassId(jQuery(el).attr('class') || '', prefix);
+            const oldLabel = jQuery(el)
                 .find('.labelLayer')
                 .text();
             jQuery(el)
                 .find('.labelLayer')
-                .text(num + ':' + t);
+                .text(buildId + ':' + oldLabel);
+            const inQueue = tasks.find(
+                t => t.cmd.name === UpgradeBuildingTask.name && Number(t.cmd.args.id) === Number(buildId)
+            );
+            if (inQueue !== undefined) {
+                jQuery(el).css({
+                    'background-image': 'linear-gradient(to top, #f00, #f00 100%)',
+                });
+            }
         });
     }
 

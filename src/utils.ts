@@ -34,6 +34,43 @@ export function trimPrefix(text: string, prefix: string): string {
     return text.startsWith(prefix) ? text.substr(prefix.length) : text;
 }
 
+export function elClassId(classes: string, prefix: string): number | undefined {
+    let result: number | undefined = undefined;
+    classes.split(/\s/).forEach(part => {
+        if (part.startsWith(prefix)) {
+            result = Number(part.substr(prefix.length));
+            if (isNaN(result)) {
+                result = undefined;
+            }
+        }
+    });
+    return result;
+}
+
+export function* split(n: number) {
+    let c = n;
+    while (c > 0) {
+        const next = 2 + Math.floor(Math.random() * 3);
+        if (next < c) {
+            yield next;
+            c -= next;
+        } else {
+            yield c;
+            c = 0;
+        }
+    }
+}
+
+export function toNumber(value: any): number | undefined {
+    const converted = Number(value);
+    return isNaN(converted) ? undefined : converted;
+}
+
+export function getNumber(value: any, def: number = 0): number {
+    const converted = toNumber(value);
+    return converted === undefined ? def : converted;
+}
+
 export function markPage(text: string, version: string) {
     jQuery('body').append(
         '<div style="' +

@@ -1,6 +1,6 @@
 import { ModeDetector } from './ModeDetector';
 import { Scheduler } from './Scheduler';
-import { Dashboard } from './Dashboard';
+import { Dashboard } from './Dashboard/Dashboard';
 import TxtVersion from '!!raw-loader!./version.txt';
 
 console.log('TRAVIAN AUTOMATION', TxtVersion);

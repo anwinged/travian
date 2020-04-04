@@ -4,8 +4,14 @@ import { Task } from '../Storage/TaskQueue';
 import { trimPrefix } from '../utils';
 import { AbortTaskError } from '../Errors';
 
-const HARD = 0;
-const NORMAL = 3;
+const CONFIG = [
+    { level: 0, health: 60 },
+    { level: 1, health: 50 },
+    { level: 2, health: 40 },
+    { level: 3, health: 30 },
+    { level: 4, health: 30 },
+    { level: 5, health: 30 },
+];
 
 interface Adventure {
     el: HTMLElement;
@@ -28,19 +34,20 @@ export class SendOnAdventureAction extends ActionController {
         console.log('HERO', hero);
 
         if (easiest && hero.health) {
-            if (easiest.level === NORMAL && hero.health >= 30) {
-                return jQuery(easiest.el)
-                    .find('td.goTo .gotoAdventure')
-                    .trigger('click');
-            }
-            if (easiest.level === HARD && hero.health >= 50) {
-                return jQuery(easiest.el)
+            this.checkConfig(easiest, Number(hero.health));
+        }
+
+        throw new AbortTaskError(task.id, 'No suitable adventure');
+    }
+
+    private checkConfig(adventure: Adventure, health: number) {
+        for (let conf of CONFIG) {
+            if (adventure.level === conf.level && health >= conf.health) {
+                return jQuery(adventure.el)
                     .find('td.goTo .gotoAdventure')
                     .trigger('click');
             }
         }
-
-        throw new AbortTaskError(task.id, 'No suitable adventure');
     }
 
     private findAdventures(): Array<Adventure> {

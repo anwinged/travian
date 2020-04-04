@@ -14,17 +14,11 @@ export class ModeDetector {
 
     private isAutoByLocation(): boolean {
         const p = new URLParse(window.location.href, true);
-        console.log('PARSED LOCATION', p);
-        if (p.query['auto-management'] !== undefined) {
-            console.log('AUTO MANAGEMENT ON');
-            return true;
-        }
-
-        return false;
+        return p.query['auto-management'] !== undefined;
     }
 
     private isAutoBySession(): boolean {
-        const k = sessionStorage.getItem(SESSION_KEY);
-        return k === SESSION_VALUE;
+        const sessionKey = sessionStorage.getItem(SESSION_KEY);
+        return sessionKey === SESSION_VALUE;
     }
 }
