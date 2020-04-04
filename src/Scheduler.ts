@@ -9,6 +9,7 @@ import { createAction } from './Action/ActionController';
 import { createTask } from './Task/TaskController';
 import { SendOnAdventureTask } from './Task/SendOnAdventureTask';
 import { GameState } from './Storage/GameState';
+import { BalanceHeroResourcesTask } from './Task/BalanceHeroResourcesTask';
 
 export class Scheduler {
     private readonly version: string;
@@ -33,8 +34,11 @@ export class Scheduler {
         this.scheduleHeroAdventure();
         setInterval(() => this.scheduleHeroAdventure(), 3600 * 1000);
 
+        this.scheduleResGrab();
+        setInterval(() => this.scheduleResGrab(), 600 * 1000);
+
         while (true) {
-            await this.doLoopStep();
+            await this.doTaskProcessingStep();
         }
     }
 
@@ -49,7 +53,13 @@ export class Scheduler {
         }
     }
 
-    private async doLoopStep() {
+    private scheduleResGrab() {
+        if (!this.taskQueue.hasNamed(BalanceHeroResourcesTask.name)) {
+            this.taskQueue.push(new Command(BalanceHeroResourcesTask.name, {}), timestamp());
+        }
+    }
+
+    private async doTaskProcessingStep() {
         await sleepShort();
         const currentTs = timestamp();
         const taskCommand = this.taskQueue.get(currentTs);

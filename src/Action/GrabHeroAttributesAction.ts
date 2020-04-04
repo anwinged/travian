@@ -2,6 +2,7 @@ import { ActionController, registerAction } from './ActionController';
 import { Args } from '../Common';
 import { Task } from '../Storage/TaskQueue';
 import { ActionError } from '../Errors';
+import { getNumber } from '../utils';
 
 @registerAction
 export class GrabHeroAttributesAction extends ActionController {
@@ -10,13 +11,11 @@ export class GrabHeroAttributesAction extends ActionController {
         if (healthElement.length !== 1) {
             throw new ActionError(task.id, 'Health dom element not found');
         }
+
         const text = healthElement.text();
         let normalized = text.replace(/[^0-9]/g, '');
-        const value = Number(normalized);
-        if (isNaN(value)) {
-            throw new ActionError(task.id, `Health value "${text}" (${normalized}) couldn't be converted to number`);
-        }
 
+        const value = getNumber(normalized);
         this.state.set('hero', { health: value });
     }
 }

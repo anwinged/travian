@@ -22,7 +22,7 @@ export class TrainTrooperAction extends ActionController {
 
         const maxCount = getNumber(countLink.text());
         if (maxCount < trainCount) {
-            throw new TryLaterError(task.id, 10 * 60, `Max count ${maxCount} less then need ${trainCount}`);
+            throw new TryLaterError(task.id, 20 * 60, `Max count ${maxCount} less then need ${trainCount}`);
         }
 
         const input = block.find(`input[name="t${troopId}"]`);
