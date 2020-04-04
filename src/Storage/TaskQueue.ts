@@ -27,10 +27,6 @@ export class Task {
 export type TaskList = Array<Task>;
 
 export class TaskQueue {
-    private static normalize(items: TaskList): TaskList {
-        return items.sort((x, y) => x.ts - y.ts);
-    }
-
     push(cmd: Command, ts: number): Task {
         const id = uniqTaskId();
         const task = new Task(id, ts, cmd);
@@ -111,7 +107,8 @@ export class TaskQueue {
     }
 
     private flushItems(items: TaskList): void {
-        localStorage.setItem(QUEUE_NAME, JSON.stringify(TaskQueue.normalize(items)));
+        const normalized = items.sort((x, y) => x.ts - y.ts);
+        localStorage.setItem(QUEUE_NAME, JSON.stringify(normalized));
     }
 
     private log(...args) {

@@ -3,7 +3,7 @@ import { UpgradeBuildingTask } from './Task/UpgradeBuildingTask';
 import { AbortTaskError, ActionError, BuildingQueueFullError, TryLaterError } from './Errors';
 import { Task, TaskId, TaskList, TaskQueue } from './Storage/TaskQueue';
 import { ActionQueue } from './Storage/ActionQueue';
-import { Command } from './Common';
+import { Args, Command } from './Common';
 import { TaskQueueRenderer } from './TaskQueueRenderer';
 import { createAction } from './Action/ActionController';
 import { createTask } from './Task/TaskController';
@@ -31,11 +31,8 @@ export class Scheduler {
         this.renderTaskQueue();
         setInterval(() => this.renderTaskQueue(), 5 * 1000);
 
-        this.scheduleHeroAdventure();
-        setInterval(() => this.scheduleHeroAdventure(), 3600 * 1000);
-
-        this.scheduleResGrab();
-        setInterval(() => this.scheduleResGrab(), 600 * 1000);
+        this.scheduleUniqTask(3600, SendOnAdventureTask.name);
+        this.scheduleUniqTask(1200, BalanceHeroResourcesTask.name);
 
         while (true) {
             await this.doTaskProcessingStep();
@@ -47,16 +44,14 @@ export class Scheduler {
         new TaskQueueRenderer().render(this.taskQueue.seeItems());
     }
 
-    private scheduleHeroAdventure() {
-        if (!this.taskQueue.hasNamed(SendOnAdventureTask.name)) {
-            this.taskQueue.push(new Command(SendOnAdventureTask.name, {}), timestamp());
-        }
-    }
-
-    private scheduleResGrab() {
-        if (!this.taskQueue.hasNamed(BalanceHeroResourcesTask.name)) {
-            this.taskQueue.push(new Command(BalanceHeroResourcesTask.name, {}), timestamp());
-        }
+    private scheduleUniqTask(seconds: number, name: string, args: Args = {}) {
+        const taskScheduler = () => {
+            if (!this.taskQueue.hasNamed(name)) {
+                this.taskQueue.push(new Command(name, args), timestamp());
+            }
+        };
+        taskScheduler();
+        setInterval(taskScheduler, seconds * 1000);
     }
 
     private async doTaskProcessingStep() {
