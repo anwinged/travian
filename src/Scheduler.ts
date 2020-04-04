@@ -1,6 +1,6 @@
 import { markPage, sleepShort, timestamp } from './utils';
 import { UpgradeBuildingTask } from './Task/UpgradeBuildingTask';
-import { AbortTaskError, BuildingQueueFullError, TryLaterError } from './Errors';
+import { AbortTaskError, ActionError, BuildingQueueFullError, TryLaterError } from './Errors';
 import { Task, TaskId, TaskList, TaskQueue } from './Storage/TaskQueue';
 import { ActionQueue } from './Storage/ActionQueue';
 import { Command } from './Common';
@@ -101,7 +101,6 @@ export class Scheduler {
     }
 
     private handleError(err: Error) {
-        this.logWarn('ACTION ABORTED', err.message);
         this.actionQueue.clear();
 
         if (err instanceof AbortTaskError) {
@@ -122,6 +121,11 @@ export class Scheduler {
                 t => t.cmd.name === UpgradeBuildingTask.name,
                 t => t.withTime(timestamp() + err.seconds)
             );
+            return;
+        }
+
+        if (err instanceof ActionError) {
+            this.logWarn('ACTION ABORTED', err.message);
             return;
         }
 
