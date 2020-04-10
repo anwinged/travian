@@ -1,7 +1,7 @@
-import { Command } from '../Common';
+import { Args } from '../Common';
 import { uniqId } from '../utils';
 
-const QUEUE_NAME = 'task_queue:v3';
+const QUEUE_NAME = 'task_queue:v4';
 
 export type TaskId = string;
 
@@ -12,25 +12,27 @@ function uniqTaskId(): TaskId {
 export class Task {
     readonly id: TaskId;
     readonly ts: number;
-    readonly cmd: Command;
-    constructor(id: TaskId, ts: number, cmd: Command) {
+    readonly name: string;
+    readonly args: Args;
+    constructor(id: TaskId, ts: number, name: string, args: Args) {
         this.id = id;
         this.ts = ts;
-        this.cmd = cmd;
+        this.name = name;
+        this.args = args;
     }
 
     withTime(ts: number): Task {
-        return new Task(this.id, ts, this.cmd);
+        return new Task(this.id, ts, this.name, this.args);
     }
 }
 
 export type TaskList = Array<Task>;
 
 export class TaskQueue {
-    push(cmd: Command, ts: number): Task {
+    push(name: string, args: Args, ts: number): Task {
         const id = uniqTaskId();
-        const task = new Task(id, ts, cmd);
-        this.log('PUSH TASK', id, ts, cmd);
+        const task = new Task(id, ts, name, args);
+        this.log('PUSH TASK', id, ts, name, args);
         let items = this.getItems();
         items.push(task);
         this.flushItems(items);
@@ -51,7 +53,7 @@ export class TaskQueue {
     }
 
     hasNamed(name: string): boolean {
-        return this.has(t => t.cmd.name === name);
+        return this.has(t => t.name === name);
     }
 
     modify(predicate: (t: Task) => boolean, modifier: (t: Task) => Task) {
@@ -101,7 +103,7 @@ export class TaskQueue {
         const storedItems = serialized !== null ? (JSON.parse(serialized) as Array<{ [key: string]: any }>) : [];
         const items: TaskList = [];
         storedItems.forEach(obj => {
-            items.push(new Task(obj.id || uniqId(), +obj.ts, obj.cmd));
+            items.push(new Task(obj.id || uniqId(), +obj.ts, obj.name, obj.args));
         });
         return items;
     }

@@ -25,7 +25,7 @@ export class TaskQueueRenderer {
         tasks.forEach(task => {
             ul.append(
                 jQuery('<li></li>').text(
-                    formatDate(task.ts) + ' ' + task.cmd.name + ' ' + JSON.stringify(task.cmd.args) + ' ' + task.id
+                    formatDate(task.ts) + ' ' + task.name + ' ' + JSON.stringify(task.args) + ' ' + task.id
                 )
             );
         });

@@ -47,7 +47,7 @@ export class Scheduler {
     private scheduleUniqTask(seconds: number, name: string, args: Args = {}) {
         const taskScheduler = () => {
             if (!this.taskQueue.hasNamed(name)) {
-                this.taskQueue.push(new Command(name, args), timestamp() + 10 * 60);
+                this.taskQueue.push(name, args, timestamp() + 10 * 60);
             }
         };
         taskScheduler();
@@ -95,12 +95,12 @@ export class Scheduler {
     }
 
     private async processTaskCommand(task: Task) {
-        const taskController = createTask(task.cmd.name, this);
-        this.log('PROCESS TASK', task.cmd.name, task, taskController);
+        const taskController = createTask(task.name, this);
+        this.log('PROCESS TASK', task.name, task, taskController);
         if (taskController) {
             await taskController.run(task);
         } else {
-            this.logWarn('TASK NOT FOUND', task.cmd.name);
+            this.logWarn('TASK NOT FOUND', task.name);
             this.taskQueue.complete(task.id);
         }
     }
@@ -123,7 +123,7 @@ export class Scheduler {
         if (err instanceof BuildingQueueFullError) {
             this.logWarn('BUILDING QUEUE FULL, TRY ALL AFTER', err.seconds);
             this.taskQueue.modify(
-                t => t.cmd.name === UpgradeBuildingTask.name,
+                t => t.name === UpgradeBuildingTask.name,
                 t => t.withTime(timestamp() + err.seconds)
             );
             return;
@@ -146,9 +146,9 @@ export class Scheduler {
         this.taskQueue.complete(id);
     }
 
-    scheduleTask(task: Command): void {
-        this.log('PUSH TASK', task);
-        this.taskQueue.push(task, timestamp());
+    scheduleTask(name: string, args: Args): void {
+        this.log('PUSH TASK', name, args);
+        this.taskQueue.push(name, args, timestamp());
     }
 
     scheduleActions(actions: Array<Command>): void {

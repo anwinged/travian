@@ -1,8 +1,8 @@
 import { elClassId, split, uniqId } from '../utils';
-import { Command } from '../Common';
 import { UpgradeBuildingTask } from '../Task/UpgradeBuildingTask';
 import { Scheduler } from '../Scheduler';
 import { TrainTroopTask } from '../Task/TrainTroopTask';
+import { grabActiveVillageId } from './EveryPage';
 
 const QUARTERS_ID = 19;
 
@@ -34,12 +34,10 @@ export class BuildPage {
         });
     }
 
-    private onScheduleBuilding(id: number) {
-        const queueItem = new Command(UpgradeBuildingTask.name, {
-            id,
-        });
-        this.scheduler.scheduleTask(queueItem);
-        const n = new Notification(`Building ${id} scheduled`);
+    private onScheduleBuilding(buildId: number) {
+        const villageId = grabActiveVillageId();
+        this.scheduler.scheduleTask(UpgradeBuildingTask.name, { villageId, buildId });
+        const n = new Notification(`Building ${buildId} scheduled`);
         setTimeout(() => n && n.close(), 4000);
     }
 
@@ -63,18 +61,18 @@ export class BuildPage {
 
     private onTrainTroopClick(buildId: Number, troopId: Number, el: HTMLElement) {
         console.log('TRAIN TROOPERS', 'TROOP ID', troopId, 'BUILDING ID', buildId);
+        const villageId = grabActiveVillageId();
         const input = jQuery(el).find(`input[name="t${troopId}"]`);
         const count = Number(input.val());
         if (!isNaN(count) && count > 0) {
             console.log('PREPARE TO TRAIN', count, 'TROOPERS');
             for (let n of split(count)) {
-                this.scheduler.scheduleTask(
-                    new Command(TrainTroopTask.name, {
-                        buildId,
-                        troopId,
-                        trainCount: n,
-                    })
-                );
+                this.scheduler.scheduleTask(TrainTroopTask.name, {
+                    villageId,
+                    buildId,
+                    troopId,
+                    trainCount: n,
+                });
             }
         }
     }
