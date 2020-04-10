@@ -3,7 +3,12 @@ import { markPage, waitForLoad } from '../utils';
 import { Scheduler } from '../Scheduler';
 import { TaskQueueRenderer } from '../TaskQueueRenderer';
 import { BuildPage } from '../Page/BuildPage';
-import { grabActiveVillageId, showBuildingSlotIds, showFieldsSlotIds } from '../Page/EveryPage';
+import {
+    grabActiveVillageId,
+    onResourceSlotCtrlClick,
+    showBuildingSlotIds,
+    showFieldsSlotIds,
+} from '../Page/EveryPage';
 import { UpgradeBuildingTask } from '../Task/UpgradeBuildingTask';
 
 export class Dashboard {
@@ -34,6 +39,11 @@ export class Dashboard {
 
         if (p.pathname === '/dorf1.php') {
             showFieldsSlotIds(buildingsInQueue);
+            onResourceSlotCtrlClick(buildId => {
+                this.scheduler.scheduleTask(UpgradeBuildingTask.name, { villageId, buildId });
+                const n = new Notification(`Building ${buildId} scheduled`);
+                setTimeout(() => n && n.close(), 4000);
+            });
         }
 
         if (p.pathname === '/dorf2.php') {

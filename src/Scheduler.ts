@@ -123,7 +123,7 @@ export class Scheduler {
         if (err instanceof BuildingQueueFullError) {
             this.logWarn('BUILDING QUEUE FULL, TRY ALL AFTER', err.seconds);
             this.taskQueue.modify(
-                t => t.name === UpgradeBuildingTask.name,
+                t => t.name === UpgradeBuildingTask.name && t.args.villageId === err.villageId,
                 t => t.withTime(timestamp() + err.seconds)
             );
             return;

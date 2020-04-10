@@ -32,10 +32,12 @@ export class TryLaterError extends Error {
 
 export class BuildingQueueFullError extends Error {
     readonly seconds: number;
+    readonly villageId: number;
     readonly taskId: TaskId;
 
-    constructor(taskId: TaskId, seconds: number, msg: string = '') {
+    constructor(taskId: TaskId, villageId: number, seconds: number, msg: string = '') {
         super(msg);
+        this.villageId = villageId;
         this.taskId = taskId;
         this.seconds = seconds;
         Object.setPrototypeOf(this, BuildingQueueFullError.prototype);

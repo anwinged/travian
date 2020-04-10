@@ -8,28 +8,60 @@ export function grabActiveVillageId(): number {
     return getNumber(p.query.newdid);
 }
 
-function showSlotIds(prefix: string, buildingIds: number[]): void {
+interface Slot {
+    el: HTMLElement;
+    buildId: number;
+}
+
+function slotElements(prefix: string): Array<Slot> {
+    const result: Array<Slot> = [];
     jQuery('.level.colorLayer').each((idx, el) => {
         const buildId = getNumber(elClassId(jQuery(el).attr('class') || '', prefix));
-        const oldLabel = jQuery(el)
+        result.push({
+            el,
+            buildId,
+        });
+    });
+    return result;
+}
+
+function showSlotIds(prefix: string, buildingIds: number[]): void {
+    const slots = slotElements(prefix);
+    slots.forEach(slot => {
+        const oldLabel = jQuery(slot.el)
             .find('.labelLayer')
             .text();
-        jQuery(el)
+        jQuery(slot.el)
             .find('.labelLayer')
-            .text(buildId + ':' + oldLabel);
-        const inQueue = buildingIds.includes(buildId);
+            .text(slot.buildId + ':' + oldLabel);
+        const inQueue = buildingIds.includes(slot.buildId);
         if (inQueue) {
-            jQuery(el).css({
+            jQuery(slot.el).css({
                 'background-image': 'linear-gradient(to top, #f00, #f00 100%)',
             });
         }
     });
 }
 
-export function showFieldsSlotIds(buildingIds: number[]) {
+export function showFieldsSlotIds(buildingIds: number[]): void {
     showSlotIds('buildingSlot', buildingIds);
 }
 
-export function showBuildingSlotIds(buildingIds: number[]) {
+export function showBuildingSlotIds(buildingIds: number[]): void {
     showSlotIds('aid', buildingIds);
+}
+
+export function onResourceSlotCtrlClick(cb: (buildId: number) => void): void {
+    const slots = slotElements('buildingSlot');
+    slots.forEach(slot => {
+        jQuery(slot.el)
+            .find('.labelLayer')
+            .on('click', evt => {
+                if (evt.ctrlKey) {
+                    evt.preventDefault();
+                    evt.stopPropagation();
+                    cb(slot.buildId);
+                }
+            });
+    });
 }

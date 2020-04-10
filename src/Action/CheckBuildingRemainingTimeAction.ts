@@ -2,6 +2,7 @@ import { ActionController, registerAction } from './ActionController';
 import { Args } from '../Common';
 import { Task } from '../Storage/TaskQueue';
 import { BuildingQueueFullError } from '../Errors';
+import { grabActiveVillageId } from '../Page/EveryPage';
 
 @registerAction
 export class CheckBuildingRemainingTimeAction extends ActionController {
@@ -10,7 +11,12 @@ export class CheckBuildingRemainingTimeAction extends ActionController {
         if (timer.length === 1) {
             const remainingSeconds = Number(timer.attr('value'));
             if (remainingSeconds > 0) {
-                throw new BuildingQueueFullError(task.id, remainingSeconds + 1, 'Building queue is full');
+                throw new BuildingQueueFullError(
+                    task.id,
+                    grabActiveVillageId(),
+                    remainingSeconds + 1,
+                    'Building queue is full'
+                );
             }
         }
     }
