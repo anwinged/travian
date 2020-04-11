@@ -6,6 +6,12 @@ export function sleep(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+export async function sleepMicro() {
+    let ms = 1000 + Math.random() * 1000;
+    console.log('SLEEP SHORT', Math.round(ms / 1000));
+    return await sleep(ms);
+}
+
 export async function sleepShort() {
     let ms = 3000 + Math.random() * 1000;
     console.log('SLEEP SHORT', Math.round(ms / 1000));

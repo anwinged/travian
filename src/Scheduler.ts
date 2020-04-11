@@ -1,4 +1,4 @@
-import { markPage, sleepShort, timestamp } from './utils';
+import { markPage, sleepMicro, timestamp, waitForLoad } from './utils';
 import { UpgradeBuildingTask } from './Task/UpgradeBuildingTask';
 import { AbortTaskError, ActionError, BuildingQueueFullError, TryLaterError } from './Errors';
 import { Task, TaskId, TaskList, TaskQueue } from './Storage/TaskQueue';
@@ -25,7 +25,8 @@ export class Scheduler {
     }
 
     async run() {
-        await sleepShort();
+        await waitForLoad();
+        await sleepMicro();
         markPage('Executor', this.version);
 
         this.renderTaskQueue();
@@ -55,7 +56,7 @@ export class Scheduler {
     }
 
     private async doTaskProcessingStep() {
-        await sleepShort();
+        await sleepMicro();
         const currentTs = timestamp();
         const taskCommand = this.taskQueue.get(currentTs);
 
