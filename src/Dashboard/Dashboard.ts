@@ -3,13 +3,11 @@ import { markPage, waitForLoad } from '../utils';
 import { Scheduler } from '../Scheduler';
 import { TaskQueueRenderer } from '../TaskQueueRenderer';
 import { BuildPage } from '../Page/BuildPage';
-import {
-    grabActiveVillageId,
-    onResourceSlotCtrlClick,
-    showBuildingSlotIds,
-    showFieldsSlotIds,
-} from '../Page/EveryPage';
+
 import { UpgradeBuildingTask } from '../Task/UpgradeBuildingTask';
+import { grabResources } from '../Page/ResourcesBlock';
+import { grabActiveVillageId, grabVillageList } from '../Page/VillageBlock';
+import { onResourceSlotCtrlClick, showBuildingSlotIds, showFieldsSlotIds } from '../Page/SlotBlock';
 
 export class Dashboard {
     private readonly version: string;
@@ -29,6 +27,12 @@ export class Dashboard {
         markPage('Dashboard', this.version);
         this.renderTaskQueue();
         setInterval(() => this.renderTaskQueue(), 5000);
+
+        const res = grabResources();
+        this.log('RES', res);
+
+        const villages = grabVillageList();
+        this.log('VILL', villages);
 
         const villageId = grabActiveVillageId();
 

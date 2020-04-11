@@ -2,7 +2,7 @@ import { elClassId, split, uniqId } from '../utils';
 import { UpgradeBuildingTask } from '../Task/UpgradeBuildingTask';
 import { Scheduler } from '../Scheduler';
 import { TrainTroopTask } from '../Task/TrainTroopTask';
-import { grabActiveVillageId } from './EveryPage';
+import { grabActiveVillageId } from './VillageBlock';
 
 const QUARTERS_ID = 19;
 

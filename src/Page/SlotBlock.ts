@@ -1,12 +1,4 @@
-import * as URLParse from 'url-parse';
 import { elClassId, getNumber } from '../utils';
-
-export function grabActiveVillageId(): number {
-    const href = jQuery('#sidebarBoxVillagelist a.active').attr('href');
-    const p = new URLParse(href || '', true);
-    console.log('VILLAGE REF', href, p);
-    return getNumber(p.query.newdid);
-}
 
 interface Slot {
     el: HTMLElement;

@@ -2,7 +2,7 @@ import { ActionController, registerAction } from './ActionController';
 import { Args } from '../Common';
 import { Task } from '../Storage/TaskQueue';
 import { BuildingQueueFullError } from '../Errors';
-import { grabActiveVillageId } from '../Page/EveryPage';
+import { grabActiveVillageId } from '../Page/VillageBlock';
 
 @registerAction
 export class CheckBuildingRemainingTimeAction extends ActionController {

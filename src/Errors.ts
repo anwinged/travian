@@ -1,5 +1,12 @@
 import { TaskId } from './Storage/TaskQueue';
 
+export class GrabError extends Error {
+    constructor(msg: string = '') {
+        super(msg);
+        Object.setPrototypeOf(this, GrabError.prototype);
+    }
+}
+
 export class ActionError extends Error {
     readonly taskId: TaskId;
     constructor(taskId: TaskId, msg: string = '') {
