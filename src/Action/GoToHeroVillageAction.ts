@@ -18,9 +18,6 @@ export class GoToHeroVillageAction extends ActionController {
         const villages = grabVillageList();
         const heroVillage = grabHeroVillage();
 
-        console.log('VILLAGES', villages);
-        console.log('HERO VILLAGE', heroVillage);
-
         for (let village of villages) {
             if (village.name === heroVillage) {
                 return village.id;

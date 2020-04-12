@@ -14,6 +14,11 @@ import Vue from 'vue';
 import DashboardApp from './Components/DashboardApp.vue';
 import { ResourcesToLevel } from '../Task/ResourcesToLevel';
 
+interface QuickAction {
+    label: string;
+    cb: () => void;
+}
+
 export class Dashboard {
     private readonly version: string;
     private scheduler: Scheduler;
@@ -32,7 +37,7 @@ export class Dashboard {
         const villageId = grabActiveVillageId();
 
         const scheduler = this.scheduler;
-        const quickActions: any[] = [];
+        const quickActions: QuickAction[] = [];
 
         const state = {
             name: 'Dashboard',
@@ -53,21 +58,6 @@ export class Dashboard {
 
         setInterval(() => state.refreshTasks(), 1000);
 
-        const deposits = grabResourceDeposits();
-        if (deposits.length) {
-            const sorted = deposits.sort((x, y) => x.level - y.level);
-            const minLevel = sorted[0].level;
-            for (let i = minLevel + 1; i < minLevel + 4; ++i) {
-                quickActions.push({
-                    label: `Ресурсы до уровня ${i}`,
-                    cb: () => {
-                        scheduler.scheduleTask(ResourcesToLevel.name, { villageId, level: i });
-                        state.refreshTasks();
-                    },
-                });
-            }
-        }
-
         const tasks = this.scheduler.getTaskItems();
         const buildingsInQueue = tasks
             .filter(t => t.name === UpgradeBuildingTask.name && t.args.villageId === villageId)
@@ -76,7 +66,7 @@ export class Dashboard {
         if (p.pathname === '/dorf1.php') {
             showResourceSlotIds(buildingsInQueue);
             onResourceSlotCtrlClick(buildId => this.onResourceSlotCtrlClick(villageId, buildId, state));
-            console.log(grabResourceDeposits());
+            quickActions.push(...this.createDepositsQuickActions(state, villageId));
         }
 
         if (p.pathname === '/dorf2.php') {
@@ -98,6 +88,26 @@ export class Dashboard {
             data: state,
             render: h => h(DashboardApp),
         });
+    }
+
+    private createDepositsQuickActions(state, villageId) {
+        const deposits = grabResourceDeposits();
+        if (deposits.length === 0) {
+            return [];
+        }
+        const quickActions: QuickAction[] = [];
+        const sorted = deposits.sort((x, y) => x.level - y.level);
+        const minLevel = sorted[0].level;
+        for (let i = minLevel + 1; i < minLevel + 4; ++i) {
+            quickActions.push({
+                label: `Ресурсы до уровня ${i}`,
+                cb: () => {
+                    this.scheduler.scheduleTask(ResourcesToLevel.name, { villageId, level: i });
+                    state.refreshTasks();
+                },
+            });
+        }
+        return quickActions;
     }
 
     private onResourceSlotCtrlClick(villageId: number, buildId: number, state) {
