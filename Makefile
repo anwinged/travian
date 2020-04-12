@@ -14,6 +14,7 @@ build-min: write-version
 
 format:
 	tools/npm run-script format
+	tools/npm run-script format-vue
 
 test:
 	tools/npm run test

@@ -1,6 +1,6 @@
 import { TaskList } from './Storage/TaskQueue';
 import { uniqId } from './utils';
-import dateFormat = require('dateformat');
+import * as dateFormat from 'dateformat';
 
 const ID = uniqId();
 

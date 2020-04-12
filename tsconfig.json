@@ -3,12 +3,12 @@
     "allowJs": true,
     "experimentalDecorators": true,
     "isolatedModules": true,
-    "module": "commonjs",
+    "module": "es2015",
     "outDir": "./dist",
     "strictNullChecks": true,
     "strictPropertyInitialization": true,
-    "target": "ES2018",
-    "types": ["node", "url-parse", "jquery", "nanoid", "mocha", "chai"]
+    "target": "es2015",
+    "types": ["node", "url-parse", "jquery", "mocha", "chai"]
   },
   "include": [
     "./src/**/*"

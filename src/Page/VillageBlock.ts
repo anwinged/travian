@@ -12,14 +12,18 @@ export function grabVillageList(): VillageList {
     return villageList;
 }
 
-export function grabActiveVillageId(): number {
+export function grabActiveVillage(): Village | undefined {
     const villageList = grabVillageList();
     for (let village of villageList) {
         if (village.active) {
-            return village.id;
+            return village;
         }
     }
-    return 0;
+    return undefined;
+}
+
+export function grabActiveVillageId(): number {
+    return grabActiveVillage()?.id || 0;
 }
 
 function getVillageListItems() {

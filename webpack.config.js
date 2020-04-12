@@ -1,4 +1,5 @@
 const path = require('path');
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 module.exports = (env = {}) => ({
     mode: env.production ? 'production' : 'development',
@@ -11,7 +12,7 @@ module.exports = (env = {}) => ({
         umdNamedDefine: true,
     },
     resolve: {
-        extensions: ['.ts', '.js'],
+        extensions: ['.ts', '.js', '.vue'],
     },
     module: {
         rules: [
@@ -21,6 +22,19 @@ module.exports = (env = {}) => ({
                     loader: 'ts-loader',
                 },
             },
+            {
+                test: /\.css$/,
+                use: ['style-loader', 'css-loader'],
+            },
+            {
+                test: /\.vue$/,
+                use: {
+                    loader: 'vue-loader',
+                }
+            },
         ],
     },
+    plugins: [
+        new VueLoaderPlugin(),
+    ],
 });

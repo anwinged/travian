@@ -1,13 +1,14 @@
 import * as URLParse from 'url-parse';
-import { markPage, waitForLoad } from '../utils';
+import { markPage, uniqId, waitForLoad } from '../utils';
 import { Scheduler } from '../Scheduler';
 import { TaskQueueRenderer } from '../TaskQueueRenderer';
 import { BuildPage } from '../Page/BuildPage';
-
 import { UpgradeBuildingTask } from '../Task/UpgradeBuildingTask';
 import { grabResources } from '../Page/ResourcesBlock';
-import { grabActiveVillageId, grabVillageList } from '../Page/VillageBlock';
+import { grabActiveVillage, grabActiveVillageId, grabVillageList } from '../Page/VillageBlock';
 import { onResourceSlotCtrlClick, showBuildingSlotIds, showResourceSlotIds } from '../Page/SlotBlock';
+import Vue from 'vue';
+import DashboardApp from './Components/DashboardApp.vue';
 
 export class Dashboard {
     private readonly version: string;
@@ -24,10 +25,6 @@ export class Dashboard {
         const p = new URLParse(window.location.href, true);
         this.log('PARSED LOCATION', p);
 
-        markPage('Dashboard', this.version);
-        this.renderTaskQueue();
-        setInterval(() => this.renderTaskQueue(), 5000);
-
         const res = grabResources();
         this.log('RES', res);
 
@@ -35,6 +32,25 @@ export class Dashboard {
         this.log('VILL', villages);
 
         const villageId = grabActiveVillageId();
+
+        const state = {
+            name: 'Dashboard',
+            village: grabActiveVillage(),
+            version: this.version,
+            taskList: this.scheduler.getTaskItems(),
+        };
+
+        const appId = `app-${uniqId()}`;
+        jQuery('body').prepend(`<div id="${appId}"></div>`);
+        new Vue({
+            el: `#${appId}`,
+            data: state,
+            render: h => h(DashboardApp),
+        });
+
+        // markPage('Dashboard', this.version);
+        // this.renderTaskQueue();
+        // setInterval(() => this.renderTaskQueue(), 5000);
 
         const tasks = this.scheduler.getTaskItems();
         const buildingsInQueue = tasks

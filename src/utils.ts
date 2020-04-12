@@ -1,7 +1,3 @@
-import { customAlphabet } from 'nanoid';
-
-const smallIdGenerator = customAlphabet('1234567890abcdef', 6);
-
 export function sleep(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -28,8 +24,20 @@ export async function waitForLoad() {
     return new Promise(resolve => jQuery(resolve));
 }
 
+const ALPHABET = 'abcdefghijklmnopqrstuvwxyz1234567890';
+const ALPHABET_LENGTH = ALPHABET.length - 1;
+
+function generateId(count: number): string {
+    let str = '';
+    for (let i = 0; i < count; ++i) {
+        let symbolIndex = Math.floor(Math.random() * ALPHABET_LENGTH);
+        str += ALPHABET[symbolIndex];
+    }
+    return str;
+}
+
 export function uniqId(): string {
-    return 'id' + smallIdGenerator();
+    return 'id' + generateId(6);
 }
 
 export function timestamp(): number {
