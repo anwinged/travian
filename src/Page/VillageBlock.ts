@@ -3,6 +3,14 @@ import { GrabError } from '../Errors';
 import * as URLParse from 'url-parse';
 import { getNumber } from '../utils';
 
+function getVillageListItems() {
+    const $elements = jQuery('#sidebarBoxVillagelist ul li a');
+    if ($elements.length === 0) {
+        throw new GrabError('Village list items not found');
+    }
+    return $elements;
+}
+
 export function grabVillageList(): VillageList {
     const villageList: VillageList = [];
     const $elements = getVillageListItems();
@@ -24,14 +32,6 @@ export function grabActiveVillage(): Village | undefined {
 
 export function grabActiveVillageId(): number {
     return grabActiveVillage()?.id || 0;
-}
-
-function getVillageListItems() {
-    const $elements = jQuery('#sidebarBoxVillagelist ul li a');
-    if ($elements.length === 0) {
-        throw new GrabError('Village list items not found');
-    }
-    return $elements;
 }
 
 function grabVillageInfo($el): Village {

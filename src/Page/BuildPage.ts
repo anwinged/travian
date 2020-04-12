@@ -1,9 +1,11 @@
-import { elClassId, split, uniqId } from '../utils';
+import { elClassId, notify, split, uniqId } from '../utils';
 import { UpgradeBuildingTask } from '../Task/UpgradeBuildingTask';
 import { Scheduler } from '../Scheduler';
 import { TrainTroopTask } from '../Task/TrainTroopTask';
 import { grabActiveVillageId } from './VillageBlock';
 import { Logger } from '../Logger';
+import { createBuildButton, createUpgradeButton } from './BuildingPage';
+import { BuildBuildingTask } from '../Task/BuildBuildingTask';
 
 const QUARTERS_ID = 19;
 
@@ -11,37 +13,40 @@ export class BuildPage {
     private scheduler: Scheduler;
     private readonly buildId: number;
     private readonly logger;
-    constructor(scheduler: Scheduler, buildId: number) {
+    private readonly categoryId: number;
+
+    constructor(scheduler: Scheduler, buildId: number, categoryId: number) {
         this.scheduler = scheduler;
         this.buildId = buildId;
+        this.categoryId = categoryId;
         this.logger = new Logger(this.constructor.name);
     }
 
     run() {
         const buildTypeId = elClassId(jQuery('#build').attr('class') || '', 'gid');
         this.logger.log('BUILD PAGE DETECTED', 'ID', this.buildId, 'TYPE', buildTypeId);
-        this.createUpgradeButton();
+
+        createBuildButton(buildTypeId => this.onScheduleBuildBuilding(buildTypeId));
+        createUpgradeButton(() => this.onScheduleUpgradeBuilding());
+
         if (buildTypeId === QUARTERS_ID) {
             this.createTrainTroopButton();
         }
     }
 
-    private createUpgradeButton() {
-        const id = uniqId();
-        jQuery('.upgradeButtonsContainer .section1').append(
-            `<div style="padding: 8px"><a id="${id}" href="#">В очередь</a></div>`
-        );
-        jQuery(`#${id}`).on('click', evt => {
-            evt.preventDefault();
-            this.onScheduleBuilding(this.buildId);
-        });
+    private onScheduleBuildBuilding(buildTypeId: number) {
+        const buildId = this.buildId;
+        const categoryId = this.categoryId;
+        const villageId = grabActiveVillageId();
+        this.scheduler.scheduleTask(BuildBuildingTask.name, { villageId, buildId, categoryId, buildTypeId });
+        notify(`Building ${buildId} scheduled`);
     }
 
-    private onScheduleBuilding(buildId: number) {
+    private onScheduleUpgradeBuilding() {
+        const buildId = this.buildId;
         const villageId = grabActiveVillageId();
         this.scheduler.scheduleTask(UpgradeBuildingTask.name, { villageId, buildId });
-        const n = new Notification(`Building ${buildId} scheduled`);
-        setTimeout(() => n && n.close(), 4000);
+        notify(`Upgrading ${buildId} scheduled`);
     }
 
     private createTrainTroopButton() {

@@ -1,5 +1,5 @@
 import * as URLParse from 'url-parse';
-import { uniqId, waitForLoad } from '../utils';
+import { getNumber, toNumber, uniqId, waitForLoad } from '../utils';
 import { Scheduler } from '../Scheduler';
 import { BuildPage } from '../Page/BuildPage';
 import { UpgradeBuildingTask } from '../Task/UpgradeBuildingTask';
@@ -77,7 +77,7 @@ export class Dashboard {
         }
 
         if (p.pathname === '/build.php') {
-            new BuildPage(this.scheduler, Number(p.query.id)).run();
+            new BuildPage(this.scheduler, getNumber(p.query.id), getNumber(p.query.category, 1)).run();
         }
 
         this.createControlPanel(state);

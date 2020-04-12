@@ -95,6 +95,11 @@ export function path(p: string, query: { [key: string]: string | number | undefi
     return p + (parts.length ? '?' + parts.join('&') : '');
 }
 
+export function notify(msg: string): void {
+    const n = new Notification(msg);
+    setTimeout(() => n && n.close(), 4000);
+}
+
 export function markPage(text: string, version: string) {
     jQuery('body').append(
         '<div style="' +

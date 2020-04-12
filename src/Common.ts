@@ -1,6 +1,8 @@
 export interface Args {
     villageId?: number;
     buildId?: number;
+    categoryId?: number;
+    buildTypeId?: number;
     [name: string]: any;
 }
 
