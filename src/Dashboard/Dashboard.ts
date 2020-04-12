@@ -13,6 +13,7 @@ import {
 import Vue from 'vue';
 import DashboardApp from './Components/DashboardApp.vue';
 import { ResourcesToLevel } from '../Task/ResourcesToLevel';
+import { Logger } from '../Logger';
 
 interface QuickAction {
     label: string;
@@ -22,17 +23,19 @@ interface QuickAction {
 export class Dashboard {
     private readonly version: string;
     private scheduler: Scheduler;
+    private readonly logger;
 
     constructor(version: string, scheduler: Scheduler) {
         this.version = version;
         this.scheduler = scheduler;
+        this.logger = new Logger(this.constructor.name);
     }
 
     async run() {
         await waitForLoad();
 
         const p = new URLParse(window.location.href, true);
-        this.log('PARSED LOCATION', p);
+        this.logger.log('PARSED LOCATION', p);
 
         const villageId = grabActiveVillageId();
 
@@ -115,13 +118,5 @@ export class Dashboard {
         state.refreshTasks();
         const n = new Notification(`Building ${buildId} scheduled`);
         setTimeout(() => n && n.close(), 4000);
-    }
-
-    private log(...args) {
-        console.log('SCHEDULER:', ...args);
-    }
-
-    private logError(...args) {
-        console.error(...args);
     }
 }

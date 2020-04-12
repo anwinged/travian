@@ -3,20 +3,23 @@ import { UpgradeBuildingTask } from '../Task/UpgradeBuildingTask';
 import { Scheduler } from '../Scheduler';
 import { TrainTroopTask } from '../Task/TrainTroopTask';
 import { grabActiveVillageId } from './VillageBlock';
+import { Logger } from '../Logger';
 
 const QUARTERS_ID = 19;
 
 export class BuildPage {
     private scheduler: Scheduler;
     private readonly buildId: number;
+    private readonly logger;
     constructor(scheduler: Scheduler, buildId: number) {
         this.scheduler = scheduler;
         this.buildId = buildId;
+        this.logger = new Logger(this.constructor.name);
     }
 
     run() {
         const buildTypeId = elClassId(jQuery('#build').attr('class') || '', 'gid');
-        this.log('BUILD PAGE DETECTED', 'ID', this.buildId, 'TYPE', buildTypeId);
+        this.logger.log('BUILD PAGE DETECTED', 'ID', this.buildId, 'TYPE', buildTypeId);
         this.createUpgradeButton();
         if (buildTypeId === QUARTERS_ID) {
             this.createTrainTroopButton();
@@ -45,7 +48,7 @@ export class BuildPage {
         const troopBlocks = jQuery('#nonFavouriteTroops .action.troop:not(.empty) .innerTroopWrapper');
         troopBlocks.each((idx, el) => {
             const troopId = elClassId(jQuery(el).attr('class') || '', 'troop');
-            console.log('TROOP', troopId);
+            this.logger.log('TROOP', troopId);
             if (troopId) {
                 const id = uniqId();
                 jQuery(el)
@@ -60,12 +63,12 @@ export class BuildPage {
     }
 
     private onTrainTroopClick(buildId: number, troopId: number, el: HTMLElement) {
-        console.log('TRAIN TROOPERS', 'TROOP ID', troopId, 'BUILDING ID', buildId);
+        this.logger.log('TRAIN TROOPERS', 'TROOP ID', troopId, 'BUILDING ID', buildId);
         const villageId = grabActiveVillageId();
         const input = jQuery(el).find(`input[name="t${troopId}"]`);
         const count = Number(input.val());
         if (!isNaN(count) && count > 0) {
-            console.log('PREPARE TO TRAIN', count, 'TROOPERS');
+            this.logger.log('PREPARE TO TRAIN', count, 'TROOPERS');
             for (let n of split(count)) {
                 this.scheduler.scheduleTask(TrainTroopTask.name, {
                     villageId,
@@ -75,13 +78,5 @@ export class BuildPage {
                 });
             }
         }
-    }
-
-    private log(...args) {
-        console.log('BUILD PAGE:', ...args);
-    }
-
-    private logError(...args) {
-        console.error(...args);
     }
 }

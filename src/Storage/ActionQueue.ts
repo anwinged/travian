@@ -1,4 +1,5 @@
 import { Command } from '../Common';
+import { Logger } from '../Logger';
 
 const QUEUE_NAME = 'action_queue:v2';
 
@@ -18,6 +19,12 @@ class State {
 }
 
 export class ActionQueue {
+    private readonly logger;
+
+    constructor() {
+        this.logger = new Logger(this.constructor.name);
+    }
+
     pop(): Command | undefined {
         const state = this.getState();
         const first = state.pop();
@@ -46,16 +53,12 @@ export class ActionQueue {
         }
 
         let parsed = JSON.parse(serialized) as State;
-        this.log('STATE', parsed);
+        this.logger.log('STATE', parsed);
 
         return new State(parsed.items);
     }
 
     private flushState(state: State): void {
         localStorage.setItem(QUEUE_NAME, JSON.stringify(state));
-    }
-
-    private log(...args) {
-        console.log('ACTION QUEUE:', ...args);
     }
 }

@@ -1,3 +1,5 @@
+import { Logger } from '../Logger';
+
 const NAMESPACE = 'game_state:v1';
 
 function join(x: string, y: string) {
@@ -5,8 +7,14 @@ function join(x: string, y: string) {
 }
 
 export class GameState {
+    private readonly logger;
+
+    constructor() {
+        this.logger = new Logger(this.constructor.name);
+    }
+
     get(key: string): any {
-        this.log('GET', key);
+        this.logger.log('GET', key);
         try {
             const serialized = localStorage.getItem(join(NAMESPACE, key));
             return JSON.parse(serialized || 'null');
@@ -24,11 +32,7 @@ export class GameState {
 
     set(key: string, value: any) {
         let serialized = JSON.stringify(value);
-        this.log('SET', key, serialized);
+        this.logger.log('SET', key, serialized);
         localStorage.setItem(join(NAMESPACE, key), serialized);
-    }
-
-    private log(...args) {
-        console.log('GAME STATE:', ...args);
     }
 }

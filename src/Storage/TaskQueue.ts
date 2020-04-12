@@ -1,5 +1,6 @@
 import { Args } from '../Common';
 import { uniqId } from '../utils';
+import { Logger } from '../Logger';
 
 const QUEUE_NAME = 'task_queue:v4';
 
@@ -29,10 +30,16 @@ export class Task {
 export type TaskList = Array<Task>;
 
 export class TaskQueue {
+    private readonly logger;
+
+    constructor() {
+        this.logger = new Logger(this.constructor.name);
+    }
+
     push(name: string, args: Args, ts: number): Task {
         const id = uniqTaskId();
         const task = new Task(id, ts, name, args);
-        this.log('PUSH TASK', id, ts, name, args);
+        this.logger.log('PUSH TASK', id, ts, name, args);
         let items = this.getItems();
         items.push(task);
         this.flushItems(items);
@@ -70,7 +77,7 @@ export class TaskQueue {
     postpone(id: TaskId, newTs: number) {
         const [task, items] = this.shiftTask(id);
         if (task) {
-            this.log('POSTPONE', task);
+            this.logger.log('POSTPONE', task);
             items.push(task.withTime(newTs));
         }
         this.flushItems(items);
@@ -116,9 +123,5 @@ export class TaskQueue {
     private flushItems(items: TaskList): void {
         const normalized = items.sort((x, y) => x.ts - y.ts);
         localStorage.setItem(QUEUE_NAME, JSON.stringify(normalized));
-    }
-
-    private log(...args) {
-        console.log('TASK QUEUE:', ...args);
     }
 }

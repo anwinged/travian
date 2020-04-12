@@ -5,6 +5,7 @@ import { Task } from '../Storage/TaskQueue';
 import { clickUpgradeButton } from '../Page/BuildingPage';
 import { grabResourceDeposits } from '../Page/SlotBlock';
 import { UpgradeBuildingTask } from '../Task/UpgradeBuildingTask';
+import { ResourceDeposit } from '../Game';
 
 @registerAction
 export class UpgradeResourceToLevel extends ActionController {
@@ -25,18 +26,19 @@ export class UpgradeResourceToLevel extends ActionController {
             return;
         }
 
+        const isDepositTaskNotInQueue = (dep: ResourceDeposit) =>
+            undefined ===
+            tasks.find(
+                task =>
+                    task.name === UpgradeBuildingTask.name &&
+                    task.args.villageId === villageId &&
+                    task.args.buildId === dep.buildId
+            );
+
         const available = deposits
             .sort((x, y) => x.level - y.level)
             .filter(dep => dep.ready)
-            .filter(
-                dep =>
-                    tasks.find(
-                        t =>
-                            t.name === UpgradeBuildingTask.name &&
-                            t.args.villageId === villageId &&
-                            t.args.buildId === dep.buildId
-                    ) === undefined
-            );
+            .filter(isDepositTaskNotInQueue);
 
         if (available.length === 0) {
             throw new TryLaterError(task.id, 10 * 60, 'No available deposits');
