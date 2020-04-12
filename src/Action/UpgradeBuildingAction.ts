@@ -1,17 +1,19 @@
 import { ActionController, registerAction } from './ActionController';
 import { Args } from '../Common';
-import { TryLaterError } from '../Errors';
+import { GrabError, TryLaterError } from '../Errors';
 import { Task } from '../Storage/TaskQueue';
+import { clickUpgradeButton } from '../Page/BuildingPage';
 
 @registerAction
 export class UpgradeBuildingAction extends ActionController {
     async run(args: Args, task: Task): Promise<any> {
-        const btn = jQuery('.upgradeButtonsContainer .section1 button.green.build');
-
-        if (btn.length !== 1) {
-            throw new TryLaterError(task.id, 15 * 60, 'No upgrade button, try later');
+        try {
+            clickUpgradeButton();
+        } catch (e) {
+            if (e instanceof GrabError) {
+                throw new TryLaterError(task.id, 15 * 60, 'No upgrade button, try later');
+            }
+            throw e;
         }
-
-        btn.trigger('click');
     }
 }

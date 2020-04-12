@@ -9,10 +9,7 @@ function slotElements(prefix: string): Array<Slot> {
     const result: Array<Slot> = [];
     jQuery('.level.colorLayer').each((idx, el) => {
         const buildId = getNumber(elClassId(jQuery(el).attr('class') || '', prefix));
-        result.push({
-            el,
-            buildId,
-        });
+        result.push({ el, buildId });
     });
     return result;
 }
@@ -35,7 +32,7 @@ function showSlotIds(prefix: string, buildingIds: number[]): void {
     });
 }
 
-export function showFieldsSlotIds(buildingIds: number[]): void {
+export function showResourceSlotIds(buildingIds: number[]): void {
     showSlotIds('buildingSlot', buildingIds);
 }
 

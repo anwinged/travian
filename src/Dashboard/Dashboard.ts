@@ -7,7 +7,7 @@ import { BuildPage } from '../Page/BuildPage';
 import { UpgradeBuildingTask } from '../Task/UpgradeBuildingTask';
 import { grabResources } from '../Page/ResourcesBlock';
 import { grabActiveVillageId, grabVillageList } from '../Page/VillageBlock';
-import { onResourceSlotCtrlClick, showBuildingSlotIds, showFieldsSlotIds } from '../Page/SlotBlock';
+import { onResourceSlotCtrlClick, showBuildingSlotIds, showResourceSlotIds } from '../Page/SlotBlock';
 
 export class Dashboard {
     private readonly version: string;
@@ -42,7 +42,7 @@ export class Dashboard {
             .map(t => t.args.buildId);
 
         if (p.pathname === '/dorf1.php') {
-            showFieldsSlotIds(buildingsInQueue);
+            showResourceSlotIds(buildingsInQueue);
             onResourceSlotCtrlClick(buildId => {
                 this.scheduler.scheduleTask(UpgradeBuildingTask.name, { villageId, buildId });
                 const n = new Notification(`Building ${buildId} scheduled`);
