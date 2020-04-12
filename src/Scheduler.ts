@@ -11,6 +11,7 @@ import { SendOnAdventureTask } from './Task/SendOnAdventureTask';
 import { GameState } from './Storage/GameState';
 import { BalanceHeroResourcesTask } from './Task/BalanceHeroResourcesTask';
 import { Logger } from './Logger';
+import { BuildBuildingTask } from './Task/BuildBuildingTask';
 
 export class Scheduler {
     private readonly version: string;
@@ -126,6 +127,10 @@ export class Scheduler {
 
         if (err instanceof BuildingQueueFullError) {
             this.logger.warn('BUILDING QUEUE FULL, TRY ALL AFTER', err.seconds);
+            this.taskQueue.modify(
+                t => t.name === BuildBuildingTask.name && t.args.villageId === err.villageId,
+                t => t.withTime(timestamp() + err.seconds)
+            );
             this.taskQueue.modify(
                 t => t.name === UpgradeBuildingTask.name && t.args.villageId === err.villageId,
                 t => t.withTime(timestamp() + err.seconds)
