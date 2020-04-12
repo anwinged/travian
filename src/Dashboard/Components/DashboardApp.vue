@@ -3,6 +3,8 @@
     <div id="dashboard-inner">
       <hdr></hdr>
       <task-list></task-list>
+      <hr class="separator" />
+      <quick-actions></quick-actions>
     </div>
   </main>
 </template>
@@ -10,10 +12,12 @@
 <script>
 import Header from './Header';
 import TaskList from './TaskList';
+import QuickActions from './QuickActions';
 export default {
   components: {
     hdr: Header,
     'task-list': TaskList,
+    'quick-actions': QuickActions,
   },
   data() {
     return {};
@@ -38,5 +42,9 @@ export default {
 #dashboard-inner {
   background-color: white;
   margin: 4px;
+  padding-bottom: 10px;
+}
+.separator {
+  margin: 10px auto;
 }
 </style>

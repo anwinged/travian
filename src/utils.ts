@@ -85,10 +85,12 @@ export function getNumber(value: any, def: number = 0): number {
     return converted === undefined ? def : converted;
 }
 
-export function path(p: string, query: { [key: string]: string | number } = {}) {
+export function path(p: string, query: { [key: string]: string | number | undefined } = {}) {
     let parts: string[] = [];
     for (let k in query) {
-        parts.push(`${k}=${query[k]}`);
+        if (query[k] !== undefined) {
+            parts.push(`${k}=${query[k]}`);
+        }
     }
     return p + (parts.length ? '?' + parts.join('&') : '');
 }

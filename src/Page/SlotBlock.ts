@@ -1,4 +1,5 @@
 import { elClassId, getNumber } from '../utils';
+import { numberToResourceType, ResourceDeposit } from '../Game';
 
 interface Slot {
     el: HTMLElement;
@@ -14,7 +15,7 @@ function slotElements(prefix: string): Array<Slot> {
     return result;
 }
 
-function showSlotIds(prefix: string, buildingIds: number[]): void {
+function showSlotIds(prefix: string, buildingIds: Array<number>): void {
     const slots = slotElements(prefix);
     slots.forEach(slot => {
         const oldLabel = jQuery(slot.el)
@@ -53,4 +54,18 @@ export function onResourceSlotCtrlClick(cb: (buildId: number) => void): void {
                 }
             });
     });
+}
+
+function slotToDepositMapper(slot: Slot): ResourceDeposit {
+    const el = slot.el;
+    const classes = jQuery(el).attr('class') || '';
+    const buildId = getNumber(elClassId(classes, 'buildingSlot'));
+    const level = getNumber(elClassId(classes, 'level'));
+    const type = getNumber(elClassId(classes, 'gid'));
+    const ready = !jQuery(el).hasClass('notNow');
+    return new ResourceDeposit(buildId, numberToResourceType(type), level, ready);
+}
+
+export function grabResourceDeposits(): Array<ResourceDeposit> {
+    return slotElements('buildingSlot').map(slotToDepositMapper);
 }

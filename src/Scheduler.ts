@@ -145,11 +145,17 @@ export class Scheduler {
 
     completeTask(id: TaskId) {
         this.taskQueue.complete(id);
+        this.actionQueue.clear();
     }
 
     scheduleTask(name: string, args: Args): void {
         this.log('PUSH TASK', name, args);
         this.taskQueue.push(name, args, timestamp());
+    }
+
+    removeTask(id: TaskId) {
+        this.taskQueue.remove(id);
+        this.actionQueue.clear();
     }
 
     scheduleActions(actions: Array<Command>): void {

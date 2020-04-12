@@ -7,7 +7,7 @@
     "outDir": "./dist",
     "strictNullChecks": true,
     "strictPropertyInitialization": true,
-    "target": "es2015",
+    "target": "es2018",
     "types": ["node", "url-parse", "jquery", "mocha", "chai"]
   },
   "include": [

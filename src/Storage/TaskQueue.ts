@@ -76,6 +76,11 @@ export class TaskQueue {
         this.flushItems(items);
     }
 
+    remove(id: TaskId) {
+        const [_, items] = this.shiftTask(id);
+        this.flushItems(items);
+    }
+
     seeItems(): TaskList {
         return this.getItems();
     }

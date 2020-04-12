@@ -59,7 +59,7 @@ export class BuildPage {
         });
     }
 
-    private onTrainTroopClick(buildId: Number, troopId: Number, el: HTMLElement) {
+    private onTrainTroopClick(buildId: number, troopId: number, el: HTMLElement) {
         console.log('TRAIN TROOPERS', 'TROOP ID', troopId, 'BUILDING ID', buildId);
         const villageId = grabActiveVillageId();
         const input = jQuery(el).find(`input[name="t${troopId}"]`);

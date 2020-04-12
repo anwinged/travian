@@ -3,9 +3,12 @@
     <p class="summary">Task count: {{ shared.taskList.length }}</p>
     <div class="container">
       <table class="task-table">
-        <tr class="task-item" v-for="task in shared.taskList">
+        <tr v-for="task in shared.taskList" class="task-item" :class="{ 'this-village': isThisVillageTask(task) }">
           <td :title="formatDate(task.ts)">{{ formatDate(task.ts) }}</td>
           <td :title="task.id">{{ task.id }}</td>
+          <td>
+            <a href="#" title="Remove task" class="remove-action" v-on:click.prevent="onRemove(task.id)">&times;</a>
+          </td>
           <td :title="task.name">{{ task.name }}</td>
           <td :title="JSON.stringify(task.args)">{{ JSON.stringify(task.args) }}</td>
         </tr>
@@ -23,10 +26,20 @@ export default {
       shared: this.$root.$data,
     };
   },
+  computed: {},
   methods: {
     formatDate(ts) {
       const d = new Date(ts * 1000);
       return dateFormat(d, 'HH:MM:ss');
+    },
+    isThisVillageTask(task) {
+      const taskVillageId = (task.args || {}).villageId;
+      const currentVillageId = (this.shared.village || {}).id;
+      return taskVillageId !== undefined && taskVillageId === currentVillageId;
+    },
+    onRemove(taskId) {
+      console.log('ON REMOVE TASK', taskId);
+      this.shared.removeTask(taskId);
     },
   },
 };
@@ -53,5 +66,12 @@ export default {
   border-top: 1px solid #ddd;
   padding: 2px 4px;
   max-width: 25%;
+}
+.this-village {
+  color: blue;
+}
+.remove-action {
+  font-weight: bold;
+  color: red;
 }
 </style>

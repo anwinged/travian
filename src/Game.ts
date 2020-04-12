@@ -12,6 +12,15 @@ export const ResourceMapping: ReadonlyArray<{ num: number; type: ResourceType }>
     { num: 4, type: ResourceType.Crop },
 ];
 
+export function numberToResourceType(typeAsNumber: number): ResourceType {
+    for (let mp of ResourceMapping) {
+        if (typeAsNumber === mp.num) {
+            return mp.type;
+        }
+    }
+    throw new Error(`Type ${typeAsNumber} in not valid`);
+}
+
 export type ResourceList = Array<{ num: number; type: ResourceType; value: number }>;
 
 export class Resources {
@@ -80,3 +89,16 @@ export type HeroAllResourcesType = 'all';
 export const HeroAllResources: HeroAllResourcesType = 'all';
 
 export type HeroResourceType = ResourceType | HeroAllResourcesType;
+
+export class ResourceDeposit {
+    readonly buildId: number;
+    readonly type: ResourceType;
+    readonly level: number;
+    readonly ready: boolean;
+    constructor(buildId: number, type: ResourceType, level: number, ready: boolean) {
+        this.buildId = buildId;
+        this.type = type;
+        this.level = level;
+        this.ready = ready;
+    }
+}
