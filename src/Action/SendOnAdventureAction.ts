@@ -28,7 +28,7 @@ export class SendOnAdventureAction extends ActionController {
         adventures.sort((x, y) => x.level - y.level);
 
         const easiest = adventures.shift();
-        const hero = this.state.get('hero') || {};
+        const hero = { health: 0 };
 
         console.log('EASIEST', easiest);
         console.log('HERO', hero);

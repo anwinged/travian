@@ -1,6 +1,6 @@
 import { Args } from '../Common';
 import { Task } from '../Storage/TaskQueue';
-import { GameState } from '../Storage/GameState';
+import { DataStorage } from '../Storage/DataStorage';
 import { Scheduler } from '../Scheduler';
 
 const actionMap: { [name: string]: Function | undefined } = {};
@@ -9,20 +9,18 @@ export function registerAction(constructor: Function) {
     actionMap[constructor.name] = constructor;
 }
 
-export function createAction(name: string, state: GameState, scheduler: Scheduler): ActionController | undefined {
+export function createAction(name: string, scheduler: Scheduler): ActionController | undefined {
     const storedFunction = actionMap[name];
     if (storedFunction === undefined) {
         return undefined;
     }
     const constructor = (storedFunction as unknown) as typeof ActionController;
-    return new constructor(state, scheduler);
+    return new constructor(scheduler);
 }
 
 export class ActionController {
-    protected state: GameState;
     protected scheduler: Scheduler;
-    constructor(state: GameState, scheduler: Scheduler) {
-        this.state = state;
+    constructor(scheduler: Scheduler) {
         this.scheduler = scheduler;
     }
 

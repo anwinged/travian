@@ -2,6 +2,7 @@ import * as URLParse from 'url-parse';
 
 const SESSION_KEY = 'travian_automation_mode';
 const SESSION_VALUE = 'command_execution';
+const MODE_PARAMETER_NAME = 'auto-management';
 
 export class ModeDetector {
     isAuto(): boolean {
@@ -14,7 +15,7 @@ export class ModeDetector {
 
     private isAutoByLocation(): boolean {
         const p = new URLParse(window.location.href, true);
-        return p.query['auto-management'] !== undefined;
+        return p.query[MODE_PARAMETER_NAME] !== undefined;
     }
 
     private isAutoBySession(): boolean {

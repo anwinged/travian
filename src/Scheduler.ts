@@ -8,23 +8,21 @@ import { TaskQueueRenderer } from './TaskQueueRenderer';
 import { createAction } from './Action/ActionController';
 import { createTask } from './Task/TaskController';
 import { SendOnAdventureTask } from './Task/SendOnAdventureTask';
-import { GameState } from './Storage/GameState';
 import { BalanceHeroResourcesTask } from './Task/BalanceHeroResourcesTask';
 import { Logger } from './Logger';
 import { BuildBuildingTask } from './Task/BuildBuildingTask';
+import { GrabVillageState } from './Task/GrabVillageState';
 
 export class Scheduler {
     private readonly version: string;
     private taskQueue: TaskQueue;
     private actionQueue: ActionQueue;
-    private gameState: GameState;
     private logger: Logger;
 
     constructor(version: string) {
         this.version = version;
         this.taskQueue = new TaskQueue();
         this.actionQueue = new ActionQueue();
-        this.gameState = new GameState();
         this.logger = new Logger(this.constructor.name);
     }
 
@@ -38,6 +36,7 @@ export class Scheduler {
 
         this.scheduleUniqTask(3600, SendOnAdventureTask.name);
         this.scheduleUniqTask(1200, BalanceHeroResourcesTask.name);
+        this.scheduleUniqTask(300, GrabVillageState.name);
 
         while (true) {
             await this.doTaskProcessingStep();
@@ -52,7 +51,7 @@ export class Scheduler {
     private scheduleUniqTask(seconds: number, name: string, args: Args = {}) {
         const taskScheduler = () => {
             if (!this.taskQueue.hasNamed(name)) {
-                this.taskQueue.push(name, args, timestamp() + 10 * 60);
+                this.taskQueue.push(name, args, timestamp() + 5 * 60);
             }
         };
         taskScheduler();
@@ -90,7 +89,7 @@ export class Scheduler {
     }
 
     private async processActionCommand(cmd: Command, task: Task) {
-        const actionController = createAction(cmd.name, this.gameState, this);
+        const actionController = createAction(cmd.name, this);
         this.logger.log('PROCESS ACTION', cmd.name, actionController);
         if (actionController) {
             await actionController.run(cmd.args, task);

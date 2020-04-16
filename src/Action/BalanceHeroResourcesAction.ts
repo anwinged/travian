@@ -8,10 +8,10 @@ import { HeroAllResources } from '../Game';
 @registerAction
 export class BalanceHeroResourcesAction extends ActionController {
     async run(args: Args, task: Task): Promise<any> {
-        const resources = grabResources().asList();
+        const resourcesAsList = grabResources().asList();
         const currentType = grabCurrentHeroResource();
 
-        const sorted = resources.sort((x, y) => x.value - y.value);
+        const sorted = resourcesAsList.sort((x, y) => x.value - y.value);
         const min = sorted[0];
         const max = sorted[sorted.length - 1];
         const delta = max.value - min.value;

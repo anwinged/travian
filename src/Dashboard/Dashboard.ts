@@ -3,7 +3,7 @@ import { getNumber, toNumber, uniqId, waitForLoad } from '../utils';
 import { Scheduler } from '../Scheduler';
 import { BuildPage } from '../Page/BuildPage';
 import { UpgradeBuildingTask } from '../Task/UpgradeBuildingTask';
-import { grabActiveVillage, grabActiveVillageId } from '../Page/VillageBlock';
+import { grabActiveVillage, grabActiveVillageId, grabVillageList } from '../Page/VillageBlock';
 import {
     grabResourceDeposits,
     onResourceSlotCtrlClick,
@@ -14,6 +14,8 @@ import Vue from 'vue';
 import DashboardApp from './Components/DashboardApp.vue';
 import { ResourcesToLevel } from '../Task/ResourcesToLevel';
 import { Logger } from '../Logger';
+import { Resources } from '../Game';
+import { VillageState } from '../Storage/VillageState';
 
 interface QuickAction {
     label: string;
@@ -45,6 +47,7 @@ export class Dashboard {
         const state = {
             name: 'Dashboard',
             village: grabActiveVillage(),
+            villages: grabVillageList(),
             version: this.version,
             taskList: this.scheduler.getTaskItems(),
             quickActions: quickActions,
@@ -56,6 +59,11 @@ export class Dashboard {
             removeTask(taskId: string) {
                 scheduler.removeTask(taskId);
                 this.taskList = scheduler.getTaskItems();
+            },
+
+            getVillageResources(villageId): Resources {
+                const state = new VillageState(villageId);
+                return state.getResources();
             },
         };
 

@@ -16,6 +16,6 @@ export class GrabHeroAttributesAction extends ActionController {
         let normalized = text.replace(/[^0-9]/g, '');
 
         const value = getNumber(normalized);
-        this.state.set('hero', { health: value });
+        // this.state.set('hero', { health: value });
     }
 }

@@ -5,6 +5,8 @@
       <task-list></task-list>
       <hr class="separator" />
       <quick-actions></quick-actions>
+      <hr class="separator" />
+      <village-state-list></village-state-list>
     </div>
   </main>
 </template>
@@ -13,14 +15,18 @@
 import Header from './Header';
 import TaskList from './TaskList';
 import QuickActions from './QuickActions';
+import VillageStateList from './VillageStateList';
 export default {
   components: {
     hdr: Header,
     'task-list': TaskList,
     'quick-actions': QuickActions,
+    'village-state-list': VillageStateList,
   },
   data() {
-    return {};
+    return {
+      shared: this.$root.$data,
+    };
   },
 };
 </script>
