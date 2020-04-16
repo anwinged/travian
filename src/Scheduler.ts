@@ -39,7 +39,7 @@ export class Scheduler {
 
         this.scheduleUniqTask(3600, SendOnAdventureTask.name);
         this.scheduleUniqTask(1200, BalanceHeroResourcesTask.name);
-        this.scheduleUniqTask(300, GrabVillageState.name);
+        this.scheduleUniqTask(180, GrabVillageState.name);
 
         while (true) {
             await this.doTaskProcessingStep();
@@ -54,7 +54,7 @@ export class Scheduler {
     private scheduleUniqTask(seconds: number, name: string, args: Args = {}) {
         const taskScheduler = () => {
             if (!this.taskQueue.hasNamed(name)) {
-                this.taskQueue.push(name, args, timestamp() + 5 * 60);
+                this.taskQueue.push(name, args, timestamp() + Math.min(seconds, 5 * 60));
             }
         };
         taskScheduler();
