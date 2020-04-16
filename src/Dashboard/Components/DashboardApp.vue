@@ -2,11 +2,11 @@
   <main id="dashboard">
     <div id="dashboard-inner">
       <hdr></hdr>
-      <task-list></task-list>
+      <village-state-list></village-state-list>
       <hr class="separator" />
       <quick-actions></quick-actions>
       <hr class="separator" />
-      <village-state-list></village-state-list>
+      <task-list></task-list>
     </div>
   </main>
 </template>
@@ -47,7 +47,7 @@ export default {
 }
 #dashboard-inner {
   background-color: white;
-  padding: 10px;
+  padding: 5px;
 }
 .separator {
   margin: 10px auto;

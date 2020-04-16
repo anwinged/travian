@@ -1,7 +1,9 @@
 <template>
   <section>
-    <h1 class="title">{{ shared.name }} - {{ villageName }}</h1>
-    <p class="version">{{ shared.version }}</p>
+    <h1 class="title">
+      [{{ shared.name }}] {{ villageName }}
+      <span class="version">- {{ shared.version }}</span>
+    </h1>
   </section>
 </template>
 
@@ -28,8 +30,6 @@ export default {
   margin-bottom: 8px;
 }
 .version {
-  font-size: 120%;
-  margin-top: 8px;
-  margin-bottom: 8px;
+  font-size: 14px;
 }
 </style>
