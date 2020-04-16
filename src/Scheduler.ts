@@ -12,17 +12,20 @@ import { BalanceHeroResourcesTask } from './Task/BalanceHeroResourcesTask';
 import { Logger } from './Logger';
 import { BuildBuildingTask } from './Task/BuildBuildingTask';
 import { GrabVillageState } from './Task/GrabVillageState';
+import { StateGrabberManager } from './State/StateGrabberManager';
 
 export class Scheduler {
     private readonly version: string;
     private taskQueue: TaskQueue;
     private actionQueue: ActionQueue;
+    private grabbers: StateGrabberManager;
     private logger: Logger;
 
     constructor(version: string) {
         this.version = version;
         this.taskQueue = new TaskQueue();
         this.actionQueue = new ActionQueue();
+        this.grabbers = new StateGrabberManager();
         this.logger = new Logger(this.constructor.name);
     }
 
@@ -89,6 +92,7 @@ export class Scheduler {
     }
 
     private async processActionCommand(cmd: Command, task: Task) {
+        this.runGrabbers();
         const actionController = createAction(cmd.name, this);
         this.logger.log('PROCESS ACTION', cmd.name, actionController);
         if (actionController) {
@@ -144,6 +148,15 @@ export class Scheduler {
 
         this.logger.error(err.message);
         throw err;
+    }
+
+    private runGrabbers() {
+        try {
+            this.logger.log('Rug grabbers');
+            this.grabbers.grab();
+        } catch (e) {
+            this.logger.warn('Grabbers fails with', e.message);
+        }
     }
 
     getTaskItems(): TaskList {

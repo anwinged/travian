@@ -1,5 +1,5 @@
 import * as URLParse from 'url-parse';
-import { getNumber, toNumber, uniqId, waitForLoad } from '../utils';
+import { getNumber, uniqId, waitForLoad } from '../utils';
 import { Scheduler } from '../Scheduler';
 import { BuildPage } from '../Page/BuildPage';
 import { UpgradeBuildingTask } from '../Task/UpgradeBuildingTask';
@@ -15,7 +15,8 @@ import DashboardApp from './Components/DashboardApp.vue';
 import { ResourcesToLevel } from '../Task/ResourcesToLevel';
 import { Logger } from '../Logger';
 import { Resources } from '../Game';
-import { VillageState } from '../Storage/VillageState';
+import { VillageState } from '../State/VillageState';
+import { StateGrabberManager } from '../State/StateGrabberManager';
 
 interface QuickAction {
     label: string;
@@ -26,10 +27,12 @@ export class Dashboard {
     private readonly version: string;
     private scheduler: Scheduler;
     private readonly logger;
+    private grabbers: StateGrabberManager;
 
     constructor(version: string, scheduler: Scheduler) {
         this.version = version;
         this.scheduler = scheduler;
+        this.grabbers = new StateGrabberManager();
         this.logger = new Logger(this.constructor.name);
     }
 
@@ -40,6 +43,8 @@ export class Dashboard {
         this.logger.log('PARSED LOCATION', p);
 
         const villageId = grabActiveVillageId();
+
+        this.grabbers.grab();
 
         const scheduler = this.scheduler;
         const quickActions: QuickAction[] = [];

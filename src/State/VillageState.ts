@@ -1,4 +1,4 @@
-import { DataStorage } from './DataStorage';
+import { DataStorage } from '../Storage/DataStorage';
 import { Resources } from '../Game';
 
 export class VillageState {
