@@ -28,15 +28,11 @@ export class Resources {
     readonly clay: number;
     readonly iron: number;
     readonly crop: number;
-    readonly warehouse: number;
-    readonly granary: number;
-    constructor(lumber: number, clay: number, iron: number, crop: number, warehouse: number, granary: number) {
+    constructor(lumber: number, clay: number, iron: number, crop: number) {
         this.lumber = lumber;
         this.clay = clay;
         this.iron = iron;
         this.crop = crop;
-        this.warehouse = warehouse;
-        this.granary = granary;
     }
 
     getByType(type: ResourceType): number {
@@ -58,6 +54,15 @@ export class Resources {
             result.push({ num: mp.num, type: mp.type, value: this.getByType(mp.type) });
         }
         return result;
+    }
+}
+
+export class ResourceStorage {
+    readonly warehouse: number;
+    readonly granary: number;
+    constructor(warehouse: number, granary: number) {
+        this.warehouse = warehouse;
+        this.granary = granary;
     }
 }
 

@@ -47,10 +47,12 @@ export default {
 
 <style scoped>
 .task-list {
-  margin: 8px 8px auto;
+  margin-top: 8px;
+  margin-bottom: 8px;
 }
 .summary {
-  margin: 10px auto 0;
+  margin-top: 10px;
+  margin-bottom: 0;
 }
 .container {
   overflow-y: scroll;

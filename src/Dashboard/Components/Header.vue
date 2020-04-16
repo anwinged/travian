@@ -24,10 +24,12 @@ export default {
 <style scoped>
 .title {
   font-size: 160%;
-  margin: 8px;
+  padding-top: 8px;
+  margin-bottom: 8px;
 }
 .version {
   font-size: 120%;
-  margin: 8px;
+  margin-top: 8px;
+  margin-bottom: 8px;
 }
 </style>

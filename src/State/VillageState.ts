@@ -1,5 +1,5 @@
 import { DataStorage } from '../Storage/DataStorage';
-import { Resources } from '../Game';
+import { Resources, ResourceStorage } from '../Game';
 
 export class VillageState {
     private storage: DataStorage;
@@ -13,7 +13,17 @@ export class VillageState {
 
     getResources(): Resources {
         let plain = this.storage.get('res');
-        let res = new Resources(0, 0, 0, 0, 0, 0);
+        let res = new Resources(0, 0, 0, 0);
         return Object.assign(res, plain) as Resources;
+    }
+
+    storeResourceStorage(storage: ResourceStorage) {
+        this.storage.set('cap', storage);
+    }
+
+    getResourceStorage(): ResourceStorage {
+        let plain = this.storage.get('res');
+        let res = new ResourceStorage(0, 0);
+        return Object.assign(res, plain) as ResourceStorage;
     }
 }

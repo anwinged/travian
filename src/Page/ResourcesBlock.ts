@@ -1,4 +1,4 @@
-import { Resources, ResourceType } from '../Game';
+import { Resources, ResourceStorage, ResourceType } from '../Game';
 import { GrabError } from '../Errors';
 import { getNumber } from '../utils';
 
@@ -8,10 +8,13 @@ export function grabResources(): Resources {
     const iron = grabResource(ResourceType.Iron);
     const crop = grabResource(ResourceType.Crop);
 
+    return new Resources(lumber, clay, iron, crop);
+}
+
+export function grabResourceStorage() {
     const warehouse = grabCapacity('warehouse');
     const granary = grabCapacity('granary');
-
-    return new Resources(lumber, clay, iron, crop, warehouse, granary);
+    return new ResourceStorage(warehouse, granary);
 }
 
 function findStockBarElement() {

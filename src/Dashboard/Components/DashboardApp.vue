@@ -47,8 +47,7 @@ export default {
 }
 #dashboard-inner {
   background-color: white;
-  margin: 4px;
-  padding-bottom: 10px;
+  padding: 10px;
 }
 .separator {
   margin: 10px auto;
