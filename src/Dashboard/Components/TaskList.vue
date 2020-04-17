@@ -24,9 +24,9 @@ export default {
   data() {
     return {
       shared: this.$root.$data,
+      activeVillage: this.$root.$data.activeVillage,
     };
   },
-  computed: {},
   methods: {
     formatDate(ts) {
       const d = new Date(ts * 1000);
@@ -34,7 +34,7 @@ export default {
     },
     isThisVillageTask(task) {
       const taskVillageId = (task.args || {}).villageId;
-      const currentVillageId = (this.shared.village || {}).id;
+      const currentVillageId = this.activeVillage.id;
       return taskVillageId !== undefined && taskVillageId === currentVillageId;
     },
     onRemove(taskId) {

@@ -16,7 +16,7 @@ export default {
   },
   computed: {
     villageName() {
-      let village = this.shared.village;
+      let village = this.shared.activeVillage;
       return village ? village.name : 'Unknown';
     },
   },

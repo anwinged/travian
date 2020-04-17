@@ -1,4 +1,4 @@
-import { Coordinates, Village, VillageList } from '../Game';
+import { Coordinates, Resources, Village, VillageList } from '../Game';
 import { GrabError } from '../Errors';
 import * as URLParse from 'url-parse';
 import { getNumber } from '../utils';
@@ -55,4 +55,20 @@ function grabVillageInfo($el): Village {
             .replace(/[^0-9-]/gi, '')
     );
     return new Village(id, name, active, new Coordinates(x, y));
+}
+
+export function grabResourcesPerformance(): Resources {
+    const $el = jQuery('#production');
+    if ($el.length !== 1) {
+        throw new GrabError();
+    }
+
+    const $nums = $el.find('td.num');
+
+    return new Resources(
+        getNumber($nums.get(0).innerText),
+        getNumber($nums.get(1).innerText),
+        getNumber($nums.get(2).innerText),
+        getNumber($nums.get(3).innerText)
+    );
 }

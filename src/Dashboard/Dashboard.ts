@@ -3,7 +3,7 @@ import { getNumber, uniqId, waitForLoad } from '../utils';
 import { Scheduler } from '../Scheduler';
 import { BuildPage } from '../Page/BuildPage';
 import { UpgradeBuildingTask } from '../Task/UpgradeBuildingTask';
-import { grabActiveVillage, grabActiveVillageId, grabVillageList } from '../Page/VillageBlock';
+import { grabActiveVillageId, grabVillageList } from '../Page/VillageBlock';
 import {
     grabResourceDeposits,
     onResourceSlotCtrlClick,
@@ -14,7 +14,6 @@ import Vue from 'vue';
 import DashboardApp from './Components/DashboardApp.vue';
 import { ResourcesToLevel } from '../Task/ResourcesToLevel';
 import { Logger } from '../Logger';
-import { Resources } from '../Game';
 import { VillageState } from '../State/VillageState';
 import { StateGrabberManager } from '../State/StateGrabberManager';
 
@@ -51,10 +50,10 @@ export class Dashboard {
 
         const state = {
             name: 'Dashboard',
-            village: grabActiveVillage(),
-            villages: grabVillageList(),
             version: this.version,
-            taskList: this.scheduler.getTaskItems(),
+            activeVillage: {},
+            villages: [],
+            taskList: [],
             quickActions: quickActions,
 
             refreshTasks() {
@@ -66,13 +65,42 @@ export class Dashboard {
                 this.taskList = scheduler.getTaskItems();
             },
 
-            getVillageResources(villageId): Resources {
-                const state = new VillageState(villageId);
-                return state.getResources();
+            refreshVillages() {
+                this.villages = grabVillageList().map(village => {
+                    const state = new VillageState(village.id);
+                    const resources = state.getResources();
+                    const storage = state.getResourceStorage();
+                    const performance = state.getResourcesPerformance();
+                    return {
+                        id: village.id,
+                        name: village.name,
+                        crd: village.crd,
+                        active: village.active,
+                        lumber: resources.lumber,
+                        clay: resources.clay,
+                        iron: resources.iron,
+                        crop: resources.crop,
+                        lumber_hour: performance.lumber,
+                        clay_hour: performance.clay,
+                        iron_hour: performance.iron,
+                        crop_hour: performance.crop,
+                        warehouse: storage.warehouse,
+                        granary: storage.granary,
+                    };
+                });
+                for (let village of this.villages) {
+                    if (village.active) {
+                        this.activeVillage = village;
+                    }
+                }
             },
         };
 
-        setInterval(() => state.refreshTasks(), 1000);
+        state.refreshTasks();
+        setInterval(() => state.refreshTasks(), 2000);
+
+        state.refreshVillages();
+        setInterval(() => state.refreshVillages(), 5000);
 
         const tasks = this.scheduler.getTaskItems();
         const buildingsInQueue = tasks
