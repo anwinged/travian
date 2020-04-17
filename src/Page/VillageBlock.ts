@@ -40,20 +40,8 @@ function grabVillageInfo($el): Village {
     const id = getNumber(parsedHref.query.newdid);
     const name = $el.find('.name').text();
     const active = $el.hasClass('active');
-    const x = getNumber(
-        $el
-            .find('.coordinateX')
-            .text()
-            .replace('−‭', '-')
-            .replace(/[^0-9-]/gi, '')
-    );
-    const y = getNumber(
-        $el
-            .find('.coordinateY')
-            .text()
-            .replace('−‭', '-')
-            .replace(/[^0-9-]/gi, '')
-    );
+    const x = getNumber($el.find('.coordinateX').text());
+    const y = getNumber($el.find('.coordinateY').text());
     return new Village(id, name, active, new Coordinates(x, y));
 }
 

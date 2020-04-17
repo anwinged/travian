@@ -16,10 +16,26 @@
         <template v-for="village in shared.villages">
           <tr class="normal-line top-line">
             <td :class="{ active: village.active }" :title="village.id">{{ village.name }}</td>
-            <td class="right" v-text="village.lumber"></td>
-            <td class="right" v-text="village.clay"></td>
-            <td class="right" v-text="village.iron"></td>
-            <td class="right" v-text="village.crop"></td>
+            <td
+              class="right"
+              v-text="village.lumber"
+              :title="resourceTitle(village.lumber, village.warehouse, village.lumber_hour)"
+            ></td>
+            <td
+              class="right"
+              v-text="village.clay"
+              :title="resourceTitle(village.clay, village.warehouse, village.clay_hour)"
+            ></td>
+            <td
+              class="right"
+              v-text="village.iron"
+              :title="resourceTitle(village.iron, village.warehouse, village.iron_hour)"
+            ></td>
+            <td
+              class="right"
+              v-text="village.crop"
+              :title="resourceTitle(village.crop, village.granary, village.crop_hour)"
+            ></td>
             <td class="right">
               <a :href="warehousePath(village)" v-text="village.warehouse"></a>
             </td>
@@ -76,6 +92,21 @@ export default {
     },
     quartersPath(village) {
       return path('/build.php', { newdid: village.id, gid: 19 });
+    },
+    resourceTitle(current, max, speed) {
+      const percent = Math.floor((current / max) * 100);
+      if (speed < 0) {
+        const time = this.fractionalHourToTime(current / speed);
+        return `${current}, ${percent}%, опустеет через ${time}`;
+      } else {
+        const time = this.fractionalHourToTime((max - current) / speed);
+        return `${current}, ${percent}%, заполнится через ${time}`;
+      }
+    },
+    fractionalHourToTime(value) {
+      const hours = Math.floor(value);
+      const minutes = Math.round((value - hours) * 60);
+      return `${hours}:${String(minutes).padStart(2, '0')}`;
     },
   },
 };

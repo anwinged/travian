@@ -76,7 +76,10 @@ export function* split(n: number) {
 }
 
 export function toNumber(value: any): number | undefined {
-    const converted = Number(value);
+    const normalized = String(value)
+        .replace('−‭', '-')
+        .replace(/[^0-9-]/gi, '');
+    const converted = Number(normalized);
     return isNaN(converted) ? undefined : converted;
 }
 
