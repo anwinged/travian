@@ -14,7 +14,7 @@
       </thead>
       <tbody>
         <template v-for="village in shared.villages">
-          <tr class="top-line">
+          <tr class="normal-line top-line">
             <td :class="{ active: village.active }" :title="village.id">{{ village.name }}</td>
             <td class="right" v-text="village.lumber"></td>
             <td class="right" v-text="village.clay"></td>
@@ -25,7 +25,7 @@
             </td>
             <td class="right" v-text="village.granary"></td>
           </tr>
-          <tr>
+          <tr class="performance-line">
             <td></td>
             <td class="right small">+{{ village.lumber_hour }}</td>
             <td class="right small">+{{ village.clay_hour }}</td>
@@ -34,7 +34,7 @@
             <td></td>
             <td></td>
           </tr>
-          <tr>
+          <tr class="normal-line">
             <td></td>
             <td class="right" colspan="6">
               <a
@@ -87,8 +87,12 @@ export default {
   border-collapse: collapse;
 }
 
-.village-table td {
+.normal-line td {
   padding: 4px;
+}
+
+.performance-line td {
+  padding: 0 4px 4px;
 }
 
 .village-table td.active {
