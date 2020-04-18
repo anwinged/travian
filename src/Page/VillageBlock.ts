@@ -1,4 +1,4 @@
-import { Coordinates, Resources, Village, VillageList } from '../Game';
+import { BuildingQueueInfo, Coordinates, Resources, Village, VillageList } from '../Game';
 import { GrabError } from '../Errors';
 import { getNumber, parseLocation } from '../utils';
 
@@ -58,4 +58,15 @@ export function grabResourcesPerformance(): Resources {
         getNumber($nums.get(2).innerText),
         getNumber($nums.get(3).innerText)
     );
+}
+
+export function grabBuildingQueueInfo(): BuildingQueueInfo {
+    const timer = jQuery('.buildDuration .timer');
+    if (timer.length !== 1) {
+        throw new GrabError();
+    }
+
+    const remainingSeconds = getNumber(timer.attr('value'));
+
+    return new BuildingQueueInfo(remainingSeconds);
 }

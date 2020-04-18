@@ -90,6 +90,13 @@ export class Village {
 
 export type VillageList = Array<Village>;
 
+export class BuildingQueueInfo {
+    readonly seconds: number;
+    constructor(seconds: number) {
+        this.seconds = seconds;
+    }
+}
+
 export type HeroAllResourcesType = 'all';
 export const HeroAllResources: HeroAllResourcesType = 'all';
 

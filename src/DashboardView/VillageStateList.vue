@@ -42,7 +42,7 @@
             <td class="right" v-text="village.granary"></td>
           </tr>
           <tr class="performance-line">
-            <td></td>
+            <td class="right small" v-text="secondsToTime(village.buildRemainingSeconds)"></td>
             <td class="right small">+{{ village.lumber_hour }}</td>
             <td class="right small">+{{ village.clay_hour }}</td>
             <td class="right small">+{{ village.iron_hour }}</td>
@@ -107,6 +107,12 @@ export default {
       const hours = Math.floor(value);
       const minutes = Math.round((value - hours) * 60);
       return `${hours}:${String(minutes).padStart(2, '0')}`;
+    },
+    secondsToTime(value) {
+      const hours = Math.floor(value / 3600);
+      const minutes = Math.floor((value % 3600) / 60);
+      const seconds = value % 60;
+      return `${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
     },
   },
 };

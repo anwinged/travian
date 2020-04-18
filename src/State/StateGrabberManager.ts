@@ -1,6 +1,6 @@
 import { StateGrabber } from './StateGrabber';
 import { ResourceGrabber } from './ResourceGrabber';
-import { ResourcePerformanceGrabber } from './ResourcePerformanceGrabber';
+import { VillageOverviewPageGrabber } from './VillageOverviewPageGrabber';
 
 export class StateGrabberManager {
     private readonly grabbers: Array<StateGrabber> = [];
@@ -8,7 +8,7 @@ export class StateGrabberManager {
     constructor() {
         this.grabbers = [];
         this.grabbers.push(new ResourceGrabber());
-        this.grabbers.push(new ResourcePerformanceGrabber());
+        this.grabbers.push(new VillageOverviewPageGrabber());
     }
 
     grab() {

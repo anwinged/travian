@@ -71,6 +71,7 @@ export class ControlPanel {
                     const resources = state.getResources();
                     const storage = state.getResourceStorage();
                     const performance = state.getResourcesPerformance();
+                    const buildQueueInfo = state.getBuildingQueueInfo();
                     return {
                         id: village.id,
                         name: village.name,
@@ -86,6 +87,7 @@ export class ControlPanel {
                         crop_hour: performance.crop,
                         warehouse: storage.warehouse,
                         granary: storage.granary,
+                        buildRemainingSeconds: buildQueueInfo.seconds,
                     };
                 });
                 for (let village of this.villages) {
