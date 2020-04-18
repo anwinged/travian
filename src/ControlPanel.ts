@@ -1,30 +1,30 @@
 import * as URLParse from 'url-parse';
-import { getNumber, uniqId, waitForLoad } from '../utils';
-import { Scheduler } from '../Scheduler';
-import { BuildPage } from '../Page/BuildPage';
-import { UpgradeBuildingTask } from '../Task/UpgradeBuildingTask';
-import { grabActiveVillageId, grabVillageList } from '../Page/VillageBlock';
+import { getNumber, uniqId, waitForLoad } from './utils';
+import { Scheduler } from './Scheduler';
+import { BuildPage } from './Page/BuildPage';
+import { UpgradeBuildingTask } from './Task/UpgradeBuildingTask';
+import { grabActiveVillageId, grabVillageList } from './Page/VillageBlock';
 import {
     grabResourceDeposits,
     onResourceSlotCtrlClick,
     showBuildingSlotIds,
     showResourceSlotIds,
-} from '../Page/SlotBlock';
+} from './Page/SlotBlock';
 import Vue from 'vue';
-import DashboardApp from './Components/DashboardApp.vue';
-import { ResourcesToLevel } from '../Task/ResourcesToLevel';
-import { ConsoleLogger, Logger } from '../Logger';
-import { VillageState } from '../State/VillageState';
-import { StateGrabberManager } from '../State/StateGrabberManager';
+import DashboardApp from './DashboardView/Dashboard.vue';
+import { ResourcesToLevel } from './Task/ResourcesToLevel';
+import { ConsoleLogger, Logger } from './Logger';
+import { VillageState } from './State/VillageState';
+import { StateGrabberManager } from './State/StateGrabberManager';
 
 interface QuickAction {
     label: string;
     cb: () => void;
 }
 
-export class Dashboard {
+export class ControlPanel {
     private readonly version: string;
-    private scheduler: Scheduler;
+    private readonly scheduler: Scheduler;
     private grabbers: StateGrabberManager;
     private readonly logger: Logger;
 

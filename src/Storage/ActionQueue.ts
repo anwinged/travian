@@ -19,7 +19,7 @@ class State {
 }
 
 export class ActionQueue {
-    private readonly logger;
+    private readonly logger: Logger;
 
     constructor() {
         this.logger = new ConsoleLogger(this.constructor.name);

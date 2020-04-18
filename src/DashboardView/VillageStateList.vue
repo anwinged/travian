@@ -71,7 +71,7 @@
 </template>
 
 <script>
-import { path } from '../../utils';
+import { path } from '../utils';
 
 export default {
   data() {

@@ -1,18 +1,24 @@
+import { ConsoleLogger } from './Logger';
 import { ModeDetector } from './ModeDetector';
 import { Scheduler } from './Scheduler';
-import { Dashboard } from './Dashboard/Dashboard';
+import { Executor } from './Executor';
+import { ControlPanel } from './ControlPanel';
 import TxtVersion from '!!raw-loader!./version.txt';
 
-console.log('TRAVIAN AUTOMATION', TxtVersion);
+const logger = new ConsoleLogger('Travian');
 
-const md = new ModeDetector();
-if (md.isAuto()) {
-    md.setAuto();
-    console.log('AUTO MANAGEMENT ON');
-    const scheduler = new Scheduler(TxtVersion);
-    scheduler.run();
+logger.log('TRAVIAN AUTOMATION', TxtVersion);
+
+const modeDetector = new ModeDetector();
+const scheduler = new Scheduler();
+
+if (modeDetector.isAuto()) {
+    modeDetector.setAuto();
+    logger.log('AUTO MANAGEMENT ON');
+    const executor = new Executor(TxtVersion, scheduler);
+    executor.run();
 } else {
-    console.log('NORMAL MODE');
-    const dashboard = new Dashboard(TxtVersion, new Scheduler());
-    dashboard.run();
+    logger.log('NORMAL MODE');
+    const controlPanel = new ControlPanel(TxtVersion, scheduler);
+    controlPanel.run();
 }
