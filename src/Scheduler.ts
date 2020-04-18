@@ -28,8 +28,8 @@ export class Scheduler {
 
     private scheduleUniqTask(seconds: number, name: string, args: Args = {}) {
         const taskScheduler = () => {
-            if (!this.taskQueue.hasNamed(name)) {
-                this.taskQueue.push(name, args, timestamp() + Math.min(seconds, 5 * 60));
+            if (!this.taskQueue.has(t => t.name === name)) {
+                this.scheduleTask(name, args, timestamp() + Math.min(seconds, 5 * 60));
             }
         };
         taskScheduler();
@@ -48,23 +48,23 @@ export class Scheduler {
         return this.actionQueue.pop();
     }
 
-    scheduleTask(name: string, args: Args): void {
-        this.logger.log('PUSH TASK', name, args);
+    scheduleTask(name: string, args: Args, ts?: number | undefined): void {
+        this.logger.log('PUSH TASK', name, args, ts);
         const villageId = args.villageId;
         if (isBuildingTask(name)) {
-            this.taskQueue.insertAfterLast(
+            const insertedTs = calculateTimeToPushAfter(
+                this.taskQueue.seeItems(),
                 t => isBuildingTask(t.name) && sameVillage(villageId, t.args),
-                name,
-                args,
-                timestamp()
+                ts
             );
+            this.taskQueue.push(name, args, insertedTs);
         } else {
-            this.taskQueue.push(name, args, timestamp());
+            this.taskQueue.push(name, args, ts || timestamp());
         }
     }
 
     completeTask(id: TaskId) {
-        this.taskQueue.complete(id);
+        this.taskQueue.remove(id);
         this.actionQueue.clear();
     }
 
@@ -74,13 +74,16 @@ export class Scheduler {
     }
 
     postponeTask(id: TaskId, deltaTs: number) {
-        this.taskQueue.postpone(id, timestamp() + deltaTs);
+        this.taskQueue.modify(
+            t => t.id === id,
+            t => withTime(t, timestamp() + deltaTs)
+        );
     }
 
     postponeBuildingsInVillage(villageId: number, seconds: number) {
         this.taskQueue.modify(
             t => isBuildingTask(t.name) && sameVillage(villageId, t.args),
-            t => t.withTime(timestamp() + seconds)
+            t => withTime(t, timestamp() + seconds)
         );
     }
 
@@ -99,4 +102,30 @@ function isBuildingTask(taskName: string) {
 
 function sameVillage(villageId: number | undefined, args: Args) {
     return villageId !== undefined && args.villageId === villageId;
+}
+
+export function withTime(task: Task, ts: number): Task {
+    return new Task(task.id, ts, task.name, task.args);
+}
+
+function calculateTimeToPushAfter(tasks: TaskList, predicate: (t: Task) => boolean, ts: number | undefined): number {
+    const normalizedTs = ts || timestamp();
+    const queuedTaskIndex = findLastIndex(tasks, predicate);
+    if (queuedTaskIndex === undefined) {
+        return normalizedTs;
+    }
+    const queuedTask = tasks[queuedTaskIndex];
+    return Math.max(normalizedTs, queuedTask.ts + 1);
+}
+
+function findLastIndex(tasks: TaskList, predicate: (t: Task) => boolean): number | undefined {
+    const count = tasks.length;
+    const indexInReversed = tasks
+        .slice()
+        .reverse()
+        .findIndex(predicate);
+    if (indexInReversed < 0) {
+        return undefined;
+    }
+    return count - 1 - indexInReversed;
 }
