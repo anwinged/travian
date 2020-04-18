@@ -42,6 +42,10 @@ export class Resources implements ResourcesInterface {
         this.crop = crop;
     }
 
+    static fromObject(obj: ResourcesInterface) {
+        return new Resources(obj.lumber, obj.clay, obj.iron, obj.crop);
+    }
+
     getByType(type: ResourceType): number {
         switch (type) {
             case ResourceType.Lumber:

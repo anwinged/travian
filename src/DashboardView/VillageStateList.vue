@@ -41,12 +41,30 @@
             </td>
             <td class="right" v-text="village.granary"></td>
           </tr>
+          <tr class="required-line">
+            <td class="right">След:</td>
+            <td class="right" v-text="village.lumber_need || ''"></td>
+            <td class="right" v-text="village.clay_need || ''"></td>
+            <td class="right" v-text="village.iron_need || ''"></td>
+            <td class="right" v-text="village.crop_need || ''"></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr class="required-line">
+            <td class="right">Необх:</td>
+            <td class="right" v-text="village.lumber_need - village.lumber || ''"></td>
+            <td class="right" v-text="village.clay_need - village.clay || ''"></td>
+            <td class="right" v-text="village.iron_need - village.iron || ''"></td>
+            <td class="right" v-text="village.crop_need - village.crop || ''"></td>
+            <td></td>
+            <td></td>
+          </tr>
           <tr class="performance-line">
-            <td class="right small" v-text="secondsToTime(village.buildRemainingSeconds)"></td>
-            <td class="right small">+{{ village.lumber_hour }}</td>
-            <td class="right small">+{{ village.clay_hour }}</td>
-            <td class="right small">+{{ village.iron_hour }}</td>
-            <td class="right small">+{{ village.crop_hour }}</td>
+            <td class="right" v-text="secondsToTime(village.buildRemainingSeconds)"></td>
+            <td class="right">+{{ village.lumber_hour }}</td>
+            <td class="right">+{{ village.clay_hour }}</td>
+            <td class="right">+{{ village.iron_hour }}</td>
+            <td class="right">+{{ village.crop_hour }}</td>
             <td></td>
             <td></td>
           </tr>
@@ -130,6 +148,12 @@ export default {
 
 .performance-line td {
   padding: 0 4px 4px;
+  font-size: 90%;
+}
+
+.required-line td {
+  padding: 0 4px 4px;
+  font-size: 90%;
 }
 
 .village-table td.active {
@@ -142,10 +166,6 @@ export default {
 
 .right {
   text-align: right;
-}
-
-.small {
-  font-size: 90%;
 }
 
 .village-quick-link {

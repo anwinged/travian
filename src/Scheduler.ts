@@ -8,6 +8,8 @@ import { ConsoleLogger, Logger } from './Logger';
 import { BuildBuildingTask } from './Task/BuildBuildingTask';
 import { GrabVillageState } from './Task/GrabVillageState';
 import { ActionQueue } from './Storage/ActionQueue';
+import { Resources, ResourcesInterface } from './Game';
+import { UpdateResourceContracts } from './Task/UpdateResourceContracts';
 
 export class Scheduler {
     private taskQueue: TaskQueue;
@@ -20,17 +22,18 @@ export class Scheduler {
         this.logger = new ConsoleLogger(this.constructor.name);
 
         // this.taskQueue.push(GrabVillageState.name, {}, timestamp());
+        // this.taskQueue.push(UpdateResourceContracts.name, {}, timestamp());
+        // this.taskQueue.push(BalanceHeroResourcesTask.name, {}, timestamp());
 
-        this.scheduleUniqTask(3600, SendOnAdventureTask.name);
-        this.scheduleUniqTask(1200, BalanceHeroResourcesTask.name);
-        this.scheduleUniqTask(180, GrabVillageState.name);
+        this.createUniqTaskTimer(3600, SendOnAdventureTask.name);
+        this.createUniqTaskTimer(1200, BalanceHeroResourcesTask.name);
+        this.createUniqTaskTimer(180, GrabVillageState.name);
+        this.createUniqTaskTimer(300, UpdateResourceContracts.name);
     }
 
-    private scheduleUniqTask(seconds: number, name: string, args: Args = {}) {
+    public createUniqTaskTimer(seconds: number, name: string, args: Args = {}) {
         const taskScheduler = () => {
-            if (!this.taskQueue.has(t => t.name === name)) {
-                this.scheduleTask(name, args, timestamp() + Math.min(seconds, 5 * 60));
-            }
+            this.scheduleUniqTask(name, args, timestamp() + Math.min(seconds, 5 * 60));
         };
         taskScheduler();
         setInterval(taskScheduler, seconds * 1000);
@@ -63,6 +66,13 @@ export class Scheduler {
         }
     }
 
+    scheduleUniqTask(name: string, args: Args, ts?: number | undefined): void {
+        let alreadyHasTask = this.taskQueue.has(t => t.name === name);
+        if (!alreadyHasTask) {
+            this.scheduleTask(name, args, ts);
+        }
+    }
+
     completeTask(id: TaskId) {
         this.taskQueue.remove(id);
         this.actionQueue.clear();
@@ -87,12 +97,28 @@ export class Scheduler {
         );
     }
 
+    updateResources(taskId: TaskId, resources: Resources): void {
+        this.taskQueue.modify(
+            t => t.id === taskId,
+            t => withResources(t, resources)
+        );
+    }
+
     scheduleActions(actions: Array<Command>): void {
         this.actionQueue.assign(actions);
     }
 
     clearActions() {
         this.actionQueue.clear();
+    }
+
+    getVillageRequiredResources(villageId): ResourcesInterface | undefined {
+        const tasks = this.taskQueue.seeItems().filter(t => isBuildingTask(t.name) && sameVillage(villageId, t.args));
+        const first = tasks.shift();
+        if (first && first.args.resources) {
+            return first.args.resources;
+        }
+        return undefined;
     }
 }
 
@@ -104,8 +130,12 @@ function sameVillage(villageId: number | undefined, args: Args) {
     return villageId !== undefined && args.villageId === villageId;
 }
 
-export function withTime(task: Task, ts: number): Task {
+function withTime(task: Task, ts: number): Task {
     return new Task(task.id, ts, task.name, task.args);
+}
+
+function withResources(task: Task, resources: ResourcesInterface): Task {
+    return new Task(task.id, task.ts, task.name, { ...task.args, resources });
 }
 
 function calculateTimeToPushAfter(tasks: TaskList, predicate: (t: Task) => boolean, ts: number | undefined): number {

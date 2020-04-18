@@ -1,4 +1,5 @@
 import { ResourcesInterface } from './Game';
+import { TaskId } from './Storage/TaskQueue';
 
 export interface Args {
     villageId?: number;
@@ -6,6 +7,7 @@ export interface Args {
     categoryId?: number;
     buildTypeId?: number;
     resources?: ResourcesInterface;
+    taskId?: TaskId;
     [name: string]: any;
 }
 

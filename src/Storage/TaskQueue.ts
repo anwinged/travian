@@ -107,7 +107,7 @@ export class TaskQueue {
     }
 
     private flushItems(items: TaskList): void {
-        const normalized = items.sort((x, y) => x.ts - y.ts);
+        const normalized = items.sort((x, y) => x.ts - y.ts || x.id.localeCompare(y.id));
         this.storage.set(QUEUE_NAME, normalized);
     }
 }

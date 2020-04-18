@@ -72,6 +72,7 @@ export class ControlPanel {
                     const storage = state.getResourceStorage();
                     const performance = state.getResourcesPerformance();
                     const buildQueueInfo = state.getBuildingQueueInfo();
+                    const requiredResources = scheduler.getVillageRequiredResources(village.id);
                     return {
                         id: village.id,
                         name: village.name,
@@ -85,6 +86,10 @@ export class ControlPanel {
                         clay_hour: performance.clay,
                         iron_hour: performance.iron,
                         crop_hour: performance.crop,
+                        lumber_need: requiredResources && requiredResources.lumber,
+                        clay_need: requiredResources && requiredResources.clay,
+                        iron_need: requiredResources && requiredResources.iron,
+                        crop_need: requiredResources && requiredResources.crop,
                         warehouse: storage.warehouse,
                         granary: storage.granary,
                         buildRemainingSeconds: buildQueueInfo.seconds,
