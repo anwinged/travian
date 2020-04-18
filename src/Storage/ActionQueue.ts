@@ -1,64 +1,57 @@
 import { Command } from '../Common';
 import { ConsoleLogger, Logger } from '../Logger';
+import { DataStorage } from './DataStorage';
 
-const QUEUE_NAME = 'action_queue:v2';
+const NAMESPACE = 'actions.v1';
+const QUEUE_NAME = 'queue';
 
-class State {
-    items: Array<Command>;
-    constructor(items: Array<Command>) {
-        this.items = items;
-    }
-
-    pop(): Command | undefined {
-        return this.items.shift();
-    }
-
-    push(cmd: Command) {
-        this.items.push(cmd);
-    }
-}
+export type ActionList = Array<Command>;
 
 export class ActionQueue {
+    private storage: DataStorage;
     private readonly logger: Logger;
 
     constructor() {
+        this.storage = new DataStorage(NAMESPACE);
         this.logger = new ConsoleLogger(this.constructor.name);
     }
 
     pop(): Command | undefined {
-        const state = this.getState();
-        const first = state.pop();
-        this.flushState(state);
+        const commands = this.getCommands();
+        const first = commands.shift();
+        this.flushState(commands);
         return first;
     }
 
     push(cmd: Command): void {
-        const state = this.getState();
-        state.push(cmd);
-        this.flushState(state);
+        const commands = this.getCommands();
+        commands.push(cmd);
+        this.flushState(commands);
     }
 
-    assign(items: Array<Command>): void {
-        this.flushState(new State(items));
+    assign(commands: ActionList): void {
+        this.flushState(commands);
     }
 
     clear(): void {
-        this.flushState(new State([]));
+        this.flushState([]);
     }
 
-    private getState(): State {
-        const serialized = localStorage.getItem(QUEUE_NAME);
-        if (serialized === null) {
-            return new State([]);
+    private getCommands(): ActionList {
+        const serialized = this.storage.get(QUEUE_NAME);
+        if (!Array.isArray(serialized)) {
+            return [];
         }
 
-        let parsed = JSON.parse(serialized) as State;
-        this.logger.log('STATE', parsed);
+        const items = serialized as Array<{ [key: string]: any }>;
 
-        return new State(parsed.items);
+        return items.map(i => {
+            const command = new Command('', {});
+            return Object.assign(command, i);
+        });
     }
 
-    private flushState(state: State): void {
-        localStorage.setItem(QUEUE_NAME, JSON.stringify(state));
+    private flushState(commands: ActionList): void {
+        this.storage.set(QUEUE_NAME, commands);
     }
 }

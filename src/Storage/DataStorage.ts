@@ -18,9 +18,9 @@ export class DataStorage {
 
     get(key: string): any {
         const fullKey = join(NAMESPACE, this.name, key);
-        this.logger.log('GET', key);
         try {
             const serialized = localStorage.getItem(fullKey);
+            this.logger.log('GET', fullKey, serialized);
             return JSON.parse(serialized || '"null"');
         } catch (e) {
             if (e instanceof SyntaxError) {

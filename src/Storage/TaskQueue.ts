@@ -1,8 +1,10 @@
 import { Args } from '../Common';
 import { uniqId } from '../utils';
 import { ConsoleLogger, Logger } from '../Logger';
+import { DataStorage } from './DataStorage';
 
-const QUEUE_NAME = 'task_queue:v4';
+const NAMESPACE = 'tasks:v1';
+const QUEUE_NAME = 'queue';
 
 export type TaskId = string;
 
@@ -31,8 +33,10 @@ export type TaskList = Array<Task>;
 
 export class TaskQueue {
     private readonly logger: Logger;
+    private storage: DataStorage;
 
     constructor() {
+        this.storage = new DataStorage(NAMESPACE);
         this.logger = new ConsoleLogger(this.constructor.name);
     }
 
@@ -111,17 +115,21 @@ export class TaskQueue {
     }
 
     private getItems(): TaskList {
-        const serialized = localStorage.getItem(QUEUE_NAME);
-        const storedItems = serialized !== null ? (JSON.parse(serialized) as Array<{ [key: string]: any }>) : [];
-        const items: TaskList = [];
-        storedItems.forEach(obj => {
-            items.push(new Task(obj.id || uniqId(), +obj.ts, obj.name, obj.args));
+        const serialized = this.storage.get(QUEUE_NAME);
+        if (!Array.isArray(serialized)) {
+            return [];
+        }
+
+        const storedItems = serialized as Array<{ [key: string]: any }>;
+
+        return storedItems.map(i => {
+            const task = new Task(uniqId(), 0, '', {});
+            return Object.assign(task, i);
         });
-        return items;
     }
 
     private flushItems(items: TaskList): void {
         const normalized = items.sort((x, y) => x.ts - y.ts);
-        localStorage.setItem(QUEUE_NAME, JSON.stringify(normalized));
+        this.storage.set(QUEUE_NAME, normalized);
     }
 }

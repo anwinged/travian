@@ -19,6 +19,8 @@ export class Scheduler {
         this.actionQueue = new ActionQueue();
         this.logger = new ConsoleLogger(this.constructor.name);
 
+        // this.taskQueue.push(GrabVillageState.name, {}, timestamp());
+
         this.scheduleUniqTask(3600, SendOnAdventureTask.name);
         this.scheduleUniqTask(1200, BalanceHeroResourcesTask.name);
         this.scheduleUniqTask(180, GrabVillageState.name);
