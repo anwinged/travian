@@ -50,6 +50,15 @@ export class TaskQueue {
         return task;
     }
 
+    insertAfterLast(predicate: (t: Task) => boolean, name: string, args: Args, ts: number): Task {
+        const id = uniqTaskId();
+        const task = new Task(id, ts, name, args);
+        this.logger.log('INSERT AFTER TASK', id, ts, name, args);
+        const items = insertTaskAfter(task, this.getItems(), predicate);
+        this.flushItems(items);
+        return task;
+    }
+
     get(ts: number): Task | undefined {
         const readyItems = this.getItems().filter(t => t.ts <= ts);
         if (readyItems.length === 0) {
@@ -132,4 +141,28 @@ export class TaskQueue {
         const normalized = items.sort((x, y) => x.ts - y.ts);
         this.storage.set(QUEUE_NAME, normalized);
     }
+}
+
+function insertTaskAfter(task: Task, tasks: TaskList, predicate: (t: Task) => boolean): TaskList {
+    const queuedTaskIndex = findLastIndex(tasks, predicate);
+    if (queuedTaskIndex === undefined) {
+        tasks.push(task);
+        return tasks;
+    }
+    const queuedTask = tasks[queuedTaskIndex];
+    let insertedTask = task.withTime(Math.max(task.ts, queuedTask.ts + 1));
+    tasks.splice(queuedTaskIndex, 0, insertedTask);
+    return tasks;
+}
+
+function findLastIndex(tasks: TaskList, predicate: (t: Task) => boolean): number | undefined {
+    const count = tasks.length;
+    const indexInReversed = tasks
+        .slice()
+        .reverse()
+        .findIndex(predicate);
+    if (indexInReversed < 0) {
+        return undefined;
+    }
+    return count - 1 - indexInReversed;
 }

@@ -47,7 +47,7 @@ function grabVillageInfo($el): Village {
 export function grabResourcesPerformance(): Resources {
     const $el = jQuery('#production');
     if ($el.length !== 1) {
-        throw new GrabError();
+        throw new GrabError('No production element');
     }
 
     const $nums = $el.find('td.num');
@@ -63,7 +63,7 @@ export function grabResourcesPerformance(): Resources {
 export function grabBuildingQueueInfo(): BuildingQueueInfo {
     const timer = jQuery('.buildDuration .timer');
     if (timer.length !== 1) {
-        throw new GrabError();
+        throw new GrabError('No building queue timer element');
     }
 
     const remainingSeconds = getNumber(timer.attr('value'));

@@ -6,6 +6,7 @@ import { clickUpgradeButton } from '../Page/BuildingPage';
 import { grabResourceDeposits } from '../Page/SlotBlock';
 import { UpgradeBuildingTask } from '../Task/UpgradeBuildingTask';
 import { ResourceDeposit } from '../Game';
+import { aroundMinutes } from '../utils';
 
 @registerAction
 export class UpgradeResourceToLevel extends ActionController {
@@ -35,19 +36,16 @@ export class UpgradeResourceToLevel extends ActionController {
                     task.args.buildId === dep.buildId
             );
 
-        const available = deposits
-            .sort((x, y) => x.level - y.level)
-            .filter(dep => dep.ready)
-            .filter(isDepositTaskNotInQueue);
+        const notUpgraded = deposits.sort((x, y) => x.level - y.level).filter(isDepositTaskNotInQueue);
 
-        if (available.length === 0) {
-            throw new TryLaterError(task.id, 10 * 60, 'No available deposits');
+        if (notUpgraded.length === 0) {
+            throw new TryLaterError(task.id, aroundMinutes(10), 'No available deposits');
         }
 
-        const targetDep = available[0];
+        for (let dep of notUpgraded) {
+            this.scheduler.scheduleTask(UpgradeBuildingTask.name, { villageId, buildId: dep.buildId });
+        }
 
-        this.scheduler.scheduleTask(UpgradeBuildingTask.name, { villageId, buildId: targetDep.buildId });
-
-        throw new TryLaterError(task.id, 20 * 60, 'Sleep for next round');
+        throw new TryLaterError(task.id, aroundMinutes(10), 'Sleep for next round');
     }
 }

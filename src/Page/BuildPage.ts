@@ -4,7 +4,7 @@ import { Scheduler } from '../Scheduler';
 import { TrainTroopTask } from '../Task/TrainTroopTask';
 import { grabActiveVillageId } from './VillageBlock';
 import { ConsoleLogger, Logger } from '../Logger';
-import { createBuildButton, createUpgradeButton } from './BuildingPage';
+import { createBuildButton, createUpgradeButton, grabContractResources } from './BuildingPage';
 import { BuildBuildingTask } from '../Task/BuildBuildingTask';
 
 const QUARTERS_ID = 19;
@@ -38,14 +38,16 @@ export class BuildPage {
         const buildId = this.buildId;
         const categoryId = this.categoryId;
         const villageId = grabActiveVillageId();
-        this.scheduler.scheduleTask(BuildBuildingTask.name, { villageId, buildId, categoryId, buildTypeId });
+        const resources = grabContractResources();
+        this.scheduler.scheduleTask(BuildBuildingTask.name, { villageId, buildId, categoryId, buildTypeId, resources });
         notify(`Building ${buildId} scheduled`);
     }
 
     private onScheduleUpgradeBuilding() {
         const buildId = this.buildId;
         const villageId = grabActiveVillageId();
-        this.scheduler.scheduleTask(UpgradeBuildingTask.name, { villageId, buildId });
+        const resources = grabContractResources();
+        this.scheduler.scheduleTask(UpgradeBuildingTask.name, { villageId, buildId, resources });
         notify(`Upgrading ${buildId} scheduled`);
     }
 

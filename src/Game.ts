@@ -23,7 +23,14 @@ export function numberToResourceType(typeAsNumber: number): ResourceType {
 
 export type ResourceList = Array<{ num: number; type: ResourceType; value: number }>;
 
-export class Resources {
+export interface ResourcesInterface {
+    lumber: number;
+    clay: number;
+    iron: number;
+    crop: number;
+}
+
+export class Resources implements ResourcesInterface {
     readonly lumber: number;
     readonly clay: number;
     readonly iron: number;

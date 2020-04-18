@@ -22,6 +22,12 @@ export async function sleepLong() {
     return await sleep(ms);
 }
 
+export function aroundMinutes(minutes: number) {
+    const seconds = minutes * 60;
+    const delta = Math.floor(seconds * 0.9);
+    return seconds - delta + Math.floor(Math.random() * 2 * delta);
+}
+
 export async function waitForLoad() {
     return new Promise(resolve => jQuery(resolve));
 }

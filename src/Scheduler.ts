@@ -1,6 +1,6 @@
 import { timestamp } from './utils';
 import { UpgradeBuildingTask } from './Task/UpgradeBuildingTask';
-import { TaskId, TaskList, TaskQueue } from './Storage/TaskQueue';
+import { Task, TaskId, TaskList, TaskQueue } from './Storage/TaskQueue';
 import { Args, Command } from './Common';
 import { SendOnAdventureTask } from './Task/SendOnAdventureTask';
 import { BalanceHeroResourcesTask } from './Task/BalanceHeroResourcesTask';
@@ -50,7 +50,17 @@ export class Scheduler {
 
     scheduleTask(name: string, args: Args): void {
         this.logger.log('PUSH TASK', name, args);
-        this.taskQueue.push(name, args, timestamp());
+        const villageId = args.villageId;
+        if (isBuildingTask(name)) {
+            this.taskQueue.insertAfterLast(
+                t => isBuildingTask(t.name) && sameVillage(villageId, t.args),
+                name,
+                args,
+                timestamp()
+            );
+        } else {
+            this.taskQueue.push(name, args, timestamp());
+        }
     }
 
     completeTask(id: TaskId) {
@@ -69,11 +79,7 @@ export class Scheduler {
 
     postponeBuildingsInVillage(villageId: number, seconds: number) {
         this.taskQueue.modify(
-            t => t.name === BuildBuildingTask.name && t.args.villageId === villageId,
-            t => t.withTime(timestamp() + seconds)
-        );
-        this.taskQueue.modify(
-            t => t.name === UpgradeBuildingTask.name && t.args.villageId === villageId,
+            t => isBuildingTask(t.name) && sameVillage(villageId, t.args),
             t => t.withTime(timestamp() + seconds)
         );
     }
@@ -85,4 +91,12 @@ export class Scheduler {
     clearActions() {
         this.actionQueue.clear();
     }
+}
+
+function isBuildingTask(taskName: string) {
+    return taskName === BuildBuildingTask.name || taskName === UpgradeBuildingTask.name;
+}
+
+function sameVillage(villageId: number | undefined, args: Args) {
+    return villageId !== undefined && args.villageId === villageId;
 }

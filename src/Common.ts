@@ -1,8 +1,11 @@
+import { ResourcesInterface } from './Game';
+
 export interface Args {
     villageId?: number;
     buildId?: number;
     categoryId?: number;
     buildTypeId?: number;
+    resources?: ResourcesInterface;
     [name: string]: any;
 }
 
