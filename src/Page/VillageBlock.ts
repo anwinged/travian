@@ -1,7 +1,6 @@
 import { Coordinates, Resources, Village, VillageList } from '../Game';
 import { GrabError } from '../Errors';
-import * as URLParse from 'url-parse';
-import { getNumber } from '../utils';
+import { getNumber, parseLocation } from '../utils';
 
 function getVillageListItems() {
     const $elements = jQuery('#sidebarBoxVillagelist ul li a');
@@ -36,7 +35,7 @@ export function grabActiveVillageId(): number {
 
 function grabVillageInfo($el): Village {
     const href = $el.attr('href');
-    const parsedHref = new URLParse(href || '', true);
+    const parsedHref = parseLocation(href || '');
     const id = getNumber(parsedHref.query.newdid);
     const name = $el.find('.name').text();
     const active = $el.hasClass('active');

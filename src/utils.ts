@@ -1,3 +1,5 @@
+import * as URLParse from 'url-parse';
+
 export function sleep(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -86,6 +88,10 @@ export function toNumber(value: any): number | undefined {
 export function getNumber(value: any, def: number = 0): number {
     const converted = toNumber(value);
     return converted === undefined ? def : converted;
+}
+
+export function parseLocation(location?: string | undefined) {
+    return new URLParse(location || window.location.href, true);
 }
 
 export function path(p: string, query: { [key: string]: string | number | undefined } = {}) {

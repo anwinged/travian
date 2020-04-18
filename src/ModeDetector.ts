@@ -1,4 +1,4 @@
-import * as URLParse from 'url-parse';
+import { parseLocation } from './utils';
 
 const SESSION_KEY = 'travian_automation_mode';
 const SESSION_VALUE = 'command_execution';
@@ -14,7 +14,7 @@ export class ModeDetector {
     }
 
     private isAutoByLocation(): boolean {
-        const p = new URLParse(window.location.href, true);
+        const p = parseLocation();
         return p.query[MODE_PARAMETER_NAME] !== undefined;
     }
 

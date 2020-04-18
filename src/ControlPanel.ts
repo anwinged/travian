@@ -1,5 +1,4 @@
-import * as URLParse from 'url-parse';
-import { getNumber, uniqId, waitForLoad } from './utils';
+import { getNumber, parseLocation, uniqId, waitForLoad } from './utils';
 import { Scheduler } from './Scheduler';
 import { BuildPage } from './Page/BuildPage';
 import { UpgradeBuildingTask } from './Task/UpgradeBuildingTask';
@@ -38,12 +37,13 @@ export class ControlPanel {
     async run() {
         await waitForLoad();
 
-        const p = new URLParse(window.location.href, true);
+        const p = parseLocation();
         this.logger.log('PARSED LOCATION', p);
 
         const villageId = grabActiveVillageId();
 
         this.grabbers.grab();
+        setInterval(() => this.grabbers.grab(), 2000);
 
         const scheduler = this.scheduler;
         const quickActions: QuickAction[] = [];
