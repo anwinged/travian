@@ -4,13 +4,13 @@
     <div class="container">
       <table class="task-table">
         <tr v-for="task in shared.taskList" class="task-item" :class="{ 'this-village': isThisVillageTask(task) }">
-          <td :title="formatDate(task.ts)">{{ formatDate(task.ts) }}</td>
-          <td :title="task.id">{{ task.id }}</td>
-          <td>
+          <td class="time-column" :title="formatDate(task.ts)">{{ formatDate(task.ts) }}</td>
+          <td class="id-column" :title="task.id">{{ task.id }}</td>
+          <td class="actions-column">
             <a href="#" title="Remove task" class="remove-action" v-on:click.prevent="onRemove(task.id)">&times;</a>
           </td>
-          <td :title="task.name">{{ task.name }}</td>
-          <td :title="JSON.stringify(task.args)">{{ JSON.stringify(task.args) }}</td>
+          <td class="name-column" :title="task.name">{{ task.name }}</td>
+          <td class="args-column" :title="JSON.stringify(task.args)">{{ JSON.stringify(task.args) }}</td>
         </tr>
       </table>
     </div>
@@ -66,8 +66,8 @@ export default {
 }
 .task-item > td {
   border-top: 1px solid #ddd;
+  border-left: 1px solid #ddd;
   padding: 2px 4px;
-  max-width: 25%;
 }
 .this-village {
   color: blue;
@@ -75,5 +75,24 @@ export default {
 .remove-action {
   font-weight: bold;
   color: red;
+}
+.time-column,
+.actions-column {
+  max-width: 25%;
+}
+.id-column {
+  max-width: 80px;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+}
+.name-column {
+  max-width: 80px;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+}
+.args-column {
+  white-space: nowrap;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
 }
 </style>

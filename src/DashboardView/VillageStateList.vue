@@ -51,11 +51,11 @@
             <td></td>
           </tr>
           <tr class="required-line">
-            <td class="right">Необх:</td>
-            <td class="right" v-text="village.lumber_need - village.lumber || ''"></td>
-            <td class="right" v-text="village.clay_need - village.clay || ''"></td>
-            <td class="right" v-text="village.iron_need - village.iron || ''"></td>
-            <td class="right" v-text="village.crop_need - village.crop || ''"></td>
+            <td class="right">Профицит:</td>
+            <td class="right" v-text="village.lumber - village.lumber_need || ''"></td>
+            <td class="right" v-text="village.clay - village.clay_need || ''"></td>
+            <td class="right" v-text="village.iron - village.iron_need || ''"></td>
+            <td class="right" v-text="village.crop - village.crop_need || ''"></td>
             <td></td>
             <td></td>
           </tr>

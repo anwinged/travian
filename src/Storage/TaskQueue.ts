@@ -8,8 +8,17 @@ const QUEUE_NAME = 'queue';
 
 export type TaskId = string;
 
+let idSequence = 1;
+let lastTimestamp = null;
+
 function uniqTaskId(): TaskId {
-    return uniqId();
+    const ts = Math.floor(Date.now() / 1000);
+    if (ts === lastTimestamp) {
+        ++idSequence;
+    } else {
+        idSequence = 1;
+    }
+    return 'tid.' + ts + '.' + String(idSequence).padStart(4, '0') + '.' + uniqId('');
 }
 
 export class Task {

@@ -44,8 +44,8 @@ function generateId(count: number): string {
     return str;
 }
 
-export function uniqId(): string {
-    return 'id' + generateId(6);
+export function uniqId(prefix: string = 'id'): string {
+    return prefix + generateId(6);
 }
 
 export function timestamp(): number {

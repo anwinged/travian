@@ -37,7 +37,7 @@ export class TryLaterError extends Error {
     }
 }
 
-export class BuildingQueueFullError extends Error {
+export class PostponeAllBuildingsError extends Error {
     readonly seconds: number;
     readonly villageId: number;
     readonly taskId: TaskId;
@@ -47,6 +47,6 @@ export class BuildingQueueFullError extends Error {
         this.villageId = villageId;
         this.taskId = taskId;
         this.seconds = seconds;
-        Object.setPrototypeOf(this, BuildingQueueFullError.prototype);
+        Object.setPrototypeOf(this, PostponeAllBuildingsError.prototype);
     }
 }

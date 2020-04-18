@@ -1,5 +1,5 @@
 import { markPage, sleepMicro, timestamp, waitForLoad } from './utils';
-import { AbortTaskError, ActionError, BuildingQueueFullError, TryLaterError } from './Errors';
+import { AbortTaskError, ActionError, PostponeAllBuildingsError, TryLaterError } from './Errors';
 import { Task } from './Storage/TaskQueue';
 import { Command } from './Common';
 import { TaskQueueRenderer } from './TaskQueueRenderer';
@@ -108,7 +108,7 @@ export class Executor {
             return;
         }
 
-        if (err instanceof BuildingQueueFullError) {
+        if (err instanceof PostponeAllBuildingsError) {
             this.logger.warn('BUILDING QUEUE FULL, TRY ALL AFTER', err.seconds);
             this.scheduler.postponeBuildingsInVillage(err.villageId, err.seconds);
             return;
