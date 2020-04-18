@@ -3,7 +3,7 @@ import { UpgradeBuildingTask } from '../Task/UpgradeBuildingTask';
 import { Scheduler } from '../Scheduler';
 import { TrainTroopTask } from '../Task/TrainTroopTask';
 import { grabActiveVillageId } from './VillageBlock';
-import { Logger } from '../Logger';
+import { ConsoleLogger, Logger } from '../Logger';
 import { createBuildButton, createUpgradeButton } from './BuildingPage';
 import { BuildBuildingTask } from '../Task/BuildBuildingTask';
 
@@ -19,7 +19,7 @@ export class BuildPage {
         this.scheduler = scheduler;
         this.buildId = buildId;
         this.categoryId = categoryId;
-        this.logger = new Logger(this.constructor.name);
+        this.logger = new ConsoleLogger(this.constructor.name);
     }
 
     run() {

@@ -13,7 +13,7 @@ import {
 import Vue from 'vue';
 import DashboardApp from './Components/DashboardApp.vue';
 import { ResourcesToLevel } from '../Task/ResourcesToLevel';
-import { Logger } from '../Logger';
+import { ConsoleLogger, Logger } from '../Logger';
 import { VillageState } from '../State/VillageState';
 import { StateGrabberManager } from '../State/StateGrabberManager';
 
@@ -25,14 +25,14 @@ interface QuickAction {
 export class Dashboard {
     private readonly version: string;
     private scheduler: Scheduler;
-    private readonly logger;
     private grabbers: StateGrabberManager;
+    private readonly logger: Logger;
 
     constructor(version: string, scheduler: Scheduler) {
         this.version = version;
         this.scheduler = scheduler;
         this.grabbers = new StateGrabberManager();
-        this.logger = new Logger(this.constructor.name);
+        this.logger = new ConsoleLogger(this.constructor.name);
     }
 
     async run() {

@@ -1,5 +1,5 @@
 import { Command } from '../Common';
-import { Logger } from '../Logger';
+import { ConsoleLogger, Logger } from '../Logger';
 
 const QUEUE_NAME = 'action_queue:v2';
 
@@ -22,7 +22,7 @@ export class ActionQueue {
     private readonly logger;
 
     constructor() {
-        this.logger = new Logger(this.constructor.name);
+        this.logger = new ConsoleLogger(this.constructor.name);
     }
 
     pop(): Command | undefined {

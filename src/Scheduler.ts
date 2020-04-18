@@ -9,7 +9,7 @@ import { createAction } from './Action/ActionController';
 import { createTask } from './Task/TaskController';
 import { SendOnAdventureTask } from './Task/SendOnAdventureTask';
 import { BalanceHeroResourcesTask } from './Task/BalanceHeroResourcesTask';
-import { Logger } from './Logger';
+import { ConsoleLogger, Logger } from './Logger';
 import { BuildBuildingTask } from './Task/BuildBuildingTask';
 import { GrabVillageState } from './Task/GrabVillageState';
 import { StateGrabberManager } from './State/StateGrabberManager';
@@ -26,7 +26,7 @@ export class Scheduler {
         this.taskQueue = new TaskQueue();
         this.actionQueue = new ActionQueue();
         this.grabbers = new StateGrabberManager();
-        this.logger = new Logger(this.constructor.name);
+        this.logger = new ConsoleLogger(this.constructor.name);
     }
 
     async run() {

@@ -1,6 +1,6 @@
 import { Args } from '../Common';
 import { uniqId } from '../utils';
-import { Logger } from '../Logger';
+import { ConsoleLogger, Logger } from '../Logger';
 
 const QUEUE_NAME = 'task_queue:v4';
 
@@ -30,10 +30,10 @@ export class Task {
 export type TaskList = Array<Task>;
 
 export class TaskQueue {
-    private readonly logger;
+    private readonly logger: Logger;
 
     constructor() {
-        this.logger = new Logger(this.constructor.name);
+        this.logger = new ConsoleLogger(this.constructor.name);
     }
 
     push(name: string, args: Args, ts: number): Task {

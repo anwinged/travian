@@ -1,4 +1,4 @@
-import { Logger } from '../Logger';
+import { ConsoleLogger, Logger, NullLogger } from '../Logger';
 
 const NAMESPACE = 'travian:v1';
 
@@ -7,12 +7,13 @@ function join(...parts: Array<string>) {
 }
 
 export class DataStorage {
-    private readonly logger;
+    private readonly logger: Logger;
     private readonly name: string;
 
     constructor(name: string) {
         this.name = name;
-        this.logger = new Logger(this.constructor.name);
+        // this.logger = new ConsoleLogger(this.constructor.name);
+        this.logger = new NullLogger();
     }
 
     get(key: string): any {
