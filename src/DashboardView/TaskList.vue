@@ -1,8 +1,11 @@
 <template>
   <section class="task-list">
     <p class="summary">
-      Task count: {{ shared.taskList.length }}
-      <template v-if="actionCount">, actions left {{ actionCount }}</template>
+      Task count: {{ shared.taskList.length
+      }}<!--
+      --><template v-if="actionCount">, actions left {{ actionCount }}</template
+      ><!--
+      --><template v-if="currentAction">, {{ currentAction.name }}</template>
     </p>
     <div class="container">
       <table class="task-table">
@@ -33,6 +36,9 @@ export default {
   computed: {
     actionCount() {
       return this.shared.actionList.length;
+    },
+    currentAction() {
+      return this.shared.actionList.find(() => true);
     },
   },
   methods: {
