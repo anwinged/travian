@@ -34,7 +34,9 @@ export class Task {
     }
 }
 
-export type TaskList = Array<Task>;
+type TaskList = Array<Task>;
+
+export type ImmutableTaskList = ReadonlyArray<Task>;
 
 export class TaskQueue {
     private readonly logger: Logger;
@@ -79,7 +81,7 @@ export class TaskQueue {
         this.flushItems(items);
     }
 
-    seeItems(): TaskList {
+    seeItems(): ImmutableTaskList {
         return this.getItems();
     }
 

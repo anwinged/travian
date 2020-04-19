@@ -1,13 +1,13 @@
 import { timestamp } from './utils';
 import { UpgradeBuildingTask } from './Task/UpgradeBuildingTask';
-import { Task, TaskId, TaskList, TaskQueue } from './Queue/TaskQueue';
+import { ImmutableTaskList, Task, TaskId, TaskQueue } from './Queue/TaskQueue';
 import { Args, Command } from './Command';
 import { SendOnAdventureTask } from './Task/SendOnAdventureTask';
 import { BalanceHeroResourcesTask } from './Task/BalanceHeroResourcesTask';
 import { ConsoleLogger, Logger } from './Logger';
 import { BuildBuildingTask } from './Task/BuildBuildingTask';
 import { GrabVillageState } from './Task/GrabVillageState';
-import { ActionList, ActionQueue } from './Queue/ActionQueue';
+import { ActionQueue, ImmutableActionList } from './Queue/ActionQueue';
 import { Resources, ResourcesInterface } from './Game';
 import { UpdateResourceContracts } from './Task/UpdateResourceContracts';
 import { TrainTroopTask } from './Task/TrainTroopTask';
@@ -40,11 +40,11 @@ export class Scheduler {
         setInterval(taskScheduler, seconds * 1000);
     }
 
-    getTaskItems(): TaskList {
+    getTaskItems(): ImmutableTaskList {
         return this.taskQueue.seeItems();
     }
 
-    getActionItems(): ActionList {
+    getActionItems(): ImmutableActionList {
         return this.actionQueue.seeItems();
     }
 
@@ -161,11 +161,11 @@ function withResources(task: Task, resources: ResourcesInterface): Task {
     return new Task(task.id, task.ts, task.name, { ...task.args, resources });
 }
 
-function firstTaskTime(tasks: TaskList, predicate: (t: Task) => boolean): number | undefined {
+function firstTaskTime(tasks: ImmutableTaskList, predicate: (t: Task) => boolean): number | undefined {
     return tasks.find(predicate)?.ts;
 }
 
-function lastTaskTime(tasks: TaskList, predicate: (t: Task) => boolean): number | undefined {
+function lastTaskTime(tasks: ImmutableTaskList, predicate: (t: Task) => boolean): number | undefined {
     const queuedTaskIndex = findLastIndex(tasks, predicate);
     if (queuedTaskIndex === undefined) {
         return undefined;
@@ -173,7 +173,7 @@ function lastTaskTime(tasks: TaskList, predicate: (t: Task) => boolean): number 
     return tasks[queuedTaskIndex].ts;
 }
 
-function findLastIndex(tasks: TaskList, predicate: (t: Task) => boolean): number | undefined {
+function findLastIndex(tasks: ImmutableTaskList, predicate: (t: Task) => boolean): number | undefined {
     const count = tasks.length;
     const indexInReversed = tasks
         .slice()

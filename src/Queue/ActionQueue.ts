@@ -5,7 +5,9 @@ import { DataStorage } from '../DataStorage';
 const NAMESPACE = 'actions.v1';
 const QUEUE_NAME = 'queue';
 
-export type ActionList = Array<Command>;
+type ActionList = Array<Command>;
+
+export type ImmutableActionList = ReadonlyArray<Command>;
 
 export class ActionQueue {
     private storage: DataStorage;
@@ -37,7 +39,7 @@ export class ActionQueue {
         this.flushState([]);
     }
 
-    seeItems(): ActionList {
+    seeItems(): ImmutableActionList {
         return this.getCommands();
     }
 

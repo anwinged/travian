@@ -1,4 +1,4 @@
-import { TaskList } from './Queue/TaskQueue';
+import { ImmutableTaskList } from './Queue/TaskQueue';
 import { uniqId } from './utils';
 import * as dateFormat from 'dateformat';
 
@@ -10,7 +10,7 @@ function formatDate(ts: number) {
 }
 
 export class TaskQueueRenderer {
-    render(tasks: TaskList) {
+    render(tasks: ImmutableTaskList) {
         const ul = jQuery('<ul></ul>')
             .attr({ id: ID })
             .css({
