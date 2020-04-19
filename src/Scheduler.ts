@@ -58,8 +58,17 @@ export class Scheduler {
 
     scheduleTask(name: string, args: Args, ts?: number | undefined): void {
         this.logger.log('PUSH TASK', name, args, ts);
-        this.taskQueue.push(name, args, ts || timestamp());
         const villageId = args.villageId;
+        let insertedTs = ts;
+        if (villageId && !insertedTs) {
+            const tasks = this.taskQueue.seeItems();
+            const sameNamePred = t => sameVillage(villageId, t.args) && t.name === name;
+            insertedTs = lastTaskTime(tasks, sameNamePred);
+            if (insertedTs) {
+                insertedTs += 1;
+            }
+        }
+        this.taskQueue.push(name, args, insertedTs || timestamp());
         if (villageId) {
             this.reorderVillageTasks(villageId);
         }
