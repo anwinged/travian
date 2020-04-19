@@ -9,7 +9,7 @@ const QUEUE_NAME = 'queue';
 export type TaskId = string;
 
 let idSequence = 1;
-let lastTimestamp = null;
+let lastTimestamp: number | null = null;
 
 function uniqTaskId(): TaskId {
     const ts = Math.floor(Date.now() / 1000);
