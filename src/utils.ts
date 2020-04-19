@@ -5,20 +5,17 @@ export function sleep(ms: number) {
 }
 
 export async function sleepMicro() {
-    let ms = 1000 + Math.random() * 1000;
-    console.log('SLEEP SHORT', Math.round(ms / 1000));
+    let ms = 1000 + Math.random() * 2000;
     return await sleep(ms);
 }
 
 export async function sleepShort() {
     let ms = 3000 + Math.random() * 1000;
-    console.log('SLEEP SHORT', Math.round(ms / 1000));
     return await sleep(ms);
 }
 
 export async function sleepLong() {
     let ms = 120_000 + Math.random() * 300_000;
-    console.log('SLEEP LONG', Math.round(ms / 1000));
     return await sleep(ms);
 }
 

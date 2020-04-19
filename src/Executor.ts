@@ -36,7 +36,6 @@ export class Executor {
     }
 
     private renderTaskQueue() {
-        this.logger.log('RENDER TASK QUEUE');
         new TaskQueueRenderer().render(this.scheduler.getTaskItems());
     }
 
@@ -54,8 +53,7 @@ export class Executor {
 
         const actionCommand = this.scheduler.nextAction();
 
-        this.logger.log('CURRENT TASK', taskCommand);
-        this.logger.log('CURRENT ACTION', actionCommand);
+        this.logger.log('CURRENT JOB', 'TASK', taskCommand, 'ACTION', actionCommand);
 
         try {
             if (actionCommand) {
