@@ -35,6 +35,7 @@ export class Resources implements ResourcesInterface {
     readonly clay: number;
     readonly iron: number;
     readonly crop: number;
+
     constructor(lumber: number, clay: number, iron: number, crop: number) {
         this.lumber = lumber;
         this.clay = clay;
@@ -46,8 +47,8 @@ export class Resources implements ResourcesInterface {
         return new Resources(obj.lumber, obj.clay, obj.iron, obj.crop);
     }
 
-    static fromStorage(warehouse: number, granary: number): Resources {
-        return new Resources(warehouse, warehouse, warehouse, granary);
+    static fromStorage(storage: ResourceStorage): Resources {
+        return new Resources(storage.warehouse, storage.warehouse, storage.warehouse, storage.granary);
     }
 
     getByType(type: ResourceType): number {
@@ -75,7 +76,7 @@ export class Resources implements ResourcesInterface {
         return new Resources(this.lumber * n, this.clay * n, this.iron * n, this.crop * n);
     }
 
-    add(other: Resources): Resources {
+    add(other: ResourcesInterface): Resources {
         return new Resources(
             this.lumber + other.lumber,
             this.clay + other.clay,
@@ -84,7 +85,7 @@ export class Resources implements ResourcesInterface {
         );
     }
 
-    sub(other: Resources): Resources {
+    sub(other: ResourcesInterface): Resources {
         return new Resources(
             this.lumber - other.lumber,
             this.clay - other.clay,

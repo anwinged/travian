@@ -67,6 +67,23 @@
             <td></td>
             <td></td>
           </tr>
+          <tr class="required-line">
+            <td class="right"></td>
+            <td class="right">
+              <resource :value="village.lumber - village.lumber_total_need"></resource>
+            </td>
+            <td class="right">
+              <resource :value="village.clay - village.clay_total_need"></resource>
+            </td>
+            <td class="right">
+              <resource :value="village.iron - village.iron_total_need"></resource>
+            </td>
+            <td class="right">
+              <resource :value="village.crop - village.crop_total_need"></resource>
+            </td>
+            <td></td>
+            <td></td>
+          </tr>
           <tr class="performance-line">
             <td class="right" v-text="secondsToTime(village.buildRemainingSeconds)"></td>
             <td class="right">+{{ village.lumber_hour }}</td>

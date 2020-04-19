@@ -14,7 +14,6 @@ import DashboardApp from './DashboardView/Dashboard.vue';
 import { ResourcesToLevel } from './Task/ResourcesToLevel';
 import { ConsoleLogger, Logger } from './Logger';
 import { VillageState } from './State/VillageState';
-import { StateGrabberManager } from './Grabber/StateGrabberManager';
 
 interface QuickAction {
     label: string;
@@ -24,13 +23,11 @@ interface QuickAction {
 export class ControlPanel {
     private readonly version: string;
     private readonly scheduler: Scheduler;
-    private grabbers: StateGrabberManager;
     private readonly logger: Logger;
 
     constructor(version: string, scheduler: Scheduler) {
         this.version = version;
         this.scheduler = scheduler;
-        this.grabbers = new StateGrabberManager();
         this.logger = new ConsoleLogger(this.constructor.name);
     }
 
@@ -41,9 +38,6 @@ export class ControlPanel {
         this.logger.log('PARSED LOCATION', p);
 
         const villageId = grabActiveVillageId();
-
-        this.grabbers.grab();
-        setInterval(() => this.grabbers.grab(), 2000);
 
         const scheduler = this.scheduler;
         const quickActions: QuickAction[] = [];
@@ -75,6 +69,7 @@ export class ControlPanel {
                     const performance = state.getResourcesPerformance();
                     const buildQueueInfo = state.getBuildingQueueInfo();
                     const requiredResources = scheduler.getVillageRequiredResources(village.id);
+                    const totalRequiredResources = scheduler.getTotalVillageRequiredResources(village.id);
                     return {
                         id: village.id,
                         name: village.name,
@@ -92,6 +87,10 @@ export class ControlPanel {
                         clay_need: requiredResources && requiredResources.clay,
                         iron_need: requiredResources && requiredResources.iron,
                         crop_need: requiredResources && requiredResources.crop,
+                        lumber_total_need: totalRequiredResources.lumber,
+                        clay_total_need: totalRequiredResources.clay,
+                        iron_total_need: totalRequiredResources.iron,
+                        crop_total_need: totalRequiredResources.crop,
                         warehouse: storage.warehouse,
                         granary: storage.granary,
                         buildRemainingSeconds: buildQueueInfo.seconds,

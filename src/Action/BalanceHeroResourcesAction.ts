@@ -46,21 +46,11 @@ export class BalanceHeroResourcesAction extends ActionController {
         console.log('REQUIRED', requiredResources);
 
         if (requiredResources) {
-            return new Resources(
-                requiredResources.lumber - resources.lumber,
-                requiredResources.clay - resources.clay,
-                requiredResources.iron - resources.iron,
-                requiredResources.crop - resources.crop
-            );
+            return requiredResources.sub(resources);
         }
 
         const storage = grabResourceStorage();
 
-        return new Resources(
-            storage.warehouse - resources.lumber,
-            storage.warehouse - resources.clay,
-            storage.warehouse - resources.iron,
-            storage.granary - resources.crop
-        );
+        return Resources.fromStorage(storage).sub(resources);
     }
 }

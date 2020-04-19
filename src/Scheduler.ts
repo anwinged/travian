@@ -121,13 +121,18 @@ export class Scheduler {
         this.actionQueue.clear();
     }
 
-    getVillageRequiredResources(villageId): ResourcesInterface | undefined {
+    getVillageRequiredResources(villageId): Resources | undefined {
         const tasks = this.taskQueue.seeItems().filter(t => sameVillage(villageId, t.args) && t.args.resources);
         const first = tasks.shift();
         if (first && first.args.resources) {
-            return first.args.resources;
+            return Resources.fromObject(first.args.resources);
         }
         return undefined;
+    }
+
+    getTotalVillageRequiredResources(villageId): Resources {
+        const tasks = this.taskQueue.seeItems().filter(t => sameVillage(villageId, t.args) && t.args.resources);
+        return tasks.reduce((acc, t) => acc.add(t.args.resources!), new Resources(0, 0, 0, 0));
     }
 
     private reorderVillageTasks(villageId: number) {
