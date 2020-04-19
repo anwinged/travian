@@ -2,7 +2,6 @@ import { Args, Command } from '../Command';
 import { Task } from '../Queue/TaskQueue';
 import { TaskController, registerTask } from './TaskController';
 import { GoToPageAction } from '../Action/GoToPageAction';
-import { GrabHeroAttributesAction } from '../Action/GrabHeroAttributesAction';
 import { CompleteTaskAction } from '../Action/CompleteTaskAction';
 import { SendOnAdventureAction } from '../Action/SendOnAdventureAction';
 import { ClickButtonAction } from '../Action/ClickButtonAction';
@@ -17,7 +16,6 @@ export class SendOnAdventureTask extends TaskController {
                 ...args,
                 path: path('/hero.php'),
             }),
-            new Command(GrabHeroAttributesAction.name, args),
             new Command(GoToPageAction.name, {
                 ...args,
                 path: path('/hero.php', { t: 3 }),

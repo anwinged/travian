@@ -18,6 +18,7 @@ function uniqTaskId(): TaskId {
     } else {
         idSequence = 1;
     }
+    lastTimestamp = ts;
     return 'tid.' + ts + '.' + String(idSequence).padStart(4, '0') + '.' + uniqId('');
 }
 
