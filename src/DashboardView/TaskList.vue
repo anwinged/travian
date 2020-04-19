@@ -1,6 +1,9 @@
 <template>
   <section class="task-list">
-    <p class="summary">Task count: {{ shared.taskList.length }}</p>
+    <p class="summary">
+      Task count: {{ shared.taskList.length }}
+      <template v-if="actionCount">, actions left {{ actionCount }}</template>
+    </p>
     <div class="container">
       <table class="task-table">
         <tr v-for="task in shared.taskList" class="task-item" :class="{ 'this-village': isThisVillageTask(task) }">
@@ -26,6 +29,11 @@ export default {
       shared: this.$root.$data,
       activeVillage: this.$root.$data.activeVillage,
     };
+  },
+  computed: {
+    actionCount() {
+      return this.shared.actionList.length;
+    },
   },
   methods: {
     formatDate(ts) {

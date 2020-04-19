@@ -7,7 +7,7 @@ import { BalanceHeroResourcesTask } from './Task/BalanceHeroResourcesTask';
 import { ConsoleLogger, Logger } from './Logger';
 import { BuildBuildingTask } from './Task/BuildBuildingTask';
 import { GrabVillageState } from './Task/GrabVillageState';
-import { ActionQueue } from './Queue/ActionQueue';
+import { ActionList, ActionQueue } from './Queue/ActionQueue';
 import { Resources, ResourcesInterface } from './Game';
 import { UpdateResourceContracts } from './Task/UpdateResourceContracts';
 
@@ -41,6 +41,10 @@ export class Scheduler {
 
     getTaskItems(): TaskList {
         return this.taskQueue.seeItems();
+    }
+
+    getActionItems(): ActionList {
+        return this.actionQueue.seeItems();
     }
 
     nextTask(ts: number) {

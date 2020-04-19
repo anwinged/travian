@@ -37,6 +37,10 @@ export class ActionQueue {
         this.flushState([]);
     }
 
+    seeItems(): ActionList {
+        return this.getCommands();
+    }
+
     private getCommands(): ActionList {
         const serialized = this.storage.get(QUEUE_NAME);
         if (!Array.isArray(serialized)) {

@@ -54,10 +54,12 @@ export class ControlPanel {
             activeVillage: {},
             villages: [],
             taskList: [],
+            actionList: [],
             quickActions: quickActions,
 
             refreshTasks() {
                 this.taskList = scheduler.getTaskItems();
+                this.actionList = scheduler.getActionItems();
             },
 
             removeTask(taskId: string) {

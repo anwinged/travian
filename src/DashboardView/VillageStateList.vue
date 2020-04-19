@@ -51,11 +51,19 @@
             <td></td>
           </tr>
           <tr class="required-line">
-            <td class="right">Профицит:</td>
-            <td class="right" v-text="village.lumber - village.lumber_need || ''"></td>
-            <td class="right" v-text="village.clay - village.clay_need || ''"></td>
-            <td class="right" v-text="village.iron - village.iron_need || ''"></td>
-            <td class="right" v-text="village.crop - village.crop_need || ''"></td>
+            <td class="right">Баланс:</td>
+            <td class="right">
+              <resource :value="village.lumber - village.lumber_need"></resource>
+            </td>
+            <td class="right">
+              <resource :value="village.clay - village.clay_need"></resource>
+            </td>
+            <td class="right">
+              <resource :value="village.iron - village.iron_need"></resource>
+            </td>
+            <td class="right">
+              <resource :value="village.crop - village.crop_need"></resource>
+            </td>
             <td></td>
             <td></td>
           </tr>
@@ -90,8 +98,12 @@
 
 <script>
 import { path } from '../utils';
+import Resource from './Resource';
 
 export default {
+  components: {
+    resource: Resource,
+  },
   data() {
     return {
       shared: this.$root.$data,
