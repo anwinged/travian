@@ -1,8 +1,8 @@
 import { ActionController, registerAction } from './ActionController';
 import { Args } from '../Command';
 import { Task } from '../Queue/TaskQueue';
-import { PostponeAllBuildingsError, GrabError } from '../Errors';
-import { grabActiveVillageId, grabBuildingQueueInfo } from '../Page/VillageBlock';
+import { GrabError, TryLaterError } from '../Errors';
+import { grabBuildingQueueInfo } from '../Page/VillageBlock';
 import { BuildingQueueInfo } from '../Game';
 
 @registerAction
@@ -10,12 +10,7 @@ export class CheckBuildingRemainingTimeAction extends ActionController {
     async run(args: Args, task: Task): Promise<any> {
         const info = this.grabBuildingQueueInfoOrDefault();
         if (info.seconds > 0) {
-            throw new PostponeAllBuildingsError(
-                task.id,
-                grabActiveVillageId(),
-                info.seconds + 1,
-                'Building queue is full'
-            );
+            throw new TryLaterError(task.id, info.seconds + 1, 'Building queue is full');
         }
     }
 

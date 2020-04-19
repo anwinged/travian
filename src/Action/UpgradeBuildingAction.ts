@@ -1,22 +1,20 @@
 import { ActionController, registerAction } from './ActionController';
 import { Args } from '../Command';
-import { ActionError, GrabError, PostponeAllBuildingsError } from '../Errors';
+import { GrabError, TryLaterError } from '../Errors';
 import { Task } from '../Queue/TaskQueue';
 import { clickUpgradeButton } from '../Page/BuildingPage';
+import { aroundMinutes } from '../utils';
 
 @registerAction
 export class UpgradeBuildingAction extends ActionController {
     async run(args: Args, task: Task): Promise<any> {
-        let villageId = args.villageId;
-        if (villageId === undefined) {
-            throw new ActionError(task.id, 'No village id');
-        }
+        this.ensureSameVillage(args, task);
 
         try {
             clickUpgradeButton();
         } catch (e) {
             if (e instanceof GrabError) {
-                throw new PostponeAllBuildingsError(task.id, villageId, 15 * 60, 'No upgrade button, try later');
+                throw new TryLaterError(task.id, aroundMinutes(5), 'No upgrade button, try later');
             }
             throw e;
         }

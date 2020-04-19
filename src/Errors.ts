@@ -36,17 +36,3 @@ export class TryLaterError extends Error {
         Object.setPrototypeOf(this, TryLaterError.prototype);
     }
 }
-
-export class PostponeAllBuildingsError extends Error {
-    readonly seconds: number;
-    readonly villageId: number;
-    readonly taskId: TaskId;
-
-    constructor(taskId: TaskId, villageId: number, seconds: number, msg: string = '') {
-        super(msg);
-        this.villageId = villageId;
-        this.taskId = taskId;
-        this.seconds = seconds;
-        Object.setPrototypeOf(this, PostponeAllBuildingsError.prototype);
-    }
-}

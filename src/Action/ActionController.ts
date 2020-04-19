@@ -1,7 +1,9 @@
 import { Args } from '../Command';
 import { Task } from '../Queue/TaskQueue';
-import { DataStorage } from '../DataStorage';
 import { Scheduler } from '../Scheduler';
+import { ActionError, TryLaterError } from '../Errors';
+import { grabActiveVillageId } from '../Page/VillageBlock';
+import { aroundMinutes } from '../utils';
 
 const actionMap: { [name: string]: Function | undefined } = {};
 
@@ -25,4 +27,16 @@ export class ActionController {
     }
 
     async run(args: Args, task: Task) {}
+
+    ensureSameVillage(args: Args, task: Task) {
+        let villageId = args.villageId;
+        if (villageId === undefined) {
+            throw new ActionError(task.id, 'Undefined village id');
+        }
+
+        const activeVillageId = grabActiveVillageId();
+        if (villageId !== activeVillageId) {
+            throw new TryLaterError(task.id, aroundMinutes(1), 'Not same village');
+        }
+    }
 }

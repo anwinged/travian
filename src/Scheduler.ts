@@ -73,28 +73,32 @@ export class Scheduler {
         }
     }
 
-    completeTask(id: TaskId) {
-        this.taskQueue.remove(id);
+    completeTask(taskId: TaskId) {
+        this.taskQueue.remove(taskId);
         this.actionQueue.clear();
     }
 
-    removeTask(id: TaskId) {
-        this.taskQueue.remove(id);
+    removeTask(taskId: TaskId) {
+        this.taskQueue.remove(taskId);
         this.actionQueue.clear();
     }
 
-    postponeTask(id: TaskId, deltaTs: number) {
-        this.taskQueue.modify(
-            t => t.id === id,
-            t => withTime(t, timestamp() + deltaTs)
-        );
-    }
-
-    postponeBuildingsInVillage(villageId: number, seconds: number) {
-        this.taskQueue.modify(
-            t => isBuildingTask(t.name) && sameVillage(villageId, t.args),
-            t => withTime(t, timestamp() + seconds)
-        );
+    postponeTask(taskId: TaskId, seconds: number) {
+        const task = this.taskQueue.seeItems().find(t => t.id === taskId);
+        if (!task) {
+            return;
+        }
+        if (isBuildingTask(task.name) && task.args.villageId) {
+            this.taskQueue.modify(
+                t => sameVillage(task.args.villageId, t.args),
+                t => withTime(t, timestamp() + seconds)
+            );
+        } else {
+            this.taskQueue.modify(
+                t => t.id === taskId,
+                t => withTime(t, timestamp() + seconds)
+            );
+        }
     }
 
     updateResources(taskId: TaskId, resources: Resources): void {
