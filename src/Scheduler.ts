@@ -10,6 +10,7 @@ import { GrabVillageState } from './Task/GrabVillageState';
 import { ActionList, ActionQueue } from './Queue/ActionQueue';
 import { Resources, ResourcesInterface } from './Game';
 import { UpdateResourceContracts } from './Task/UpdateResourceContracts';
+import { TrainTroopTask } from './Task/TrainTroopTask';
 
 export class Scheduler {
     private taskQueue: TaskQueue;
@@ -57,16 +58,10 @@ export class Scheduler {
 
     scheduleTask(name: string, args: Args, ts?: number | undefined): void {
         this.logger.log('PUSH TASK', name, args, ts);
+        this.taskQueue.push(name, args, ts || timestamp());
         const villageId = args.villageId;
-        if (isBuildingTask(name)) {
-            const insertedTs = calculateTimeToPushAfter(
-                this.taskQueue.seeItems(),
-                t => isBuildingTask(t.name) && sameVillage(villageId, t.args),
-                ts
-            );
-            this.taskQueue.push(name, args, insertedTs);
-        } else {
-            this.taskQueue.push(name, args, ts || timestamp());
+        if (villageId) {
+            this.reorderVillageTasks(villageId);
         }
     }
 
@@ -92,16 +87,22 @@ export class Scheduler {
         if (!task) {
             return;
         }
-        if (isBuildingTask(task.name) && task.args.villageId) {
-            this.taskQueue.modify(
-                t => sameVillage(task.args.villageId, t.args),
-                t => withTime(t, timestamp() + seconds)
-            );
+
+        const villageId = task.args.villageId;
+        const modifyTime = t => withTime(t, timestamp() + seconds);
+        const buildPred = t => sameVillage(villageId, t.args) && isBuildingTask(task.name);
+        const trainPred = t => sameVillage(villageId, t.args) && isTrainTroopTask(task.name);
+
+        if (isBuildingTask(task.name) && villageId) {
+            this.taskQueue.modify(buildPred, modifyTime);
+        } else if (isTrainTroopTask(task.name) && villageId) {
+            this.taskQueue.modify(trainPred, modifyTime);
         } else {
-            this.taskQueue.modify(
-                t => t.id === taskId,
-                t => withTime(t, timestamp() + seconds)
-            );
+            this.taskQueue.modify(t => t.id === taskId, modifyTime);
+        }
+
+        if (villageId) {
+            this.reorderVillageTasks(villageId);
         }
     }
 
@@ -128,6 +129,20 @@ export class Scheduler {
         }
         return undefined;
     }
+
+    private reorderVillageTasks(villageId: number) {
+        const tasks = this.taskQueue.seeItems();
+        const trainPred = t => isTrainTroopTask(t.name) && sameVillage(villageId, t.args);
+        const buildPred = t => isBuildingTask(t.name) && sameVillage(villageId, t.args);
+        const lastTrainTaskTs = lastTaskTime(tasks, trainPred);
+        if (lastTrainTaskTs) {
+            this.taskQueue.modify(buildPred, t => withTime(t, lastTrainTaskTs + 1));
+        }
+    }
+}
+
+function isTrainTroopTask(taskName: string) {
+    return taskName === TrainTroopTask.name;
 }
 
 function isBuildingTask(taskName: string) {
@@ -146,14 +161,16 @@ function withResources(task: Task, resources: ResourcesInterface): Task {
     return new Task(task.id, task.ts, task.name, { ...task.args, resources });
 }
 
-function calculateTimeToPushAfter(tasks: TaskList, predicate: (t: Task) => boolean, ts: number | undefined): number {
-    const normalizedTs = ts || timestamp();
+function firstTaskTime(tasks: TaskList, predicate: (t: Task) => boolean): number | undefined {
+    return tasks.find(predicate)?.ts;
+}
+
+function lastTaskTime(tasks: TaskList, predicate: (t: Task) => boolean): number | undefined {
     const queuedTaskIndex = findLastIndex(tasks, predicate);
     if (queuedTaskIndex === undefined) {
-        return normalizedTs;
+        return undefined;
     }
-    const queuedTask = tasks[queuedTaskIndex];
-    return Math.max(normalizedTs, queuedTask.ts + 1);
+    return tasks[queuedTaskIndex].ts;
 }
 
 function findLastIndex(tasks: TaskList, predicate: (t: Task) => boolean): number | undefined {
