@@ -1,4 +1,4 @@
-import { TaskList } from './Storage/TaskQueue';
+import { TaskList } from './Queue/TaskQueue';
 import { uniqId } from './utils';
 import * as dateFormat from 'dateformat';
 

@@ -1,7 +1,7 @@
 import { ActionController, registerAction } from './ActionController';
-import { Args } from '../Common';
+import { Args } from '../Command';
 import { ActionError, TryLaterError } from '../Errors';
-import { Task } from '../Storage/TaskQueue';
+import { Task } from '../Queue/TaskQueue';
 import { getNumber, toNumber } from '../utils';
 
 @registerAction

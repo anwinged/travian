@@ -1,6 +1,6 @@
 import { ActionController, registerAction } from './ActionController';
-import { Args } from '../Common';
-import { Task } from '../Storage/TaskQueue';
+import { Args } from '../Command';
+import { Task } from '../Queue/TaskQueue';
 import { trimPrefix } from '../utils';
 import { AbortTaskError } from '../Errors';
 

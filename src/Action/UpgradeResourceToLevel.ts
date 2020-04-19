@@ -1,7 +1,7 @@
 import { ActionController, registerAction } from './ActionController';
-import { Args } from '../Common';
+import { Args } from '../Command';
 import { ActionError, GrabError, TryLaterError } from '../Errors';
-import { Task } from '../Storage/TaskQueue';
+import { Task } from '../Queue/TaskQueue';
 import { clickUpgradeButton } from '../Page/BuildingPage';
 import { grabResourceDeposits } from '../Page/SlotBlock';
 import { UpgradeBuildingTask } from '../Task/UpgradeBuildingTask';

@@ -1,6 +1,6 @@
-import { Command } from '../Common';
+import { Command } from '../Command';
 import { ConsoleLogger, Logger } from '../Logger';
-import { DataStorage } from './DataStorage';
+import { DataStorage } from '../DataStorage';
 
 const NAMESPACE = 'actions.v1';
 const QUEUE_NAME = 'queue';

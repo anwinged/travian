@@ -1,7 +1,7 @@
 import { StateGrabber } from './StateGrabber';
 import { grabActiveVillageId } from '../Page/VillageBlock';
 import { grabResources, grabResourceStorage } from '../Page/ResourcesBlock';
-import { VillageState } from './VillageState';
+import { VillageState } from '../State/VillageState';
 
 export class ResourceGrabber extends StateGrabber {
     grab(): void {

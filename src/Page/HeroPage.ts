@@ -1,5 +1,15 @@
-import { GrabError } from '../Errors';
-import { HeroAllResources, HeroResourceType, ResourceMapping, ResourceType } from '../Game';
+import { ActionError, GrabError } from '../Errors';
+import { HeroAllResources, HeroAttributes, HeroResourceType, ResourceMapping, ResourceType } from '../Game';
+import { getNumber } from '../utils';
+
+export function grabHeroAttributes(): HeroAttributes {
+    const healthElement = jQuery('#attributes .attribute.health .powervalue .value');
+    if (healthElement.length !== 1) {
+        throw new GrabError('Health dom element not found');
+    }
+
+    return new HeroAttributes(getNumber(healthElement.text()));
+}
 
 export function grabCurrentHeroResource(): HeroResourceType {
     for (let mp of ResourceMapping) {
@@ -44,7 +54,7 @@ function heroResourceTypeToNumber(type: HeroResourceType): number {
 export function grabHeroVillage(): string | undefined {
     const status = jQuery('.heroStatusMessage').text();
     const hrefText = jQuery('.heroStatusMessage a').text();
-    if (status.includes('в родной деревне')) {
+    if (status.toLowerCase().includes('в родной деревне')) {
         return hrefText || undefined;
     } else {
         return undefined;

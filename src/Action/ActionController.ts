@@ -1,6 +1,6 @@
-import { Args } from '../Common';
-import { Task } from '../Storage/TaskQueue';
-import { DataStorage } from '../Storage/DataStorage';
+import { Args } from '../Command';
+import { Task } from '../Queue/TaskQueue';
+import { DataStorage } from '../DataStorage';
 import { Scheduler } from '../Scheduler';
 
 const actionMap: { [name: string]: Function | undefined } = {};

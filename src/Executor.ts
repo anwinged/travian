@@ -1,12 +1,12 @@
 import { markPage, sleepMicro, timestamp, waitForLoad } from './utils';
 import { AbortTaskError, ActionError, PostponeAllBuildingsError, TryLaterError } from './Errors';
-import { Task } from './Storage/TaskQueue';
-import { Command } from './Common';
+import { Task } from './Queue/TaskQueue';
+import { Command } from './Command';
 import { TaskQueueRenderer } from './TaskQueueRenderer';
 import { createAction } from './Action/ActionController';
 import { createTask } from './Task/TaskController';
 import { ConsoleLogger, Logger } from './Logger';
-import { StateGrabberManager } from './State/StateGrabberManager';
+import { StateGrabberManager } from './Grabber/StateGrabberManager';
 import { Scheduler } from './Scheduler';
 
 export class Executor {

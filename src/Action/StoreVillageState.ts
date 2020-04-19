@@ -1,7 +1,7 @@
 import { ActionController, registerAction } from './ActionController';
-import { Args } from '../Common';
-import { Task } from '../Storage/TaskQueue';
-import { StateGrabberManager } from '../State/StateGrabberManager';
+import { Args } from '../Command';
+import { Task } from '../Queue/TaskQueue';
+import { StateGrabberManager } from '../Grabber/StateGrabberManager';
 
 @registerAction
 export class StoreVillageState extends ActionController {

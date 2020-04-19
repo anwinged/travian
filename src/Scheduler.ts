@@ -1,13 +1,13 @@
 import { timestamp } from './utils';
 import { UpgradeBuildingTask } from './Task/UpgradeBuildingTask';
-import { Task, TaskId, TaskList, TaskQueue } from './Storage/TaskQueue';
-import { Args, Command } from './Common';
+import { Task, TaskId, TaskList, TaskQueue } from './Queue/TaskQueue';
+import { Args, Command } from './Command';
 import { SendOnAdventureTask } from './Task/SendOnAdventureTask';
 import { BalanceHeroResourcesTask } from './Task/BalanceHeroResourcesTask';
 import { ConsoleLogger, Logger } from './Logger';
 import { BuildBuildingTask } from './Task/BuildBuildingTask';
 import { GrabVillageState } from './Task/GrabVillageState';
-import { ActionQueue } from './Storage/ActionQueue';
+import { ActionQueue } from './Queue/ActionQueue';
 import { Resources, ResourcesInterface } from './Game';
 import { UpdateResourceContracts } from './Task/UpdateResourceContracts';
 

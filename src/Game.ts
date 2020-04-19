@@ -108,6 +108,13 @@ export class BuildingQueueInfo {
     }
 }
 
+export class HeroAttributes {
+    readonly health: number;
+    constructor(health: number) {
+        this.health = health;
+    }
+}
+
 export type HeroAllResourcesType = 'all';
 export const HeroAllResources: HeroAllResourcesType = 'all';
 

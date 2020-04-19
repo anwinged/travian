@@ -1,4 +1,4 @@
-import { Task } from '../Storage/TaskQueue';
+import { Task } from '../Queue/TaskQueue';
 import { Scheduler } from '../Scheduler';
 
 const taskMap: { [name: string]: Function | undefined } = {};

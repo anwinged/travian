@@ -1,6 +1,6 @@
 import { StateGrabber } from './StateGrabber';
 import { grabActiveVillageId, grabBuildingQueueInfo, grabResourcesPerformance } from '../Page/VillageBlock';
-import { VillageState } from './VillageState';
+import { VillageState } from '../State/VillageState';
 import { parseLocation } from '../utils';
 import { GrabError } from '../Errors';
 import { BuildingQueueInfo } from '../Game';

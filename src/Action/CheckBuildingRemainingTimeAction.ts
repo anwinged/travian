@@ -1,6 +1,6 @@
 import { ActionController, registerAction } from './ActionController';
-import { Args } from '../Common';
-import { Task } from '../Storage/TaskQueue';
+import { Args } from '../Command';
+import { Task } from '../Queue/TaskQueue';
 import { PostponeAllBuildingsError, GrabError } from '../Errors';
 import { grabActiveVillageId, grabBuildingQueueInfo } from '../Page/VillageBlock';
 import { BuildingQueueInfo } from '../Game';

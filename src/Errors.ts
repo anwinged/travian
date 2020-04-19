@@ -1,4 +1,4 @@
-import { TaskId } from './Storage/TaskQueue';
+import { TaskId } from './Queue/TaskQueue';
 
 export class GrabError extends Error {
     constructor(msg: string = '') {

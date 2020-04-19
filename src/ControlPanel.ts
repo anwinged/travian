@@ -14,7 +14,7 @@ import DashboardApp from './DashboardView/Dashboard.vue';
 import { ResourcesToLevel } from './Task/ResourcesToLevel';
 import { ConsoleLogger, Logger } from './Logger';
 import { VillageState } from './State/VillageState';
-import { StateGrabberManager } from './State/StateGrabberManager';
+import { StateGrabberManager } from './Grabber/StateGrabberManager';
 
 interface QuickAction {
     label: string;

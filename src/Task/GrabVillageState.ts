@@ -1,8 +1,8 @@
-import { Args, Command } from '../Common';
+import { Args, Command } from '../Command';
 import { CompleteTaskAction } from '../Action/CompleteTaskAction';
 import { GoToPageAction } from '../Action/GoToPageAction';
 import { path } from '../utils';
-import { Task } from '../Storage/TaskQueue';
+import { Task } from '../Queue/TaskQueue';
 import { TaskController, registerTask } from './TaskController';
 import { grabVillageList } from '../Page/VillageBlock';
 import { StoreVillageState } from '../Action/StoreVillageState';

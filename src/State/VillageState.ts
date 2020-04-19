@@ -1,4 +1,4 @@
-import { DataStorage } from '../Storage/DataStorage';
+import { DataStorage } from '../DataStorage';
 import { BuildingQueueInfo, Resources, ResourceStorage } from '../Game';
 
 const RESOURCES_KEY = 'res';

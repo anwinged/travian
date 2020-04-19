@@ -1,5 +1,5 @@
-import { Args, Command } from '../Common';
-import { Task } from '../Storage/TaskQueue';
+import { Args, Command } from '../Command';
+import { Task } from '../Queue/TaskQueue';
 import { TaskController, registerTask } from './TaskController';
 import { GoToPageAction } from '../Action/GoToPageAction';
 import { CompleteTaskAction } from '../Action/CompleteTaskAction';

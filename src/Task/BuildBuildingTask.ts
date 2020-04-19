@@ -1,10 +1,10 @@
-import { Args, Command } from '../Common';
+import { Args, Command } from '../Command';
 import { BuildBuildingAction } from '../Action/BuildBuildingAction';
 import { CheckBuildingRemainingTimeAction } from '../Action/CheckBuildingRemainingTimeAction';
 import { CompleteTaskAction } from '../Action/CompleteTaskAction';
 import { GoToPageAction } from '../Action/GoToPageAction';
 import { path } from '../utils';
-import { Task } from '../Storage/TaskQueue';
+import { Task } from '../Queue/TaskQueue';
 import { TaskController, registerTask } from './TaskController';
 
 @registerTask

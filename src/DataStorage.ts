@@ -1,4 +1,4 @@
-import { ConsoleLogger, Logger, NullLogger } from '../Logger';
+import { ConsoleLogger, Logger, NullLogger } from './Logger';
 
 const NAMESPACE = 'travian:v1';
 
