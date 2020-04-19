@@ -42,8 +42,12 @@ export class Resources implements ResourcesInterface {
         this.crop = crop;
     }
 
-    static fromObject(obj: ResourcesInterface) {
+    static fromObject(obj: ResourcesInterface): Resources {
         return new Resources(obj.lumber, obj.clay, obj.iron, obj.crop);
+    }
+
+    static fromStorage(warehouse: number, granary: number): Resources {
+        return new Resources(warehouse, warehouse, warehouse, granary);
     }
 
     getByType(type: ResourceType): number {
@@ -65,6 +69,28 @@ export class Resources implements ResourcesInterface {
             result.push({ num: mp.num, type: mp.type, value: this.getByType(mp.type) });
         }
         return result;
+    }
+
+    scale(n: number): Resources {
+        return new Resources(this.lumber * n, this.clay * n, this.iron * n, this.crop * n);
+    }
+
+    add(other: Resources): Resources {
+        return new Resources(
+            this.lumber + other.lumber,
+            this.clay + other.clay,
+            this.iron + other.iron,
+            this.crop + other.crop
+        );
+    }
+
+    sub(other: Resources): Resources {
+        return new Resources(
+            this.lumber - other.lumber,
+            this.clay - other.clay,
+            this.iron - other.iron,
+            this.crop - other.crop
+        );
     }
 }
 

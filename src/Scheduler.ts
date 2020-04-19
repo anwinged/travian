@@ -121,7 +121,7 @@ export class Scheduler {
     }
 
     getVillageRequiredResources(villageId): ResourcesInterface | undefined {
-        const tasks = this.taskQueue.seeItems().filter(t => isBuildingTask(t.name) && sameVillage(villageId, t.args));
+        const tasks = this.taskQueue.seeItems().filter(t => sameVillage(villageId, t.args) && t.args.resources);
         const first = tasks.shift();
         if (first && first.args.resources) {
             return first.args.resources;

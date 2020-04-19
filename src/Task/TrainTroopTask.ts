@@ -10,11 +10,18 @@ import { path } from '../utils';
 export class TrainTroopTask extends TaskController {
     async run(task: Task) {
         const args: Args = { ...task.args, taskId: task.id };
+
+        const pathArgs = {
+            newdid: args.villageId,
+            gid: args.buildTypeId || undefined,
+            id: args.buildId || undefined,
+            s: args.tabId,
+        };
+
+        const pagePath = path('/build.php', pathArgs);
+
         this.scheduler.scheduleActions([
-            new Command(GoToPageAction.name, {
-                ...args,
-                path: path('/build.php', { newdid: args.villageId, id: args.buildId }),
-            }),
+            new Command(GoToPageAction.name, { ...args, path: pagePath }),
             new Command(TrainTrooperAction.name, args),
             new Command(CompleteTaskAction.name, args),
         ]);

@@ -9,7 +9,7 @@ interface Slot {
 function slotElements(prefix: string): Array<Slot> {
     const result: Array<Slot> = [];
     jQuery('.level.colorLayer').each((idx, el) => {
-        const buildId = getNumber(elClassId(jQuery(el).attr('class') || '', prefix));
+        const buildId = getNumber(elClassId(jQuery(el).attr('class'), prefix));
         result.push({ el, buildId });
     });
     return result;
@@ -58,7 +58,7 @@ export function onResourceSlotCtrlClick(cb: (buildId: number) => void): void {
 
 function slotToDepositMapper(slot: Slot): ResourceDeposit {
     const el = slot.el;
-    const classes = jQuery(el).attr('class') || '';
+    const classes = jQuery(el).attr('class');
     const buildId = getNumber(elClassId(classes, 'buildingSlot'));
     const level = getNumber(elClassId(classes, 'level'));
     const type = getNumber(elClassId(classes, 'gid'));

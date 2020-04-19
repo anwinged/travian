@@ -1,6 +1,6 @@
-import { getNumber, parseLocation, uniqId, waitForLoad } from './utils';
+import { elClassId, getNumber, parseLocation, uniqId, waitForLoad } from './utils';
 import { Scheduler } from './Scheduler';
-import { BuildPage } from './Page/BuildPage';
+import { BuildingPageController } from './Page/BuildingPageController';
 import { UpgradeBuildingTask } from './Task/UpgradeBuildingTask';
 import { grabActiveVillageId, grabVillageList } from './Page/VillageBlock';
 import {
@@ -127,7 +127,13 @@ export class ControlPanel {
         }
 
         if (p.pathname === '/build.php') {
-            new BuildPage(this.scheduler, getNumber(p.query.id), getNumber(p.query.category, 1)).run();
+            const buildPage = new BuildingPageController(this.scheduler, {
+                buildId: getNumber(p.query.id),
+                buildTypeId: getNumber(elClassId(jQuery('#build').attr('class'), 'gid')),
+                categoryId: getNumber(p.query.category, 1),
+                tabId: getNumber(p.query.s, 0),
+            });
+            buildPage.run();
         }
 
         this.createControlPanel(state);

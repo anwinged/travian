@@ -53,23 +53,23 @@ export function trimPrefix(text: string, prefix: string): string {
     return text.startsWith(prefix) ? text.substr(prefix.length) : text;
 }
 
-export function elClassId(classes: string, prefix: string): number | undefined {
+export function elClassId(classes: string | undefined, prefix: string): number | undefined {
+    if (classes === undefined) {
+        return undefined;
+    }
     let result: number | undefined = undefined;
     classes.split(/\s/).forEach(part => {
         if (part.startsWith(prefix)) {
-            result = Number(part.substr(prefix.length));
-            if (isNaN(result)) {
-                result = undefined;
-            }
+            result = toNumber(part.substr(prefix.length));
         }
     });
     return result;
 }
 
-export function* split(n: number) {
+export function* split(n: number, from: number = 2, to: number = 6) {
     let c = n;
     while (c > 0) {
-        const next = 2 + Math.floor(Math.random() * 3);
+        const next = from + Math.floor(Math.random() * (to - from));
         if (next < c) {
             yield next;
             c -= next;

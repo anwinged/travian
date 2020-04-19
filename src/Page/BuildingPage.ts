@@ -1,6 +1,8 @@
 import { GrabError } from '../Errors';
-import { getNumber, trimPrefix, uniqId } from '../utils';
+import { elClassId, getNumber, split, trimPrefix, uniqId } from '../utils';
 import { Resources } from '../Game';
+import { grabActiveVillageId } from './VillageBlock';
+import { TrainTroopTask } from '../Task/TrainTroopTask';
 
 export function clickBuildButton(typeId: number) {
     const section = jQuery(`#contract_building${typeId}`);
@@ -52,16 +54,47 @@ export function createUpgradeButton(onClickHandler: () => void) {
     });
 }
 
+function grabResourcesFromList($els) {
+    const getText = n =>
+        jQuery($els.get(n))
+            .find('.value')
+            .text();
+    const grab = n => getNumber(getText(n));
+    return new Resources(grab(0), grab(1), grab(2), grab(3));
+}
+
 export function grabContractResources(): Resources {
     const $els = jQuery('#contract .resource');
     if ($els.length === 0) {
         throw new GrabError('No resource contract element');
     }
-    const grab = n =>
-        getNumber(
-            jQuery($els.get(n))
-                .find('.value')
-                .text()
-        );
-    return new Resources(grab(0), grab(1), grab(2), grab(3));
+    return grabResourcesFromList($els);
+}
+
+export function createTrainTroopButtons(
+    onClickHandler: (troopId: number, resources: Resources, count: number) => void
+) {
+    const troopBlocks = jQuery('.action.troop:not(.empty) .innerTroopWrapper');
+    if (troopBlocks.length === 0) {
+        throw new GrabError('No troop blocks');
+    }
+    troopBlocks.each((idx, el) => {
+        const $el = jQuery(el);
+        const troopId = elClassId($el.attr('class'), 'troop');
+        if (troopId === undefined) {
+            return;
+        }
+        const id = uniqId();
+        $el.find('.details').append(`<div style="padding: 8px 0"><a id="${id}" href="#">Обучить</a></div>`);
+        const resElement = $el.find('.resourceWrapper .resource');
+        const resources = grabResourcesFromList(resElement);
+        jQuery(`#${id}`).on('click', evt => {
+            evt.preventDefault();
+            const input = $el.find(`input[name="t${troopId}"]`);
+            const count = getNumber(input.val());
+            if (count > 0) {
+                onClickHandler(troopId, resources, count);
+            }
+        });
+    });
 }
