@@ -55,6 +55,8 @@ export class Executor {
 
         this.logger.log('CURRENT JOB', 'TASK', taskCommand, 'ACTION', actionCommand);
 
+        this.runGrabbers();
+
         try {
             if (actionCommand) {
                 return await this.processActionCommand(actionCommand, taskCommand);
@@ -69,7 +71,6 @@ export class Executor {
     }
 
     private async processActionCommand(cmd: Command, task: Task) {
-        this.runGrabbers();
         const actionController = createAction(cmd.name, this.scheduler);
         this.logger.log('PROCESS ACTION', cmd.name, actionController);
         if (actionController) {

@@ -26,7 +26,7 @@ export class Scheduler {
         // this.taskQueue.push(UpdateResourceContracts.name, {}, timestamp());
         // this.taskQueue.push(BalanceHeroResourcesTask.name, {}, timestamp());
 
-        this.createUniqTaskTimer(3 * 60, GrabVillageState.name);
+        this.createUniqTaskTimer(2 * 60, GrabVillageState.name);
         this.createUniqTaskTimer(10 * 60, UpdateResourceContracts.name);
         this.createUniqTaskTimer(20 * 60, BalanceHeroResourcesTask.name);
         this.createUniqTaskTimer(60 * 60, SendOnAdventureTask.name);

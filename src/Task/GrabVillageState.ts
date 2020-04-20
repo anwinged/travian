@@ -5,7 +5,6 @@ import { path } from '../utils';
 import { Task } from '../Queue/TaskQueue';
 import { TaskController, registerTask } from './TaskController';
 import { grabVillageList } from '../Page/VillageBlock';
-import { StoreVillageState } from '../Action/StoreVillageState';
 
 @registerTask
 export class GrabVillageState extends TaskController {
@@ -22,7 +21,6 @@ export class GrabVillageState extends TaskController {
                     path: path('/dorf1.php', { newdid: village.id }),
                 })
             );
-            actions.push(new Command(StoreVillageState.name, args));
         }
 
         actions.push(new Command(CompleteTaskAction.name, args));
