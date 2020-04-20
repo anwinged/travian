@@ -10,7 +10,7 @@ export class CheckBuildingRemainingTimeAction extends ActionController {
     async run(args: Args, task: Task): Promise<any> {
         const info = this.grabBuildingQueueInfoOrDefault();
         if (info.seconds > 0) {
-            throw new TryLaterError(task.id, info.seconds + 1, 'Building queue is full');
+            throw new TryLaterError(info.seconds + 1, 'Building queue is full');
         }
     }
 

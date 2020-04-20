@@ -12,14 +12,14 @@ export class BuildBuildingAction extends ActionController {
 
         const buildTypeId = args.buildTypeId;
         if (buildTypeId === undefined) {
-            throw new ActionError(task.id, 'Undefined build type id');
+            throw new ActionError('Undefined build type id');
         }
 
         try {
             clickBuildButton(buildTypeId);
         } catch (e) {
             if (e instanceof GrabError) {
-                throw new TryLaterError(task.id, aroundMinutes(5), 'No upgrade button, try later');
+                throw new TryLaterError(aroundMinutes(5), 'No upgrade button, try later');
             }
             throw e;
         }

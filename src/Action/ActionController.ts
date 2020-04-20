@@ -31,12 +31,12 @@ export class ActionController {
     ensureSameVillage(args: Args, task: Task) {
         let villageId = args.villageId;
         if (villageId === undefined) {
-            throw new ActionError(task.id, 'Undefined village id');
+            throw new ActionError('Undefined village id');
         }
 
         const activeVillageId = grabActiveVillageId();
         if (villageId !== activeVillageId) {
-            throw new TryLaterError(task.id, aroundMinutes(1), 'Not same village');
+            throw new TryLaterError(aroundMinutes(1), 'Not same village');
         }
     }
 }

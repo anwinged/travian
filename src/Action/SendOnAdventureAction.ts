@@ -37,7 +37,7 @@ export class SendOnAdventureAction extends ActionController {
             this.checkConfig(easiest, Number(hero.health));
         }
 
-        throw new AbortTaskError(task.id, 'No suitable adventure');
+        throw new AbortTaskError('No suitable adventure');
     }
 
     private checkConfig(adventure: Adventure, health: number) {

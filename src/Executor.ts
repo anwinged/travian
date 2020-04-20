@@ -43,10 +43,10 @@ export class Executor {
         await sleepMicro();
 
         const currentTs = timestamp();
-        const taskCommand = this.scheduler.nextTask(currentTs);
+        const task = this.scheduler.nextTask(currentTs);
 
         // текущего таска нет, очищаем очередь действий по таску
-        if (!taskCommand) {
+        if (!task) {
             this.logger.log('NO ACTIVE TASK');
             this.scheduler.clearActions();
             return;
@@ -54,26 +54,29 @@ export class Executor {
 
         const actionCommand = this.scheduler.nextAction();
 
-        this.logger.log('CURRENT JOB', 'TASK', taskCommand, 'ACTION', actionCommand);
+        this.logger.log('CURRENT JOB', 'TASK', task, 'ACTION', actionCommand);
 
         this.runGrabbers();
 
         try {
             if (actionCommand) {
-                return await this.processActionCommand(actionCommand, taskCommand);
+                return await this.processActionCommand(actionCommand, task);
             }
 
-            if (taskCommand) {
-                return await this.processTaskCommand(taskCommand);
+            if (task) {
+                return await this.processTaskCommand(task);
             }
         } catch (e) {
-            this.handleError(e);
+            this.handleError(e, task);
         }
     }
 
     private async processActionCommand(cmd: Command, task: Task) {
         const actionController = createAction(cmd.name, this.scheduler);
         this.logger.log('PROCESS ACTION', cmd.name, actionController);
+        if (cmd.args.taskId !== task.id) {
+            throw new ActionError(`Action task id ${cmd.args.taskId} not equal current task id ${task.id}`);
+        }
         if (actionController) {
             await actionController.run(cmd.args, task);
         } else {
@@ -92,19 +95,19 @@ export class Executor {
         }
     }
 
-    private handleError(err: Error) {
+    private handleError(err: Error, task: Task) {
         this.scheduler.clearActions();
 
         if (err instanceof AbortTaskError) {
-            this.logger.warn('ABORT TASK', err.taskId);
-            this.scheduler.completeTask(err.taskId);
+            this.logger.warn('ABORT TASK', task.id);
+            this.scheduler.completeTask(task.id);
             this.scheduler.clearActions();
             return;
         }
 
         if (err instanceof TryLaterError) {
-            this.logger.warn('TRY', err.taskId, 'AFTER', err.seconds);
-            this.scheduler.postponeTask(err.taskId, err.seconds);
+            this.logger.warn('TRY', task.id, 'AFTER', err.seconds);
+            this.scheduler.postponeTask(task.id, err.seconds);
             return;
         }
 

@@ -14,7 +14,7 @@ export class UpgradeBuildingAction extends ActionController {
             clickUpgradeButton();
         } catch (e) {
             if (e instanceof GrabError) {
-                throw new TryLaterError(task.id, aroundMinutes(5), 'No upgrade button, try later');
+                throw new TryLaterError(aroundMinutes(5), 'No upgrade button, try later');
             }
             throw e;
         }
