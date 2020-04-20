@@ -16,16 +16,18 @@ export function clickBuildButton(typeId: number) {
     btn.trigger('click');
 }
 
-export function createBuildButton(onClickHandler: (buildTypeId: number) => void) {
+export function createBuildButton(onClickHandler: (buildTypeId: number, resources: Resources) => void) {
     const $els = jQuery('[id^=contract_building]');
     $els.each((idx, el) => {
         const $el = jQuery(el);
-        const id = getNumber(trimPrefix($el.attr('id') || '', 'contract_building'));
+        const buildTypeId = getNumber(trimPrefix($el.attr('id') || '', 'contract_building'));
         const btnId = uniqId();
+        const resElement = $el.find('.resourceWrapper .resource');
+        const resources = grabResourcesFromList(resElement);
         $el.append(`<div style="padding: 8px"><a id="${btnId}" href="#">Построить</a></div>`);
         jQuery(`#${btnId}`).on('click', evt => {
             evt.preventDefault();
-            onClickHandler(id);
+            onClickHandler(buildTypeId, resources);
         });
     });
 }
@@ -43,14 +45,15 @@ export function clickUpgradeButton() {
     btn.trigger('click');
 }
 
-export function createUpgradeButton(onClickHandler: () => void) {
+export function createUpgradeButton(onClickHandler: (resources: Resources) => void) {
     const id = uniqId();
     jQuery('.upgradeButtonsContainer .section1').append(
         `<div style="padding: 8px"><a id="${id}" href="#">В очередь</a></div>`
     );
+    const resources = grabContractResources();
     jQuery(`#${id}`).on('click', evt => {
         evt.preventDefault();
-        onClickHandler();
+        onClickHandler(resources);
     });
 }
 

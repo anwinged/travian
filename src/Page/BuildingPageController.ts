@@ -1,10 +1,10 @@
-import { elClassId, notify, split, uniqId } from '../utils';
+import { notify, split } from '../utils';
 import { UpgradeBuildingTask } from '../Task/UpgradeBuildingTask';
 import { Scheduler } from '../Scheduler';
 import { TrainTroopTask } from '../Task/TrainTroopTask';
 import { grabActiveVillageId } from './VillageBlock';
-import { ConsoleLogger, Logger } from '../Logger';
-import { createBuildButton, createTrainTroopButtons, createUpgradeButton, grabContractResources } from './BuildingPage';
+import { ConsoleLogger } from '../Logger';
+import { createBuildButton, createTrainTroopButtons, createUpgradeButton } from './BuildingPage';
 import { BuildBuildingTask } from '../Task/BuildBuildingTask';
 import { Resources } from '../Game';
 
@@ -34,8 +34,11 @@ export class BuildingPageController {
         const buildTypeId = this.attributes.buildTypeId;
         this.logger.log('BUILD PAGE DETECTED', 'ID', this.attributes.buildId, 'TYPE', buildTypeId);
 
-        createBuildButton(buildTypeId => this.onScheduleBuildBuilding(buildTypeId));
-        createUpgradeButton(() => this.onScheduleUpgradeBuilding());
+        if (buildTypeId) {
+            createUpgradeButton(res => this.onScheduleUpgradeBuilding(res));
+        } else {
+            createBuildButton((buildTypeId, res) => this.onScheduleBuildBuilding(buildTypeId, res));
+        }
 
         if (buildTypeId === QUARTERS_ID) {
             createTrainTroopButtons((troopId, res, count) => this.onScheduleTrainTroopers(troopId, res, count));
@@ -50,19 +53,17 @@ export class BuildingPageController {
         }
     }
 
-    private onScheduleBuildBuilding(buildTypeId: number) {
+    private onScheduleBuildBuilding(buildTypeId: number, resources: Resources) {
         const buildId = this.attributes.buildId;
         const categoryId = this.attributes.categoryId;
         const villageId = grabActiveVillageId();
-        const resources = grabContractResources();
         this.scheduler.scheduleTask(BuildBuildingTask.name, { villageId, buildId, categoryId, buildTypeId, resources });
         notify(`Building ${buildId} scheduled`);
     }
 
-    private onScheduleUpgradeBuilding() {
+    private onScheduleUpgradeBuilding(resources: Resources) {
         const buildId = this.attributes.buildId;
         const villageId = grabActiveVillageId();
-        const resources = grabContractResources();
         this.scheduler.scheduleTask(UpgradeBuildingTask.name, { villageId, buildId, resources });
         notify(`Upgrading ${buildId} scheduled`);
     }

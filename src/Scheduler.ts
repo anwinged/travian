@@ -55,19 +55,10 @@ export class Scheduler {
 
     scheduleTask(name: string, args: Args, ts?: number | undefined): void {
         this.logger.log('PUSH TASK', name, args, ts);
-        const villageId = args.villageId;
-        let insertedTs = ts;
-        if (villageId && !insertedTs) {
-            const tasks = this.taskQueue.seeItems();
-            const sameNamePred = t => sameVillage(villageId, t.args) && t.name === name;
-            insertedTs = lastTaskTime(tasks, sameNamePred);
-            if (insertedTs) {
-                insertedTs += 1;
-            }
-        }
-        this.taskQueue.push(name, args, insertedTs || timestamp());
-        if (villageId) {
-            this.reorderVillageTasks(villageId);
+        let insertedTs = calculateInsertTime(this.taskQueue.seeItems(), name, args, ts);
+        this.taskQueue.push(name, args, insertedTs);
+        if (args.villageId) {
+            this.reorderVillageTasks(args.villageId);
         }
     }
 
@@ -152,6 +143,10 @@ export class Scheduler {
     }
 }
 
+interface TaskNamePredicate {
+    (name: string): boolean;
+}
+
 function isTrainTroopTask(taskName: string) {
     return taskName === TrainTroopTask.name;
 }
@@ -159,6 +154,8 @@ function isTrainTroopTask(taskName: string) {
 function isBuildingTask(taskName: string) {
     return taskName === BuildBuildingTask.name || taskName === UpgradeBuildingTask.name;
 }
+
+const TASK_TYPE_PREDICATES: Array<TaskNamePredicate> = [isTrainTroopTask, isBuildingTask];
 
 function sameVillage(villageId: number | undefined, args: Args) {
     return villageId !== undefined && args.villageId === villageId;
@@ -194,4 +191,21 @@ function findLastIndex(tasks: ImmutableTaskList, predicate: (t: Task) => boolean
         return undefined;
     }
     return count - 1 - indexInReversed;
+}
+
+function calculateInsertTime(tasks: ImmutableTaskList, name: string, args: Args, ts: number | undefined): number {
+    const villageId = args.villageId;
+    let insertedTs = ts;
+
+    if (villageId && !insertedTs) {
+        for (let taskTypePred of TASK_TYPE_PREDICATES) {
+            const sameVillageAndTypePred = t => sameVillage(villageId, t.args) && taskTypePred(t.name);
+            insertedTs = lastTaskTime(tasks, sameVillageAndTypePred);
+            if (insertedTs) {
+                insertedTs += 1;
+            }
+        }
+    }
+
+    return insertedTs || timestamp();
 }
