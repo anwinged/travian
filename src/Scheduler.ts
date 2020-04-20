@@ -33,11 +33,8 @@ export class Scheduler {
     }
 
     private createUniqTaskTimer(seconds: number, name: string, args: Args = {}) {
-        const taskScheduler = () => {
-            this.scheduleUniqTask(name, args, timestamp() + seconds);
-        };
-        taskScheduler();
-        setInterval(taskScheduler, seconds * 1000);
+        this.scheduleUniqTask(name, args, timestamp() + seconds - 10);
+        setInterval(() => this.scheduleUniqTask(name, args, timestamp()), seconds * 1000);
     }
 
     getTaskItems(): ImmutableTaskList {
