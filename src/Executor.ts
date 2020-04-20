@@ -40,7 +40,6 @@ export class Executor {
     }
 
     private async doTaskProcessingStep() {
-        await sleepMicro();
         const currentTs = timestamp();
         const taskCommand = this.scheduler.nextTask(currentTs);
 
