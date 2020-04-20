@@ -47,6 +47,7 @@ export class Executor {
         if (!taskCommand) {
             this.logger.log('NO ACTIVE TASK');
             this.scheduler.clearActions();
+            await sleepMicro();
             return;
         }
 
