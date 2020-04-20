@@ -16,26 +16,18 @@
         <template v-for="village in shared.villages">
           <tr class="normal-line top-line">
             <td :class="{ active: village.active }" :title="village.id">{{ village.name }}</td>
-            <td
-              class="right"
-              v-text="village.lumber"
-              :title="resourceTitle(village.lumber, village.warehouse, village.lumber_hour)"
-            ></td>
-            <td
-              class="right"
-              v-text="village.clay"
-              :title="resourceTitle(village.clay, village.warehouse, village.clay_hour)"
-            ></td>
-            <td
-              class="right"
-              v-text="village.iron"
-              :title="resourceTitle(village.iron, village.warehouse, village.iron_hour)"
-            ></td>
-            <td
-              class="right"
-              v-text="village.crop"
-              :title="resourceTitle(village.crop, village.granary, village.crop_hour)"
-            ></td>
+            <td class="right">
+              <filling :value="village.lumber" :max="village.warehouse" :speed="village.lumber_hour"></filling>
+            </td>
+            <td class="right">
+              <filling :value="village.clay" :max="village.warehouse" :speed="village.clay_hour"></filling>
+            </td>
+            <td class="right">
+              <filling :value="village.iron" :max="village.warehouse" :speed="village.iron_hour"></filling>
+            </td>
+            <td class="right">
+              <filling :value="village.crop" :max="village.granary" :speed="village.crop_hour"></filling>
+            </td>
             <td class="right">
               <a :href="warehousePath(village)" v-text="village.warehouse"></a>
             </td>
@@ -115,11 +107,13 @@
 
 <script>
 import { path } from '../utils';
-import Resource from './Resource';
+import ResourceBalance from './ResourceBalance';
+import VillageResource from './VillageResource';
 
 export default {
   components: {
-    resource: Resource,
+    resource: ResourceBalance,
+    filling: VillageResource,
   },
   data() {
     return {
@@ -140,21 +134,6 @@ export default {
     quartersPath(village) {
       return path('/build.php', { newdid: village.id, gid: 19 });
     },
-    resourceTitle(current, max, speed) {
-      const percent = Math.floor((current / max) * 100);
-      if (speed < 0) {
-        const time = this.fractionalHourToTime(current / speed);
-        return `${current}, ${percent}%, опустеет через ${time}`;
-      } else {
-        const time = this.fractionalHourToTime((max - current) / speed);
-        return `${current}, ${percent}%, заполнится через ${time}`;
-      }
-    },
-    fractionalHourToTime(value) {
-      const hours = Math.floor(value);
-      const minutes = Math.round((value - hours) * 60);
-      return `${hours}:${String(minutes).padStart(2, '0')}`;
-    },
     secondsToTime(value) {
       const hours = Math.floor(value / 3600);
       const minutes = Math.floor((value % 3600) / 60);
@@ -171,8 +150,17 @@ export default {
   border-collapse: collapse;
 }
 
+.top-line td {
+  border-top: 1px solid #ddd;
+}
+
 .normal-line td {
   padding: 4px;
+}
+
+.filling-line td {
+  padding: 0;
+  border: 1px solid #ddd;
 }
 
 .performance-line td {
@@ -187,10 +175,6 @@ export default {
 
 .village-table td.active {
   font-weight: bold;
-}
-
-.top-line td {
-  border-top: 1px solid #ddd;
 }
 
 .right {
