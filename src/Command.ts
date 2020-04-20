@@ -3,6 +3,7 @@ import { TaskId } from './Queue/TaskQueue';
 
 export interface Args {
     taskId?: TaskId;
+    targetTaskId?: TaskId;
     villageId?: number;
     buildId?: number;
     categoryId?: number;

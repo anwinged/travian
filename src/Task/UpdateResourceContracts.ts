@@ -24,7 +24,7 @@ export class UpdateResourceContracts extends TaskController {
                         path: path('/build.php', { newdid: villageId, id: buildId }),
                     })
                 );
-                actions.push(new Command(UpdateBuildingTaskResourcesAction.name, { ...args, taskId: task.id }));
+                actions.push(new Command(UpdateBuildingTaskResourcesAction.name, { ...args, targetTaskId: task.id }));
             }
         }
 
