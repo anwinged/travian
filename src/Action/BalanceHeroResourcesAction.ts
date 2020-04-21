@@ -38,19 +38,20 @@ export class BalanceHeroResourcesAction extends ActionController {
         }
     }
 
-    private getRequirements(heroVillageId) {
+    private getRequirements(heroVillageId): Resources {
         const resources = grabResources();
         const requiredResources = this.scheduler.getVillageRequiredResources(heroVillageId);
+        const totalRequiredResources = this.scheduler.getTotalVillageRequiredResources(heroVillageId);
 
-        console.log('RESOURCES', resources);
-        console.log('REQUIRED', requiredResources);
-
-        if (requiredResources) {
+        if (requiredResources.gt(resources)) {
             return requiredResources.sub(resources);
         }
 
-        const storage = grabResourceStorage();
+        if (totalRequiredResources.gt(resources)) {
+            return totalRequiredResources.sub(resources);
+        }
 
+        const storage = grabResourceStorage();
         return Resources.fromStorage(storage).sub(resources);
     }
 }

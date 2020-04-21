@@ -118,13 +118,13 @@ export class Scheduler {
         this.actionQueue.clear();
     }
 
-    getVillageRequiredResources(villageId): Resources | undefined {
+    getVillageRequiredResources(villageId): Resources {
         const tasks = this.taskQueue.seeItems().filter(t => sameVillage(villageId, t.args) && t.args.resources);
         const first = tasks.shift();
         if (first && first.args.resources) {
             return Resources.fromObject(first.args.resources);
         }
-        return undefined;
+        return new Resources(0, 0, 0, 0);
     }
 
     getTotalVillageRequiredResources(villageId): Resources {

@@ -200,10 +200,10 @@ class VillageController {
         this.clay_hour = performance.clay;
         this.iron_hour = performance.iron;
         this.crop_hour = performance.crop;
-        this.lumber_need = requiredResources && requiredResources.lumber;
-        this.clay_need = requiredResources && requiredResources.clay;
-        this.iron_need = requiredResources && requiredResources.iron;
-        this.crop_need = requiredResources && requiredResources.crop;
+        this.lumber_need = requiredResources.lumber;
+        this.clay_need = requiredResources.clay;
+        this.iron_need = requiredResources.iron;
+        this.crop_need = requiredResources.crop;
         this.lumber_total_need = totalRequiredResources.lumber;
         this.clay_total_need = totalRequiredResources.clay;
         this.iron_total_need = totalRequiredResources.iron;
@@ -221,11 +221,7 @@ class VillageController {
         return this.timeToResources(this.totalRequiredResources);
     }
 
-    private timeToResources(resources: Resources | undefined): number {
-        if (resources === undefined) {
-            return -2;
-        }
-
+    private timeToResources(resources: Resources): number {
         const time_to_lumber = this.timeToRes(this.resources.lumber, resources.lumber, this.performance.lumber);
 
         const time_to_clay = this.timeToRes(this.resources.clay, resources.clay, this.performance.clay);

@@ -145,10 +145,7 @@ export default {
     },
     secondsToRequiredTime(value) {
       if (value === -1) {
-        return '-';
-      }
-      if (value === -2) {
-        return '';
+        return 'never';
       }
       return this.secondsToTime(value);
     },

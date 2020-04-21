@@ -37,10 +37,10 @@ export class Resources implements ResourcesInterface {
     readonly crop: number;
 
     constructor(lumber: number, clay: number, iron: number, crop: number) {
-        this.lumber = lumber;
-        this.clay = clay;
-        this.iron = iron;
-        this.crop = crop;
+        this.lumber = Math.floor(lumber);
+        this.clay = Math.floor(clay);
+        this.iron = Math.floor(iron);
+        this.crop = Math.floor(crop);
     }
 
     static fromObject(obj: ResourcesInterface): Resources {
@@ -92,6 +92,22 @@ export class Resources implements ResourcesInterface {
             this.iron - other.iron,
             this.crop - other.crop
         );
+    }
+
+    lt(other: Resources): boolean {
+        return this.lumber < other.lumber && this.clay < other.clay && this.iron < other.iron && this.crop < other.crop;
+    }
+
+    gt(other: Resources): boolean {
+        return this.lumber > other.lumber && this.clay > other.clay && this.iron > other.iron && this.crop > other.crop;
+    }
+
+    lte(other: Resources): boolean {
+        return !this.gt(other);
+    }
+
+    gte(other: Resources): boolean {
+        return !this.lt(other);
     }
 }
 
