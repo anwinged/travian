@@ -14,6 +14,7 @@ import DashboardApp from './DashboardView/Dashboard.vue';
 import { ResourcesToLevel } from './Task/ResourcesToLevel';
 import { ConsoleLogger, Logger } from './Logger';
 import { VillageState } from './State/VillageState';
+import { Resources, Village } from './Game';
 
 interface QuickAction {
     label: string;
@@ -63,38 +64,7 @@ export class ControlPanel {
 
             refreshVillages() {
                 this.villages = grabVillageList().map(village => {
-                    const state = new VillageState(village.id);
-                    const resources = state.getResources();
-                    const storage = state.getResourceStorage();
-                    const performance = state.getResourcesPerformance();
-                    const buildQueueInfo = state.getBuildingQueueInfo();
-                    const requiredResources = scheduler.getVillageRequiredResources(village.id);
-                    const totalRequiredResources = scheduler.getTotalVillageRequiredResources(village.id);
-                    return {
-                        id: village.id,
-                        name: village.name,
-                        crd: village.crd,
-                        active: village.active,
-                        lumber: resources.lumber,
-                        clay: resources.clay,
-                        iron: resources.iron,
-                        crop: resources.crop,
-                        lumber_hour: performance.lumber,
-                        clay_hour: performance.clay,
-                        iron_hour: performance.iron,
-                        crop_hour: performance.crop,
-                        lumber_need: requiredResources && requiredResources.lumber,
-                        clay_need: requiredResources && requiredResources.clay,
-                        iron_need: requiredResources && requiredResources.iron,
-                        crop_need: requiredResources && requiredResources.crop,
-                        lumber_total_need: totalRequiredResources.lumber,
-                        clay_total_need: totalRequiredResources.clay,
-                        iron_total_need: totalRequiredResources.iron,
-                        crop_total_need: totalRequiredResources.crop,
-                        warehouse: storage.warehouse,
-                        granary: storage.granary,
-                        buildRemainingSeconds: buildQueueInfo.seconds,
-                    };
+                    return new VillageController(village, new VillageState(village.id), scheduler);
                 });
                 for (let village of this.villages) {
                     if (village.active) {
@@ -173,5 +143,112 @@ export class ControlPanel {
         state.refreshTasks();
         const n = new Notification(`Building ${buildId} scheduled`);
         setTimeout(() => n && n.close(), 4000);
+    }
+}
+
+class VillageController {
+    public readonly id;
+    public readonly name;
+    public readonly crd;
+    public readonly active;
+    public readonly lumber;
+    public readonly clay;
+    public readonly iron;
+    public readonly crop;
+    public readonly resources;
+    public readonly performance;
+    public readonly requiredResources;
+    public readonly totalRequiredResources;
+    public readonly storage;
+    public readonly lumber_hour;
+    public readonly clay_hour;
+    public readonly iron_hour;
+    public readonly crop_hour;
+    public readonly lumber_need;
+    public readonly clay_need;
+    public readonly iron_need;
+    public readonly crop_need;
+    public readonly lumber_total_need;
+    public readonly clay_total_need;
+    public readonly iron_total_need;
+    public readonly crop_total_need;
+    public readonly warehouse;
+    public readonly granary;
+    public readonly buildRemainingSeconds;
+
+    constructor(village: Village, state: VillageState, scheduler: Scheduler) {
+        const resources = state.getResources();
+        const storage = state.getResourceStorage();
+        const performance = state.getResourcesPerformance();
+        const buildQueueInfo = state.getBuildingQueueInfo();
+        const requiredResources = scheduler.getVillageRequiredResources(village.id);
+        const totalRequiredResources = scheduler.getTotalVillageRequiredResources(village.id);
+        this.id = village.id;
+        this.name = village.name;
+        this.crd = village.crd;
+        this.active = village.active;
+        this.lumber = resources.lumber;
+        this.clay = resources.clay;
+        this.iron = resources.iron;
+        this.crop = resources.crop;
+        this.resources = resources;
+        this.performance = performance;
+        this.requiredResources = requiredResources;
+        this.totalRequiredResources = totalRequiredResources;
+        this.storage = storage;
+        this.lumber_hour = performance.lumber;
+        this.clay_hour = performance.clay;
+        this.iron_hour = performance.iron;
+        this.crop_hour = performance.crop;
+        this.lumber_need = requiredResources && requiredResources.lumber;
+        this.clay_need = requiredResources && requiredResources.clay;
+        this.iron_need = requiredResources && requiredResources.iron;
+        this.crop_need = requiredResources && requiredResources.crop;
+        this.lumber_total_need = totalRequiredResources.lumber;
+        this.clay_total_need = totalRequiredResources.clay;
+        this.iron_total_need = totalRequiredResources.iron;
+        this.crop_total_need = totalRequiredResources.crop;
+        this.warehouse = storage.warehouse;
+        this.granary = storage.granary;
+        this.buildRemainingSeconds = buildQueueInfo.seconds;
+    }
+
+    timeToRequired() {
+        return this.timeToResources(this.requiredResources);
+    }
+
+    timeToTotalRequired() {
+        return this.timeToResources(this.totalRequiredResources);
+    }
+
+    private timeToResources(resources: Resources | undefined): number {
+        if (resources === undefined) {
+            return -2;
+        }
+
+        const time_to_lumber = this.timeToRes(this.resources.lumber, resources.lumber, this.performance.lumber);
+
+        const time_to_clay = this.timeToRes(this.resources.clay, resources.clay, this.performance.clay);
+        const time_to_iron = this.timeToRes(this.resources.iron, resources.iron, this.performance.iron);
+        const time_to_crop = this.timeToRes(this.resources.crop, resources.crop, this.performance.crop);
+
+        const min = Math.max(time_to_lumber, time_to_clay, time_to_iron, time_to_crop);
+
+        if (min === -1) {
+            return -1;
+        }
+
+        return Math.max(time_to_lumber, time_to_clay, time_to_iron, time_to_crop);
+    }
+
+    private timeToRes(current: number, desired: number, speed: number) {
+        if (current >= desired) {
+            return 0;
+        }
+        if (current < desired && speed <= 0) {
+            return -1;
+        }
+        const diff = desired - current;
+        return (diff / speed) * 3600;
     }
 }

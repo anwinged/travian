@@ -33,34 +33,43 @@
             </td>
             <td class="right" v-text="village.granary"></td>
           </tr>
+          <tr class="performance-line">
+            <td class="right">Прирост:</td>
+            <td class="right">+{{ village.lumber_hour }}</td>
+            <td class="right">+{{ village.clay_hour }}</td>
+            <td class="right">+{{ village.iron_hour }}</td>
+            <td class="right">+{{ village.crop_hour }}</td>
+            <td></td>
+            <td></td>
+          </tr>
           <tr class="required-line">
             <td class="right">След:</td>
             <td class="right" v-text="village.lumber_need || ''"></td>
             <td class="right" v-text="village.clay_need || ''"></td>
             <td class="right" v-text="village.iron_need || ''"></td>
             <td class="right" v-text="village.crop_need || ''"></td>
-            <td></td>
+            <td class="right" v-text="secondsToTime(village.buildRemainingSeconds)"></td>
             <td></td>
           </tr>
           <tr class="required-line">
             <td class="right">Баланс:</td>
             <td class="right">
-              <resource :value="village.lumber - village.lumber_need"></resource>
+              <resource :value="village.lumber - (village.lumber_need || 0)"></resource>
             </td>
             <td class="right">
-              <resource :value="village.clay - village.clay_need"></resource>
+              <resource :value="village.clay - (village.clay_need || 0)"></resource>
             </td>
             <td class="right">
-              <resource :value="village.iron - village.iron_need"></resource>
+              <resource :value="village.iron - (village.iron_need || 0)"></resource>
             </td>
             <td class="right">
-              <resource :value="village.crop - village.crop_need"></resource>
+              <resource :value="village.crop - (village.crop_need || 0)"></resource>
             </td>
-            <td></td>
+            <td class="right" v-text="timeToRequired(village)"></td>
             <td></td>
           </tr>
           <tr class="required-line">
-            <td class="right"></td>
+            <td class="right">Баланс очереди:</td>
             <td class="right">
               <resource :value="village.lumber - village.lumber_total_need"></resource>
             </td>
@@ -73,16 +82,7 @@
             <td class="right">
               <resource :value="village.crop - village.crop_total_need"></resource>
             </td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr class="performance-line">
-            <td class="right" v-text="secondsToTime(village.buildRemainingSeconds)"></td>
-            <td class="right">+{{ village.lumber_hour }}</td>
-            <td class="right">+{{ village.clay_hour }}</td>
-            <td class="right">+{{ village.iron_hour }}</td>
-            <td class="right">+{{ village.crop_hour }}</td>
-            <td></td>
+            <td class="right" v-text="timeToTotalRequired(village)"></td>
             <td></td>
           </tr>
           <tr class="normal-line">
@@ -135,10 +135,28 @@ export default {
       return path('/build.php', { newdid: village.id, gid: 19 });
     },
     secondsToTime(value) {
+      if (value === 0) {
+        return '';
+      }
       const hours = Math.floor(value / 3600);
       const minutes = Math.floor((value % 3600) / 60);
-      const seconds = value % 60;
+      const seconds = Math.floor(value % 60);
       return `${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    },
+    secondsToRequiredTime(value) {
+      if (value === -1) {
+        return '-';
+      }
+      if (value === -2) {
+        return '';
+      }
+      return this.secondsToTime(value);
+    },
+    timeToRequired(village) {
+      return this.secondsToRequiredTime(village.timeToRequired());
+    },
+    timeToTotalRequired(village) {
+      return this.secondsToRequiredTime(village.timeToTotalRequired());
     },
   },
 };
