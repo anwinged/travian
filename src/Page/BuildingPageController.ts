@@ -31,7 +31,7 @@ export class BuildingPageController {
     }
 
     run() {
-        const buildTypeId = this.attributes.buildTypeId;
+        const { buildTypeId } = this.attributes;
         this.logger.log('BUILD PAGE DETECTED', 'ID', this.attributes.buildId, 'TYPE', buildTypeId);
 
         if (buildTypeId) {

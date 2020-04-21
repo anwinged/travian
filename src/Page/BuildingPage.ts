@@ -46,10 +46,13 @@ export function clickUpgradeButton() {
 }
 
 export function createUpgradeButton(onClickHandler: (resources: Resources) => void) {
+    const upgradeContainer = jQuery('.upgradeButtonsContainer .section1');
+    if (upgradeContainer.length !== 1) {
+        return;
+    }
     const id = uniqId();
-    jQuery('.upgradeButtonsContainer .section1').append(
-        `<div style="padding: 8px"><a id="${id}" href="#">В очередь</a></div>`
-    );
+    const btn = `<div style="padding: 8px"><a id="${id}" href="#">В очередь</a></div>`;
+    upgradeContainer.append(btn);
     const resources = grabContractResources();
     jQuery(`#${id}`).on('click', evt => {
         evt.preventDefault();
