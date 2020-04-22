@@ -1,10 +1,10 @@
 import { it, describe } from 'mocha';
 import { expect } from 'chai';
 
-import { ResourceStorage } from '../../src/Game';
 import { calcHeroResource } from '../../src/Core/HeroBalance';
 import { Resources } from '../../src/Core/Resources';
 import { ResourceType } from '../../src/Core/ResourceType';
+import { ResourceStorage } from '../../src/Core/ResourceStorage';
 
 describe('HeroBalance', function() {
     it('Get resource for requirement', function() {

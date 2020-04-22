@@ -1,5 +1,6 @@
 import { Resources } from './Resources';
-import { HeroAllResources, HeroResourceType, ResourceStorage } from '../Game';
+import { ResourceStorage } from './ResourceStorage';
+import { HeroAllResources, HeroResourceType } from './Hero';
 
 export function calcHeroResource(
     current: Resources,

@@ -3,10 +3,10 @@ import { Args } from '../Command';
 import { Task } from '../Queue/TaskQueue';
 import { grabResources, grabResourceStorage } from '../Page/ResourcesBlock';
 import { changeHeroResource, grabCurrentHeroResource } from '../Page/HeroPage';
-import { HeroAllResources } from '../Game';
 import { grabActiveVillageId } from '../Page/VillageBlock';
 import { HeroState } from '../State/HeroState';
 import { calcHeroResource } from '../Core/HeroBalance';
+import { HeroAllResources } from '../Core/Hero';
 
 @registerAction
 export class BalanceHeroResourcesAction extends ActionController {

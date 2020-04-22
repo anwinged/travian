@@ -1,8 +1,8 @@
-import { ResourceStorage } from '../Game';
 import { GrabError } from '../Errors';
 import { getNumber } from '../utils';
 import { Resources } from '../Core/Resources';
 import { ResourceType } from '../Core/ResourceType';
+import { ResourceStorage } from '../Core/ResourceStorage';
 
 export function grabResources(): Resources {
     const lumber = grabResource(ResourceType.Lumber);

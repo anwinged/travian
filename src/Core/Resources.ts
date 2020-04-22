@@ -1,5 +1,5 @@
-import { ResourceStorage } from '../Game';
 import { ResourceList, ResourceMapping, ResourceType } from './ResourceType';
+import { ResourceStorage } from './ResourceStorage';
 
 export interface ResourcesInterface {
     lumber: number;

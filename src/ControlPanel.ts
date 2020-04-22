@@ -14,8 +14,8 @@ import DashboardApp from './DashboardView/Dashboard.vue';
 import { ResourcesToLevel } from './Task/ResourcesToLevel';
 import { ConsoleLogger, Logger } from './Logger';
 import { VillageState } from './State/VillageState';
-import { Village } from './Game';
 import { Resources } from './Core/Resources';
+import { Village } from './Core/Village';
 
 interface QuickAction {
     label: string;
