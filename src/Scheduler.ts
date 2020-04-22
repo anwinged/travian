@@ -8,9 +8,9 @@ import { ConsoleLogger, Logger } from './Logger';
 import { BuildBuildingTask } from './Task/BuildBuildingTask';
 import { GrabVillageState } from './Task/GrabVillageState';
 import { ActionQueue, ImmutableActionList } from './Queue/ActionQueue';
-import { Resources, ResourcesInterface } from './Game';
 import { UpdateResourceContracts } from './Task/UpdateResourceContracts';
 import { TrainTroopTask } from './Task/TrainTroopTask';
+import { Resources, ResourcesInterface } from './Core/Resources';
 
 export class Scheduler {
     private taskQueue: TaskQueue;

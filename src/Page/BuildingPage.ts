@@ -1,8 +1,6 @@
 import { GrabError } from '../Errors';
-import { elClassId, getNumber, split, trimPrefix, uniqId } from '../utils';
-import { Resources } from '../Game';
-import { grabActiveVillageId } from './VillageBlock';
-import { TrainTroopTask } from '../Task/TrainTroopTask';
+import { elClassId, getNumber, trimPrefix, uniqId } from '../utils';
+import { Resources } from '../Core/Resources';
 
 export function clickBuildButton(typeId: number) {
     const section = jQuery(`#contract_building${typeId}`);

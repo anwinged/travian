@@ -1,6 +1,7 @@
-import { ActionError, GrabError } from '../Errors';
-import { HeroAllResources, HeroAttributes, HeroResourceType, ResourceMapping, ResourceType } from '../Game';
+import { GrabError } from '../Errors';
+import { HeroAllResources, HeroAttributes, HeroResourceType } from '../Game';
 import { getNumber } from '../utils';
+import { ResourceMapping, ResourceType } from '../Core/ResourceType';
 
 export function grabHeroAttributes(): HeroAttributes {
     const healthElement = jQuery('#attributes .attribute.health .powervalue .value');

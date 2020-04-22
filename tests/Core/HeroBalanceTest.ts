@@ -1,8 +1,10 @@
 import { it, describe } from 'mocha';
 import { expect } from 'chai';
 
-import { Resources, ResourceStorage, ResourceType } from '../../src/Game';
-import { Core } from '../../src/Core/HeroBalance';
+import { ResourceStorage } from '../../src/Game';
+import { calcHeroResource } from '../../src/Core/HeroBalance';
+import { Resources } from '../../src/Core/Resources';
+import { ResourceType } from '../../src/Core/ResourceType';
 
 describe('HeroBalance', function() {
     it('Get resource for requirement', function() {
@@ -10,7 +12,7 @@ describe('HeroBalance', function() {
         const required = new Resources(200, 200, 400, 300);
         const totalRequired = new Resources(200, 200, 400, 300);
         const storage = new ResourceStorage(1000, 1000);
-        const heroRes = Core.calcHeroResource(current, required, totalRequired, storage);
+        const heroRes = calcHeroResource(current, required, totalRequired, storage);
         expect(ResourceType.Iron).to.equals(heroRes);
     });
 
@@ -19,7 +21,7 @@ describe('HeroBalance', function() {
         const required = new Resources(200, 200, 400, 300);
         const totalRequired = new Resources(200, 200, 400, 300);
         const storage = new ResourceStorage(1000, 1000);
-        const heroRes = Core.calcHeroResource(current, required, totalRequired, storage);
+        const heroRes = calcHeroResource(current, required, totalRequired, storage);
         expect(ResourceType.Iron).to.equals(heroRes);
     });
 
@@ -28,7 +30,7 @@ describe('HeroBalance', function() {
         const required = new Resources(400, 400, 400, 300);
         const totalRequired = new Resources(400, 400, 400, 300);
         const storage = new ResourceStorage(1000, 1000);
-        const heroRes = Core.calcHeroResource(current, required, totalRequired, storage);
+        const heroRes = calcHeroResource(current, required, totalRequired, storage);
         expect(ResourceType.Lumber).to.equals(heroRes);
     });
 
@@ -37,7 +39,7 @@ describe('HeroBalance', function() {
         const required = new Resources(100, 100, 100, 100);
         const totalRequired = new Resources(100, 100, 100, 100);
         const storage = new ResourceStorage(1000, 1000);
-        const heroRes = Core.calcHeroResource(current, required, totalRequired, storage);
+        const heroRes = calcHeroResource(current, required, totalRequired, storage);
         expect(ResourceType.Iron).to.equals(heroRes);
     });
 });

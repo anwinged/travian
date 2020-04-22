@@ -6,7 +6,7 @@ import { changeHeroResource, grabCurrentHeroResource } from '../Page/HeroPage';
 import { HeroAllResources } from '../Game';
 import { grabActiveVillageId } from '../Page/VillageBlock';
 import { HeroState } from '../State/HeroState';
-import { Core } from '../Core/HeroBalance';
+import { calcHeroResource } from '../Core/HeroBalance';
 
 @registerAction
 export class BalanceHeroResourcesAction extends ActionController {
@@ -25,7 +25,7 @@ export class BalanceHeroResourcesAction extends ActionController {
         const storage = grabResourceStorage();
         const currentType = grabCurrentHeroResource();
 
-        const heroType = Core.calcHeroResource(resources, requiredResources, totalRequiredResources, storage);
+        const heroType = calcHeroResource(resources, requiredResources, totalRequiredResources, storage);
 
         if (heroType !== currentType) {
             changeHeroResource(heroType);

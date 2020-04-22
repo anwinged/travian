@@ -1,5 +1,5 @@
-import { ResourcesInterface } from './Game';
 import { TaskId } from './Queue/TaskQueue';
+import { ResourcesInterface } from './Core/Resources';
 
 export interface Args {
     taskId?: TaskId;

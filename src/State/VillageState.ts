@@ -1,5 +1,6 @@
 import { DataStorage } from '../DataStorage';
-import { BuildingQueueInfo, Resources, ResourceStorage } from '../Game';
+import { BuildingQueueInfo, ResourceStorage } from '../Game';
+import { Resources } from '../Core/Resources';
 
 const RESOURCES_KEY = 'res';
 const CAPACITY_KEY = 'cap';

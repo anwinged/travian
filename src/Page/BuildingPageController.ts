@@ -6,7 +6,7 @@ import { grabActiveVillageId } from './VillageBlock';
 import { ConsoleLogger } from '../Logger';
 import { createBuildButton, createTrainTroopButtons, createUpgradeButton } from './BuildingPage';
 import { BuildBuildingTask } from '../Task/BuildBuildingTask';
-import { Resources } from '../Game';
+import { Resources } from '../Core/Resources';
 
 const QUARTERS_ID = 19;
 const HORSE_STABLE_ID = 20;

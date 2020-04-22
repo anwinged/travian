@@ -1,6 +1,7 @@
-import { BuildingQueueInfo, Coordinates, Resources, Village, VillageList } from '../Game';
+import { BuildingQueueInfo, Coordinates, Village, VillageList } from '../Game';
 import { GrabError } from '../Errors';
 import { getNumber, parseLocation } from '../utils';
+import { Resources } from '../Core/Resources';
 
 function getVillageListItems() {
     const $elements = jQuery('#sidebarBoxVillagelist ul li a');
