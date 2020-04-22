@@ -10,11 +10,7 @@ export namespace Core {
         const resourceDiff = calcNeedResources(current, required, totalRequired, storage);
         const resourcesAsList = resourceDiff.asList();
 
-        const sorted = resourcesAsList.filter(x => x.value > 0).sort((x, y) => y.value - x.value);
-
-        if (sorted.length === 0) {
-            return HeroAllResources;
-        }
+        const sorted = resourcesAsList.sort((x, y) => y.value - x.value);
 
         const maxRequirement = sorted[0];
         const minRequirement = sorted[sorted.length - 1];
