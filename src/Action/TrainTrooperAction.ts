@@ -10,7 +10,7 @@ export class TrainTrooperAction extends ActionController {
         const troopId = this.getTroopId(args);
         const trainCount = this.getTrainCount(args);
 
-        const block = jQuery(`#nonFavouriteTroops .innerTroopWrapper.troop${troopId}`);
+        const block = jQuery(`.innerTroopWrapper[data-troopid="${troopId}"]`);
         if (block.length !== 1) {
             throw new ActionError(`Troop block not found`);
         }
