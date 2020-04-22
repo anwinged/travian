@@ -1,4 +1,4 @@
-all: format build
+all: test format build
 
 restart-server:
 	docker-compose restart

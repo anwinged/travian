@@ -1,13 +1,13 @@
 {
-  "name": "@anwinged/predictor",
+  "name": "@anwinged/travian",
   "version": "0.1.0",
   "description": "",
   "author": "Anton Vakhrushev",
   "license": "MIT",
-  "main": "dist/predictor.js",
+  "main": "dist/travian.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/anwinged/predictor.git"
+    "url": "https://github.com/anwinged/travian.git"
   },
   "scripts": {
     "test": "mocha",

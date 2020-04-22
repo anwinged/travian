@@ -3,7 +3,7 @@
     "allowJs": true,
     "experimentalDecorators": true,
     "isolatedModules": true,
-    "module": "es2015",
+    "module": "commonjs",
     "outDir": "./dist",
     "strictNullChecks": true,
     "strictPropertyInitialization": true,
