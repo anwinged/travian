@@ -27,11 +27,11 @@ function calcNeedResources(
     totalRequired: Resources,
     storage: ResourceStorage
 ): Resources {
-    if (!current.gt(required)) {
+    if (current.lt(required)) {
         return required.sub(current);
     }
 
-    if (!current.gt(totalRequired)) {
+    if (current.lt(totalRequired)) {
         return totalRequired.sub(current);
     }
 

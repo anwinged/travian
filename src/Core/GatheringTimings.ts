@@ -16,7 +16,7 @@ export class GatheringTimings {
         this.crop = crop;
     }
 
-    get common(): GatheringTime {
+    private get common(): GatheringTime {
         const xs = [this.lumber, this.clay, this.iron, this.crop];
         return xs.reduce((m, t) => (m === 'never' || t === 'never' ? 'never' : Math.max(m, t)), 0);
     }
