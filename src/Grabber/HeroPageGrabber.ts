@@ -1,4 +1,4 @@
-import { StateGrabber } from './StateGrabber';
+import { Grabber } from './Grabber';
 import {
     grabActiveVillageId,
     grabBuildingQueueInfo,
@@ -12,7 +12,7 @@ import { BuildingQueueInfo } from '../Game';
 import { HeroState } from '../State/HeroState';
 import { grabHeroAttributes, grabHeroVillage } from '../Page/HeroPage';
 
-export class HeroPageGrabber extends StateGrabber {
+export class HeroPageGrabber extends Grabber {
     grab(): void {
         const p = parseLocation();
         if (p.pathname !== '/hero.php') {

@@ -6,19 +6,19 @@ import { TaskQueueRenderer } from './TaskQueueRenderer';
 import { createAction } from './Action/ActionController';
 import { createTask } from './Task/TaskController';
 import { ConsoleLogger, Logger } from './Logger';
-import { StateGrabberManager } from './Grabber/StateGrabberManager';
+import { GrabberManager } from './Grabber/GrabberManager';
 import { Scheduler } from './Scheduler';
 
 export class Executor {
     private readonly version: string;
     private readonly scheduler: Scheduler;
-    private grabbers: StateGrabberManager;
+    private grabbers: GrabberManager;
     private logger: Logger;
 
     constructor(version: string, scheduler: Scheduler) {
         this.version = version;
         this.scheduler = scheduler;
-        this.grabbers = new StateGrabberManager();
+        this.grabbers = new GrabberManager();
         this.logger = new ConsoleLogger(this.constructor.name);
     }
 

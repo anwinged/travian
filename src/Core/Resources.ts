@@ -29,6 +29,10 @@ export class Resources implements ResourcesInterface {
         return new Resources(storage.warehouse, storage.warehouse, storage.warehouse, storage.granary);
     }
 
+    static zero(): Resources {
+        return new Resources(0, 0, 0, 0);
+    }
+
     getByType(type: ResourceType): number {
         switch (type) {
             case ResourceType.Lumber:
@@ -72,19 +76,46 @@ export class Resources implements ResourcesInterface {
         );
     }
 
-    lt(other: Resources): boolean {
+    eq(other: ResourcesInterface): boolean {
+        return (
+            this.lumber === other.lumber &&
+            this.clay === other.clay &&
+            this.iron === other.iron &&
+            this.crop === other.crop
+        );
+    }
+
+    lt(other: ResourcesInterface): boolean {
         return this.lumber < other.lumber && this.clay < other.clay && this.iron < other.iron && this.crop < other.crop;
     }
 
-    gt(other: Resources): boolean {
+    gt(other: ResourcesInterface): boolean {
         return this.lumber > other.lumber && this.clay > other.clay && this.iron > other.iron && this.crop > other.crop;
     }
 
-    lte(other: Resources): boolean {
+    lte(other: ResourcesInterface): boolean {
         return !this.gt(other);
     }
 
-    gte(other: Resources): boolean {
+    gte(other: ResourcesInterface): boolean {
         return !this.lt(other);
+    }
+
+    min(other: ResourcesInterface): Resources {
+        return new Resources(
+            Math.min(this.lumber, other.lumber),
+            Math.min(this.clay, other.clay),
+            Math.min(this.iron, other.iron),
+            Math.min(this.crop, other.crop)
+        );
+    }
+
+    max(other: ResourcesInterface): Resources {
+        return new Resources(
+            Math.max(this.lumber, other.lumber),
+            Math.max(this.clay, other.clay),
+            Math.max(this.iron, other.iron),
+            Math.max(this.crop, other.crop)
+        );
     }
 }

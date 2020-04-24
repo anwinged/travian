@@ -3,11 +3,12 @@ import { Task } from '../Queue/TaskQueue';
 import { TaskController, registerTask } from './TaskController';
 import { GoToPageAction } from '../Action/GoToPageAction';
 import { CompleteTaskAction } from '../Action/CompleteTaskAction';
-import { TrainTrooperAction } from '../Action/TrainTrooperAction';
 import { path } from '../utils';
+import { SendResourcesAction } from '../Action/SendResourcesAction';
+import { ClickButtonAction } from '../Action/ClickButtonAction';
 
 @registerTask
-export class TrainTroopTask extends TaskController {
+export class SendResourcesTask extends TaskController {
     async run(task: Task) {
         const args: Args = { ...task.args, taskId: task.id };
 
@@ -15,14 +16,15 @@ export class TrainTroopTask extends TaskController {
             newdid: args.villageId,
             gid: args.buildTypeId || undefined,
             id: args.buildId || undefined,
-            s: args.sheetId,
+            t: args.tabId,
         };
 
         const pagePath = path('/build.php', pathArgs);
 
         this.scheduler.scheduleActions([
             new Command(GoToPageAction.name, { ...args, path: pagePath }),
-            new Command(TrainTrooperAction.name, args),
+            new Command(SendResourcesAction.name, args),
+            new Command(ClickButtonAction.name, { ...args, selector: '#enabledButton.green.sendRessources' }),
             new Command(CompleteTaskAction.name, args),
         ]);
     }

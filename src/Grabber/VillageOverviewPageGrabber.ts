@@ -1,11 +1,11 @@
-import { StateGrabber } from './StateGrabber';
+import { Grabber } from './Grabber';
 import { grabActiveVillageId, grabBuildingQueueInfo, grabResourcesPerformance } from '../Page/VillageBlock';
 import { VillageState } from '../State/VillageState';
 import { parseLocation } from '../utils';
 import { GrabError } from '../Errors';
 import { BuildingQueueInfo } from '../Game';
 
-export class VillageOverviewPageGrabber extends StateGrabber {
+export class VillageOverviewPageGrabber extends Grabber {
     grab(): void {
         const p = parseLocation();
         if (p.pathname !== '/dorf1.php') {

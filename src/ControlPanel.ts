@@ -16,6 +16,9 @@ import { ConsoleLogger, Logger } from './Logger';
 import { VillageState } from './State/VillageState';
 import { Resources } from './Core/Resources';
 import { Village } from './Core/Village';
+import { calcGatheringTimings } from './Core/GatheringTimings';
+import { DataStorage } from './DataStorage';
+import { debounce } from 'debounce';
 
 interface QuickAction {
     label: string;
@@ -76,10 +79,19 @@ export class ControlPanel {
         };
 
         state.refreshTasks();
-        setInterval(() => state.refreshTasks(), 2000);
-
         state.refreshVillages();
-        setInterval(() => state.refreshVillages(), 5000);
+
+        setInterval(() => {
+            state.refreshTasks();
+            state.refreshVillages();
+        }, 3000);
+
+        DataStorage.onChange(() => {
+            debounce(() => {
+                setInterval(() => state.refreshTasks(), 2000);
+                setInterval(() => state.refreshVillages(), 5000);
+            }, 500);
+        });
 
         const tasks = this.scheduler.getTaskItems();
         const buildingsInQueue = tasks
@@ -101,7 +113,8 @@ export class ControlPanel {
                 buildId: getNumber(p.query.id),
                 buildTypeId: getNumber(elClassId(jQuery('#build').attr('class'), 'gid')),
                 categoryId: getNumber(p.query.category, 1),
-                tabId: getNumber(p.query.s, 0),
+                sheetId: getNumber(p.query.s, 0),
+                tabId: getNumber(p.query.t, 0),
             });
             buildPage.run();
         }
@@ -223,29 +236,11 @@ class VillageController {
     }
 
     private timeToResources(resources: Resources): number {
-        const time_to_lumber = this.timeToRes(this.resources.lumber, resources.lumber, this.performance.lumber);
-
-        const time_to_clay = this.timeToRes(this.resources.clay, resources.clay, this.performance.clay);
-        const time_to_iron = this.timeToRes(this.resources.iron, resources.iron, this.performance.iron);
-        const time_to_crop = this.timeToRes(this.resources.crop, resources.crop, this.performance.crop);
-
-        const min = Math.max(time_to_lumber, time_to_clay, time_to_iron, time_to_crop);
-
-        if (min === -1) {
+        const timings = calcGatheringTimings(this.resources, resources, this.performance);
+        if (timings.never) {
             return -1;
         }
 
-        return Math.max(time_to_lumber, time_to_clay, time_to_iron, time_to_crop);
-    }
-
-    private timeToRes(current: number, desired: number, speed: number) {
-        if (current >= desired) {
-            return 0;
-        }
-        if (current < desired && speed <= 0) {
-            return -1;
-        }
-        const diff = desired - current;
-        return (diff / speed) * 3600;
+        return timings.hours * 3600;
     }
 }

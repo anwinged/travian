@@ -23,6 +23,7 @@
   "devDependencies": {
     "@types/chai": "^4.2.11",
     "@types/dateformat": "^3.0.1",
+    "@types/debounce": "^1.2.0",
     "@types/jquery": "^3.3.34",
     "@types/mocha": "^7.0.2",
     "@types/node": "^13.9.4",
@@ -30,6 +31,7 @@
     "chai": "^4.2.0",
     "css-loader": "^3.5.2",
     "dateformat": "^3.0.3",
+    "debounce": "^1.2.0",
     "jquery": "^3.4.1",
     "mocha": "^7.1.1",
     "mocha-junit-reporter": "^1.23.3",

@@ -1,10 +1,23 @@
-export class Coordinates {
+export interface CoordinatesInterface {
+    x: number;
+    y: number;
+}
+
+export class Coordinates implements CoordinatesInterface {
     readonly x: number;
     readonly y: number;
+
+    static fromObject(crd: CoordinatesInterface) {
+        return new Coordinates(crd.x, crd.y);
+    }
 
     constructor(x: number, y: number) {
         this.x = x;
         this.y = y;
+    }
+
+    eq(other: CoordinatesInterface): boolean {
+        return this.x === other.x && this.y === other.y;
     }
 }
 

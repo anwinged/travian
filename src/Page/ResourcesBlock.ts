@@ -4,7 +4,7 @@ import { Resources } from '../Core/Resources';
 import { ResourceType } from '../Core/ResourceType';
 import { ResourceStorage } from '../Core/ResourceStorage';
 
-export function grabResources(): Resources {
+export function grabVillageResources(): Resources {
     const lumber = grabResource(ResourceType.Lumber);
     const clay = grabResource(ResourceType.Clay);
     const iron = grabResource(ResourceType.Iron);
@@ -13,7 +13,7 @@ export function grabResources(): Resources {
     return new Resources(lumber, clay, iron, crop);
 }
 
-export function grabResourceStorage() {
+export function grabVillageResourceStorage() {
     const warehouse = grabCapacity('warehouse');
     const granary = grabCapacity('granary');
     return new ResourceStorage(warehouse, granary);

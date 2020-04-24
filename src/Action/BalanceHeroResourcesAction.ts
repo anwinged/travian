@@ -1,7 +1,7 @@
 import { ActionController, registerAction } from './ActionController';
 import { Args } from '../Command';
 import { Task } from '../Queue/TaskQueue';
-import { grabResources, grabResourceStorage } from '../Page/ResourcesBlock';
+import { grabVillageResources, grabVillageResourceStorage } from '../Page/ResourcesBlock';
 import { changeHeroResource, grabCurrentHeroResource } from '../Page/HeroPage';
 import { grabActiveVillageId } from '../Page/VillageBlock';
 import { HeroState } from '../State/HeroState';
@@ -19,10 +19,10 @@ export class BalanceHeroResourcesAction extends ActionController {
             return;
         }
 
-        const resources = grabResources();
+        const resources = grabVillageResources();
         const requiredResources = this.scheduler.getVillageRequiredResources(heroVillageId);
         const totalRequiredResources = this.scheduler.getTotalVillageRequiredResources(heroVillageId);
-        const storage = grabResourceStorage();
+        const storage = grabVillageResourceStorage();
         const currentType = grabCurrentHeroResource();
 
         const heroType = calcHeroResource(resources, requiredResources, totalRequiredResources, storage);

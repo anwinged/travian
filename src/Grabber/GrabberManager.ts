@@ -1,14 +1,14 @@
-import { StateGrabber } from './StateGrabber';
-import { ResourceGrabber } from './ResourceGrabber';
+import { Grabber } from './Grabber';
+import { VillageResourceGrabber } from './VillageResourceGrabber';
 import { VillageOverviewPageGrabber } from './VillageOverviewPageGrabber';
 import { HeroPageGrabber } from './HeroPageGrabber';
 
-export class StateGrabberManager {
-    private readonly grabbers: Array<StateGrabber> = [];
+export class GrabberManager {
+    private readonly grabbers: Array<Grabber> = [];
 
     constructor() {
         this.grabbers = [];
-        this.grabbers.push(new ResourceGrabber());
+        this.grabbers.push(new VillageResourceGrabber());
         this.grabbers.push(new VillageOverviewPageGrabber());
         this.grabbers.push(new HeroPageGrabber());
     }
