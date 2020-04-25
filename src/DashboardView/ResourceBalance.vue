@@ -4,7 +4,23 @@
 
 <script>
 export default {
-  props: ['value'],
+  props: {
+    value: {
+      type: Number,
+    },
+    hideZero: {
+      type: Boolean,
+      default: false,
+    },
+    color: {
+      type: Boolean,
+      default: true,
+    },
+    sign: {
+      type: Boolean,
+      default: true,
+    },
+  },
   data() {
     return {};
   },
@@ -12,17 +28,22 @@ export default {
     formatted() {
       if (this.value === undefined) {
         return '';
-      } else if (this.value > 0) {
-        return '+' + this.value;
+      }
+      if (this.value === 0) {
+        return this.hideZero ? '' : '0';
+      }
+      if (this.value > 0) {
+        return (this.sign ? '+' : '') + this.value;
       } else {
         return '' + this.value;
       }
     },
     classes() {
-      return {
+      const colorClasses = {
         good: this.value > 0,
         bad: this.value < 0,
       };
+      return this.color ? colorClasses : {};
     },
   },
 };

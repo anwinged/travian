@@ -17,16 +17,16 @@
           <tr class="normal-line top-line">
             <td :class="{ active: village.active }" :title="village.id">{{ village.name }}</td>
             <td class="right">
-              <filling :value="village.lumber" :max="village.warehouse" :speed="village.lumber_hour"></filling>
+              <filling :value="village.lumber" :max="village.warehouse" :speed="village.performance.lumber"></filling>
             </td>
             <td class="right">
-              <filling :value="village.clay" :max="village.warehouse" :speed="village.clay_hour"></filling>
+              <filling :value="village.clay" :max="village.warehouse" :speed="village.performance.clay"></filling>
             </td>
             <td class="right">
-              <filling :value="village.iron" :max="village.warehouse" :speed="village.iron_hour"></filling>
+              <filling :value="village.iron" :max="village.warehouse" :speed="village.performance.iron"></filling>
             </td>
             <td class="right">
-              <filling :value="village.crop" :max="village.granary" :speed="village.crop_hour"></filling>
+              <filling :value="village.crop" :max="village.granary" :speed="village.performance.crop"></filling>
             </td>
             <td class="right">
               <a :href="warehousePath(village)" v-text="village.warehouse"></a>
@@ -35,35 +35,71 @@
           </tr>
           <tr class="performance-line">
             <td class="right">Прирост:</td>
-            <td class="right">+{{ village.lumber_hour }}</td>
-            <td class="right">+{{ village.clay_hour }}</td>
-            <td class="right">+{{ village.iron_hour }}</td>
-            <td class="right">+{{ village.crop_hour }}</td>
+            <td class="right">
+              <resource :value="village.performance.lumber"></resource>
+            </td>
+            <td class="right">
+              <resource :value="village.performance.clay"></resource>
+            </td>
+            <td class="right">
+              <resource :value="village.performance.iron"></resource>
+            </td>
+            <td class="right">
+              <resource :value="village.performance.crop"></resource>
+            </td>
             <td></td>
             <td></td>
           </tr>
           <tr class="required-line">
             <td class="right">След:</td>
-            <td class="right" v-text="village.lumber_need || ''"></td>
-            <td class="right" v-text="village.clay_need || ''"></td>
-            <td class="right" v-text="village.iron_need || ''"></td>
-            <td class="right" v-text="village.crop_need || ''"></td>
+            <td class="right">
+              <resource
+                :value="village.requiredResources.lumber"
+                :hide-zero="true"
+                :color="false"
+                :sign="false"
+              ></resource>
+            </td>
+            <td class="right">
+              <resource
+                :value="village.requiredResources.clay"
+                :hide-zero="true"
+                :color="false"
+                :sign="false"
+              ></resource>
+            </td>
+            <td class="right">
+              <resource
+                :value="village.requiredResources.iron"
+                :hide-zero="true"
+                :color="false"
+                :sign="false"
+              ></resource>
+            </td>
+            <td class="right">
+              <resource
+                :value="village.requiredResources.crop"
+                :hide-zero="true"
+                :color="false"
+                :sign="false"
+              ></resource>
+            </td>
             <td class="right" v-text="secondsToTime(village.buildRemainingSeconds)"></td>
             <td></td>
           </tr>
           <tr class="required-line">
             <td class="right">Баланс:</td>
             <td class="right">
-              <resource :value="village.lumber - (village.lumber_need || 0)"></resource>
+              <resource :value="village.requiredBalance.lumber"></resource>
             </td>
             <td class="right">
-              <resource :value="village.clay - (village.clay_need || 0)"></resource>
+              <resource :value="village.requiredBalance.clay"></resource>
             </td>
             <td class="right">
-              <resource :value="village.iron - (village.iron_need || 0)"></resource>
+              <resource :value="village.requiredBalance.iron"></resource>
             </td>
             <td class="right">
-              <resource :value="village.crop - (village.crop_need || 0)"></resource>
+              <resource :value="village.requiredBalance.crop"></resource>
             </td>
             <td class="right" v-text="timeToRequired(village)"></td>
             <td></td>
@@ -71,16 +107,16 @@
           <tr class="required-line">
             <td class="right">Баланс очереди:</td>
             <td class="right">
-              <resource :value="village.lumber - village.lumber_total_need"></resource>
+              <resource :value="village.totalRequiredBalance.lumber"></resource>
             </td>
             <td class="right">
-              <resource :value="village.clay - village.clay_total_need"></resource>
+              <resource :value="village.totalRequiredBalance.clay"></resource>
             </td>
             <td class="right">
-              <resource :value="village.iron - village.iron_total_need"></resource>
+              <resource :value="village.totalRequiredBalance.iron"></resource>
             </td>
             <td class="right">
-              <resource :value="village.crop - village.crop_total_need"></resource>
+              <resource :value="village.totalRequiredBalance.crop"></resource>
             </td>
             <td class="right" v-text="timeToTotalRequired(village)"></td>
             <td></td>
@@ -88,16 +124,16 @@
           <tr class="incoming-line">
             <td class="right">Торговцы:</td>
             <td class="right">
-              <resource :value="village.incomingResources.lumber"></resource>
+              <resource :value="village.incomingResources.lumber" :hide-zero="true"></resource>
             </td>
             <td class="right">
-              <resource :value="village.incomingResources.clay"></resource>
+              <resource :value="village.incomingResources.clay" :hide-zero="true"></resource>
             </td>
             <td class="right">
-              <resource :value="village.incomingResources.iron"></resource>
+              <resource :value="village.incomingResources.iron" :hide-zero="true"></resource>
             </td>
             <td class="right">
-              <resource :value="village.incomingResources.crop"></resource>
+              <resource :value="village.incomingResources.crop" :hide-zero="true"></resource>
             </td>
             <td></td>
             <td></td>
