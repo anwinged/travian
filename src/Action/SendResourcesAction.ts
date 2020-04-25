@@ -1,14 +1,14 @@
 import { ActionController, registerAction } from './ActionController';
 import { Args } from '../Command';
-import { AbortTaskError, ActionError } from '../Errors';
+import { AbortTaskError, ActionError, TryLaterError } from '../Errors';
 import { Task } from '../Queue/TaskQueue';
 import { Resources } from '../Core/Resources';
-import { Coordinates } from '../Core/Village';
+import { Coordinates, Village } from '../Core/Village';
 import { clickSendButton, fillSendResourcesForm, grabMerchantsInfo } from '../Page/BuildingPage';
 import { grabVillageResources } from '../Page/ResourcesBlock';
-import { grabVillageList } from '../Page/VillageBlock';
+import { grabActiveVillageId, grabVillageList } from '../Page/VillageBlock';
 import { SendResourcesTask } from '../Task/SendResourcesTask';
-import { timestamp } from '../utils';
+import { aroundMinutes, timestamp } from '../utils';
 import { VillageState } from '../State/VillageState';
 
 function err(msg): never {
@@ -21,68 +21,101 @@ export class SendResourcesAction extends ActionController {
         const resources = Resources.fromObject(args.resources || err('No resources'));
         const coordinates = Coordinates.fromObject(args.coordinates || err('No coordinates'));
 
-        const merchants = grabMerchantsInfo();
-        const villageList = grabVillageList();
-
-        const village = villageList.find(v => v.crd.eq(coordinates));
-
-        if (!village) {
-            throw new AbortTaskError('No village');
-        }
-
-        const capacity = merchants.available * merchants.carry;
-
-        if (!capacity) {
-            throw new AbortTaskError('No merchants');
-        }
-
         console.log('Send', resources, 'to', coordinates);
-        console.log('Merchants', merchants, capacity);
 
-        const villageResources = grabVillageResources();
+        const recipientVillage = this.findRecipientVillage(coordinates);
+        const readyToTransfer = this.getResourcesForTransfer(recipientVillage.id).min(resources);
 
-        const targetVillageState = new VillageState(village.id);
-        const targetVillageResources = targetVillageState.getResources();
-        const targetVillageRequirements = this.scheduler
-            .getVillageRequiredResources(village.id)
-            .sub(targetVillageResources)
-            .max(Resources.zero());
+        const remainingResources = resources.sub(readyToTransfer).max(Resources.zero());
 
-        if (targetVillageRequirements.eq(Resources.zero())) {
-            throw new AbortTaskError('No requirements');
-        }
+        console.log('Total res', resources);
+        console.log('To transfer res', readyToTransfer);
+        console.log('Remaining res', remainingResources);
 
-        let sendResources = targetVillageRequirements.min(villageResources).min(resources);
-
-        const reqSum = sendResources.lumber + sendResources.clay + sendResources.iron + sendResources.crop;
-
-        let coeff = reqSum > capacity ? capacity / reqSum : 1;
-
-        const normSendResources = sendResources.scale(coeff);
-
-        const remainingResources = resources.sub(normSendResources);
-
-        console.log('planned res', resources);
-        console.log('current village res', villageResources);
-        console.log('target village req', targetVillageRequirements);
-        console.log('send res', sendResources);
-        console.log('coeff', coeff);
-        console.log('norm send res', normSendResources);
-        console.log('remaining res', remainingResources);
-
-        if (remainingResources.gt(Resources.zero())) {
-            console.log('schedule next', remainingResources);
+        if (!remainingResources.empty()) {
+            console.log('Schedule next', remainingResources);
             this.scheduler.scheduleTask(
                 SendResourcesTask.name,
                 {
                     ...args,
                     resources: remainingResources,
                 },
-                timestamp() + 10 * 60
+                timestamp() + aroundMinutes(10)
             );
         }
 
-        fillSendResourcesForm(normSendResources, coordinates);
+        fillSendResourcesForm(readyToTransfer, coordinates);
         clickSendButton();
+    }
+
+    private findRecipientVillage(coordinates: Coordinates): Village {
+        const villageList = grabVillageList();
+        const village = villageList.find(v => v.crd.eq(coordinates));
+        if (!village) {
+            throw new AbortTaskError('No village');
+        }
+        return village;
+    }
+
+    private getMerchantsCapacity(): number {
+        const merchants = grabMerchantsInfo();
+        const capacity = merchants.available * merchants.carry;
+        if (!capacity) {
+            throw new TryLaterError(aroundMinutes(10), 'No merchants');
+        }
+        return capacity;
+    }
+
+    private getSenderAvailableResources(): Resources {
+        const villageId = grabActiveVillageId();
+        const resources = grabVillageResources();
+        const requirements = this.scheduler.getVillageRequiredResources(villageId);
+        const free = resources.sub(requirements).max(Resources.zero());
+        console.log('Sender res', resources);
+        console.log('Sender req', requirements);
+        console.log('Sender free', free);
+        if (free.empty()) {
+            throw new TryLaterError(aroundMinutes(10), 'No free resources');
+        }
+        return free;
+    }
+
+    private getRecipientRequirements(villageId: number): Resources {
+        const state = new VillageState(villageId);
+        const resources = state.getResources();
+        const incoming = state.getIncomingMerchants().reduce((m, i) => m.add(i.resources), Resources.zero());
+        const requirements = this.scheduler.getVillageRequiredResources(villageId);
+        const missing = requirements
+            .sub(incoming)
+            .sub(resources)
+            .max(Resources.zero());
+        console.log('Recipient res', resources);
+        console.log('Recipient incoming', incoming);
+        console.log('Recipient req', requirements);
+        console.log('Recipient missing', missing);
+        if (missing.empty()) {
+            throw new TryLaterError(aroundMinutes(10), 'No missing resources');
+        }
+        return missing;
+    }
+
+    private getResourcesForTransfer(recipientVillageId): Resources {
+        const senderResources = this.getSenderAvailableResources();
+        const recipientNeeds = this.getRecipientRequirements(recipientVillageId);
+        const prepared = senderResources.min(recipientNeeds);
+        const capacity = this.getMerchantsCapacity();
+
+        let readyToTransfer = prepared;
+        if (prepared.amount() > capacity) {
+            readyToTransfer = prepared.scale(capacity / prepared.amount());
+        }
+
+        console.log('Sender', senderResources);
+        console.log('Recipient', recipientNeeds);
+        console.log('Prepared', prepared);
+        console.log('Capacity', capacity);
+        console.log('Ready to transfer', readyToTransfer);
+
+        return readyToTransfer;
     }
 }

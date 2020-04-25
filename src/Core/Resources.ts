@@ -110,4 +110,12 @@ export class Resources implements ResourcesInterface {
             Math.max(this.crop, other.crop)
         );
     }
+
+    amount(): number {
+        return this.lumber + this.clay + this.iron + this.crop;
+    }
+
+    empty(): boolean {
+        return this.eq(Resources.zero());
+    }
 }

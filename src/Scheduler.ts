@@ -11,6 +11,7 @@ import { ActionQueue, ImmutableActionList } from './Queue/ActionQueue';
 import { UpdateResourceContracts } from './Task/UpdateResourceContracts';
 import { TrainTroopTask } from './Task/TrainTroopTask';
 import { Resources, ResourcesInterface } from './Core/Resources';
+import { SendResourcesTask } from './Task/SendResourcesTask';
 
 export class Scheduler {
     private taskQueue: TaskQueue;
@@ -119,7 +120,9 @@ export class Scheduler {
     }
 
     getVillageRequiredResources(villageId): Resources {
-        const tasks = this.taskQueue.seeItems().filter(t => sameVillage(villageId, t.args) && t.args.resources);
+        const tasks = this.taskQueue
+            .seeItems()
+            .filter(t => sameVillage(villageId, t.args) && t.args.resources && t.name !== SendResourcesTask.name);
         const first = tasks.shift();
         if (first && first.args.resources) {
             return Resources.fromObject(first.args.resources);
