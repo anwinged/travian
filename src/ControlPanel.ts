@@ -99,8 +99,8 @@ export class ControlPanel {
 
         if (p.pathname === '/dorf1.php') {
             showResourceSlotIds(buildingsInQueue);
-            onResourceSlotCtrlClick(buildId => this.onResourceSlotCtrlClick(villageId, buildId, state));
-            quickActions.push(...this.createDepositsQuickActions(state, villageId));
+            onResourceSlotCtrlClick(buildId => this.onResourceSlotCtrlClick(villageId, buildId));
+            quickActions.push(...this.createDepositsQuickActions(villageId));
         }
 
         if (p.pathname === '/dorf2.php') {
@@ -125,7 +125,7 @@ export class ControlPanel {
         });
     }
 
-    private createDepositsQuickActions(state, villageId) {
+    private createDepositsQuickActions(villageId) {
         const deposits = grabResourceDeposits();
         if (deposits.length === 0) {
             return [];
@@ -138,16 +138,14 @@ export class ControlPanel {
                 label: `Ресурсы до уровня ${i}`,
                 cb: () => {
                     this.scheduler.scheduleTask(ResourcesToLevel.name, { villageId, level: i });
-                    state.refreshTasks();
                 },
             });
         }
         return quickActions;
     }
 
-    private onResourceSlotCtrlClick(villageId: number, buildId: number, state) {
+    private onResourceSlotCtrlClick(villageId: number, buildId: number) {
         this.scheduler.scheduleTask(UpgradeBuildingTask.name, { villageId, buildId });
-        state.refreshTasks();
         const n = new Notification(`Building ${buildId} scheduled`);
         setTimeout(() => n && n.close(), 4000);
     }
