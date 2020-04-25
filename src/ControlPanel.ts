@@ -57,9 +57,10 @@ export class ControlPanel {
             actionList: [],
             quickActions: quickActions,
 
-            refreshTasks() {
+            refresh() {
                 this.taskList = scheduler.getTaskItems();
                 this.actionList = scheduler.getActionItems();
+                this.refreshVillages();
             },
 
             removeTask(taskId: string) {
@@ -79,18 +80,15 @@ export class ControlPanel {
             },
         };
 
-        state.refreshTasks();
-        state.refreshVillages();
+        state.refresh();
 
         setInterval(() => {
-            state.refreshTasks();
-            state.refreshVillages();
+            state.refresh();
         }, 3000);
 
         DataStorage.onChange(() => {
             debounce(() => {
-                setInterval(() => state.refreshTasks(), 2000);
-                setInterval(() => state.refreshVillages(), 5000);
+                state.refresh();
             }, 500);
         });
 
