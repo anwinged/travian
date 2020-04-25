@@ -52,8 +52,7 @@ export class BuildingPageController {
         }
 
         if (isMarketSendResourcesPage()) {
-            console.log('MERCH', grabIncomingMerchants());
-            createSendResourcesButton((res, crd) => this.onSendResources(res, crd));
+            createSendResourcesButton((res, crd, scale) => this.onSendResources(res, crd, scale));
         }
     }
 
@@ -89,14 +88,14 @@ export class BuildingPageController {
         notify(`Training ${count} troopers scheduled`);
     }
 
-    private onSendResources(resources: Resources, coordinates: Coordinates) {
+    private onSendResources(resources: Resources, coordinates: Coordinates, scale: number) {
         const villageId = grabActiveVillageId();
         this.scheduler.scheduleTask(SendResourcesTask.name, {
             villageId: villageId,
             buildTypeId: this.attributes.buildTypeId,
             buildId: this.attributes.buildId,
             tabId: this.attributes.tabId,
-            resources,
+            resources: resources.scale(scale),
             coordinates,
         });
         notify(`Send resources ${JSON.stringify(resources)} from ${villageId} to ${JSON.stringify(coordinates)}`);

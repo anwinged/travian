@@ -105,10 +105,22 @@ export function createTrainTroopButtons(
     });
 }
 
-export function createSendResourcesButton(onClickHandler: (resources: Resources, crd: Coordinates) => void) {
-    const id = uniqId();
-    jQuery('#button').before(`<div style="padding: 8px"><a id="${id}" href="#">Отправить</a></div>`);
-    jQuery(`#${id}`).on('click', evt => {
+export function createSendResourcesButton(
+    onClickHandler: (resources: Resources, crd: Coordinates, scale: number) => void
+) {
+    const id1 = uniqId();
+    const id10 = uniqId();
+    const id100 = uniqId();
+    const id1000 = uniqId();
+
+    jQuery('#button').before(`<div style="padding: 8px">
+        <a id="${id1}" href="#">Отправить</a> / 
+        <a id="${id10}" href="#">x10</a> / 
+        <a id="${id100}" href="#">x100</a> /
+        <a id="${id1000}" href="#">x1000</a>
+    </div>`);
+
+    const createHandler = (handler, scale) => evt => {
         evt.preventDefault();
         const sendSelect = jQuery('#send_select');
         const resources = new Resources(
@@ -118,8 +130,13 @@ export function createSendResourcesButton(onClickHandler: (resources: Resources,
             getNumber(sendSelect.find('#r4').val())
         );
         const crd = new Coordinates(getNumber(jQuery('#xCoordInput').val()), getNumber(jQuery('#yCoordInput').val()));
-        onClickHandler(resources, crd);
-    });
+        onClickHandler(resources, crd, scale);
+    };
+
+    jQuery(`#${id1}`).on('click', createHandler(onClickHandler, 1));
+    jQuery(`#${id10}`).on('click', createHandler(onClickHandler, 10));
+    jQuery(`#${id100}`).on('click', createHandler(onClickHandler, 100));
+    jQuery(`#${id1000}`).on('click', createHandler(onClickHandler, 1000));
 }
 
 export function grabMerchantsInfo() {
