@@ -25,12 +25,22 @@ export class Executor {
     async run() {
         await waitForLoad();
         await sleepMicro();
-        markPage('Executor', this.version);
 
-        this.renderTaskQueue();
-        setInterval(() => this.renderTaskQueue(), 5 * 1000);
+        try {
+            markPage('Executor', this.version);
+            this.renderTaskQueue();
+        } catch (e) {
+            this.logger.warn(e);
+        }
+
+        let skipFirstSleep = true;
 
         while (true) {
+            if (skipFirstSleep) {
+                skipFirstSleep = false;
+            } else {
+                await sleepMicro();
+            }
             await this.doTaskProcessingStep();
         }
     }
@@ -40,8 +50,6 @@ export class Executor {
     }
 
     private async doTaskProcessingStep() {
-        await sleepMicro();
-
         const currentTs = timestamp();
         const task = this.scheduler.nextTask(currentTs);
 

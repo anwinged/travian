@@ -5,7 +5,7 @@ export function sleep(ms: number) {
 }
 
 export async function sleepMicro() {
-    let ms = 1000 + Math.random() * 2000;
+    let ms = 2000 + Math.random() * 500;
     return await sleep(ms);
 }
 
