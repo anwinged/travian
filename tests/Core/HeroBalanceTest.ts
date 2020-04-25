@@ -42,4 +42,13 @@ describe('HeroBalance', function() {
         const heroRes = calcHeroResource(current, required, totalRequired, storage);
         expect(ResourceType.Iron).to.equals(heroRes);
     });
+
+    it('Get resource if enough, but total not enough', function() {
+        const current = new Resources(300, 300, 300, 300);
+        const required = new Resources(100, 100, 100, 100);
+        const totalRequired = new Resources(500, 600, 200, 200);
+        const storage = new ResourceStorage(1000, 1000);
+        const heroRes = calcHeroResource(current, required, totalRequired, storage);
+        expect(ResourceType.Clay).to.equals(heroRes);
+    });
 });

@@ -53,9 +53,10 @@ function heroResourceTypeToNumber(type: HeroResourceType): number {
 }
 
 export function grabHeroVillage(): string | undefined {
-    const status = jQuery('.heroStatusMessage').text();
-    const hrefText = jQuery('.heroStatusMessage a').text();
-    if (status.toLowerCase().includes('в родной деревне')) {
+    const statusSpan = jQuery('.heroStatusMessage span:not(.titleExtra)');
+    const statusText = statusSpan.text();
+    const hrefText = statusSpan.find('a').text();
+    if (statusText.toLowerCase().includes('в родной деревне')) {
         return hrefText || undefined;
     } else {
         return undefined;
