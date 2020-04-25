@@ -2,6 +2,7 @@ import { GrabError } from '../Errors';
 import { elClassId, getNumber, trimPrefix, uniqId } from '../utils';
 import { Resources } from '../Core/Resources';
 import { Coordinates } from '../Core/Village';
+import { IncomingMerchant } from '../Core/Market';
 
 export function clickBuildButton(typeId: number) {
     const section = jQuery(`#contract_building${typeId}`);
@@ -139,4 +140,19 @@ export function fillSendResourcesForm(resources: Resources, crd: Coordinates) {
 
 export function clickSendButton() {
     jQuery('#enabledButton').trigger('click');
+}
+
+export function grabIncomingMerchants(): ReadonlyArray<IncomingMerchant> {
+    const result: Array<IncomingMerchant> = [];
+    const root = jQuery('#merchantsOnTheWay .ownMerchants');
+    root.find('.traders').each((idx, el) => {
+        const $el = jQuery(el);
+        result.push(
+            new IncomingMerchant(
+                grabResourcesFromList($el.find('.resourceWrapper .resources')),
+                getNumber($el.find('.timer').attr('value'))
+            )
+        );
+    });
+    return result;
 }

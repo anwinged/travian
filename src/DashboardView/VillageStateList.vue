@@ -85,6 +85,23 @@
             <td class="right" v-text="timeToTotalRequired(village)"></td>
             <td></td>
           </tr>
+          <tr class="incoming-line">
+            <td class="right">Торговцы:</td>
+            <td class="right">
+              <resource :value="village.incomingResources.lumber"></resource>
+            </td>
+            <td class="right">
+              <resource :value="village.incomingResources.clay"></resource>
+            </td>
+            <td class="right">
+              <resource :value="village.incomingResources.iron"></resource>
+            </td>
+            <td class="right">
+              <resource :value="village.incomingResources.crop"></resource>
+            </td>
+            <td></td>
+            <td></td>
+          </tr>
           <tr class="normal-line">
             <td></td>
             <td class="right" colspan="6">
@@ -97,6 +114,7 @@
                 >->{{ v.name }}</a
               >
               <a class="village-quick-link" :href="quartersPath(village)">Казармы</a>
+              <a class="village-quick-link" :href="horseStablePath(village)">Конюшни</a>
             </td>
           </tr>
         </template>
@@ -109,6 +127,7 @@
 import { path } from '../utils';
 import ResourceBalance from './ResourceBalance';
 import VillageResource from './VillageResource';
+import { HORSE_STABLE_ID, MARKET_ID, QUARTERS_ID, WAREHOUSE_ID } from '../Core/Buildings';
 
 export default {
   components: {
@@ -126,13 +145,22 @@ export default {
       return path(name, args);
     },
     marketPath(fromVillage, toVillage) {
-      return path('/build.php', { newdid: fromVillage.id, gid: 17, t: 5, x: toVillage.crd.x, y: toVillage.crd.y });
+      return path('/build.php', {
+        newdid: fromVillage.id,
+        gid: MARKET_ID,
+        t: 5,
+        x: toVillage.crd.x,
+        y: toVillage.crd.y,
+      });
     },
     warehousePath(village) {
-      return path('/build.php', { newdid: village.id, gid: 10 });
+      return path('/build.php', { newdid: village.id, gid: WAREHOUSE_ID });
     },
     quartersPath(village) {
-      return path('/build.php', { newdid: village.id, gid: 19 });
+      return path('/build.php', { newdid: village.id, gid: QUARTERS_ID });
+    },
+    horseStablePath(village) {
+      return path('/build.php', { newdid: village.id, gid: HORSE_STABLE_ID });
     },
     secondsToTime(value) {
       if (value === 0) {
@@ -178,12 +206,9 @@ export default {
   border: 1px solid #ddd;
 }
 
-.performance-line td {
-  padding: 0 4px 4px;
-  font-size: 90%;
-}
-
-.required-line td {
+.performance-line td,
+.required-line td,
+.incoming-line td {
   padding: 0 4px 4px;
   font-size: 90%;
 }

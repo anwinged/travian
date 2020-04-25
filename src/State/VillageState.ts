@@ -1,12 +1,18 @@
 import { DataStorage } from '../DataStorage';
 import { BuildingQueueInfo } from '../Game';
-import { Resources } from '../Core/Resources';
+import { Resources, ResourcesInterface } from '../Core/Resources';
 import { ResourceStorage } from '../Core/ResourceStorage';
+import { IncomingMerchant } from '../Core/Market';
 
 const RESOURCES_KEY = 'res';
 const CAPACITY_KEY = 'cap';
 const PERFORMANCE_KEY = 'perf';
 const BUILDING_QUEUE_KEY = 'bq';
+const INCOMING_MERCHANTS_KEY = 'im';
+
+const ResourceOptions = {
+    factory: () => new Resources(0, 0, 0, 0),
+};
 
 export class VillageState {
     private storage: DataStorage;
@@ -19,9 +25,7 @@ export class VillageState {
     }
 
     getResources(): Resources {
-        let plain = this.storage.get(RESOURCES_KEY);
-        let res = new Resources(0, 0, 0, 0);
-        return Object.assign(res, plain) as Resources;
+        return this.storage.getTyped(RESOURCES_KEY, ResourceOptions);
     }
 
     storeResourceStorage(storage: ResourceStorage) {
@@ -39,9 +43,7 @@ export class VillageState {
     }
 
     getResourcesPerformance(): Resources {
-        let plain = this.storage.get(PERFORMANCE_KEY);
-        let res = new Resources(0, 0, 0, 0);
-        return Object.assign(res, plain) as Resources;
+        return this.storage.getTyped(PERFORMANCE_KEY, ResourceOptions);
     }
 
     storeBuildingQueueInfo(info: BuildingQueueInfo): void {
@@ -52,5 +54,24 @@ export class VillageState {
         let plain = this.storage.get(BUILDING_QUEUE_KEY);
         let res = new BuildingQueueInfo(0);
         return Object.assign(res, plain) as BuildingQueueInfo;
+    }
+
+    storeIncomingMerchants(merchants: ReadonlyArray<IncomingMerchant>): void {
+        this.storage.set(
+            INCOMING_MERCHANTS_KEY,
+            merchants.map(m => ({ ...m.resources, ts: m.ts }))
+        );
+    }
+
+    getIncomingMerchants(): ReadonlyArray<IncomingMerchant> {
+        const objects = this.storage.getTypedList<object>(INCOMING_MERCHANTS_KEY, { factory: () => ({}) });
+        return objects.map((plain: object) => {
+            const m = new IncomingMerchant(new Resources(0, 0, 0, 0), 0);
+            if (typeof plain !== 'object') {
+                return m;
+            }
+            const norm = plain as ResourcesInterface & { ts: number };
+            return new IncomingMerchant(Resources.fromObject(norm), Number(norm.ts || 0));
+        });
     }
 }

@@ -1,21 +1,12 @@
 import { Grabber } from './Grabber';
-import {
-    grabActiveVillageId,
-    grabBuildingQueueInfo,
-    grabResourcesPerformance,
-    grabVillageList,
-} from '../Page/VillageBlock';
-import { VillageState } from '../State/VillageState';
-import { parseLocation } from '../utils';
-import { GrabError } from '../Errors';
-import { BuildingQueueInfo } from '../Game';
+import { grabVillageList } from '../Page/VillageBlock';
 import { HeroState } from '../State/HeroState';
 import { grabHeroAttributes, grabHeroVillage } from '../Page/HeroPage';
+import { isHeroPage } from '../Page/PageDetectors';
 
 export class HeroPageGrabber extends Grabber {
     grab(): void {
-        const p = parseLocation();
-        if (p.pathname !== '/hero.php') {
+        if (!isHeroPage()) {
             return;
         }
 

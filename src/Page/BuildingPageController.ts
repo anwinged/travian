@@ -9,24 +9,14 @@ import {
     createSendResourcesButton,
     createTrainTroopButtons,
     createUpgradeButton,
+    grabIncomingMerchants,
 } from './BuildingPage';
 import { BuildBuildingTask } from '../Task/BuildBuildingTask';
 import { Resources } from '../Core/Resources';
 import { Coordinates } from '../Core/Village';
 import { SendResourcesTask } from '../Task/SendResourcesTask';
-
-const MARKET_ID = 17;
-const QUARTERS_ID = 19;
-const HORSE_STABLE_ID = 20;
-const EMBASSY_ID = 25;
-
-export interface BuildingPageAttributes {
-    buildId: number;
-    buildTypeId: number;
-    categoryId: number;
-    sheetId: number;
-    tabId: number;
-}
+import { EMBASSY_ID, HORSE_STABLE_ID, QUARTERS_ID } from '../Core/Buildings';
+import { BuildingPageAttributes, isMarketSendResourcesPage } from './PageDetectors';
 
 export class BuildingPageController {
     private scheduler: Scheduler;
@@ -40,7 +30,7 @@ export class BuildingPageController {
     }
 
     run() {
-        const { buildTypeId, sheetId, tabId } = this.attributes;
+        const { buildTypeId, sheetId } = this.attributes;
         this.logger.log('BUILD PAGE DETECTED', 'ID', this.attributes.buildId, this.attributes);
 
         if (buildTypeId) {
@@ -61,7 +51,8 @@ export class BuildingPageController {
             createTrainTroopButtons((troopId, res, count) => this.onScheduleTrainTroopers(troopId, res, count));
         }
 
-        if (buildTypeId === MARKET_ID && tabId === 5) {
+        if (isMarketSendResourcesPage()) {
+            console.log('MERCH', grabIncomingMerchants());
             createSendResourcesButton((res, crd) => this.onSendResources(res, crd));
         }
     }

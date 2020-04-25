@@ -1,4 +1,4 @@
-import { elClassId, getNumber, parseLocation, uniqId, waitForLoad } from './utils';
+import { parseLocation, uniqId, waitForLoad } from './utils';
 import { Scheduler } from './Scheduler';
 import { BuildingPageController } from './Page/BuildingPageController';
 import { UpgradeBuildingTask } from './Task/UpgradeBuildingTask';
@@ -18,6 +18,7 @@ import { Resources } from './Core/Resources';
 import { Village } from './Core/Village';
 import { calcGatheringTimings } from './Core/GatheringTimings';
 import { DataStorage } from './DataStorage';
+import { getBuildingPageAttributes, isBuildingPage } from './Page/PageDetectors';
 import { debounce } from 'debounce';
 
 interface QuickAction {
@@ -108,14 +109,8 @@ export class ControlPanel {
             showBuildingSlotIds(buildingsInQueue);
         }
 
-        if (p.pathname === '/build.php') {
-            const buildPage = new BuildingPageController(this.scheduler, {
-                buildId: getNumber(p.query.id),
-                buildTypeId: getNumber(elClassId(jQuery('#build').attr('class'), 'gid')),
-                categoryId: getNumber(p.query.category, 1),
-                sheetId: getNumber(p.query.s, 0),
-                tabId: getNumber(p.query.t, 0),
-            });
+        if (isBuildingPage()) {
+            const buildPage = new BuildingPageController(this.scheduler, getBuildingPageAttributes());
             buildPage.run();
         }
 
@@ -189,6 +184,7 @@ class VillageController {
     public readonly warehouse;
     public readonly granary;
     public readonly buildRemainingSeconds;
+    public readonly incomingResources: Resources;
 
     constructor(village: Village, state: VillageState, scheduler: Scheduler) {
         const resources = state.getResources();
@@ -225,6 +221,7 @@ class VillageController {
         this.warehouse = storage.warehouse;
         this.granary = storage.granary;
         this.buildRemainingSeconds = buildQueueInfo.seconds;
+        this.incomingResources = this.calcIncomingResources(state);
     }
 
     timeToRequired() {
@@ -242,5 +239,9 @@ class VillageController {
         }
 
         return timings.hours * 3600;
+    }
+
+    private calcIncomingResources(state: VillageState): Resources {
+        return state.getIncomingMerchants().reduce((m, i) => m.add(i.resources), new Resources(0, 0, 0, 0));
     }
 }
