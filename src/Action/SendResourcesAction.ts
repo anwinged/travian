@@ -32,6 +32,10 @@ export class SendResourcesAction extends ActionController {
         console.log('To transfer res', readyToTransfer);
         console.log('Remaining res', remainingResources);
 
+        if (!remainingResources.empty() && readyToTransfer.amount() < 100) {
+            throw new TryLaterError(aroundMinutes(10), 'Not minimal amount');
+        }
+
         if (!remainingResources.empty()) {
             console.log('Schedule next', remainingResources);
             this.scheduler.scheduleTask(

@@ -88,8 +88,8 @@ export class Scheduler {
 
         const villageId = task.args.villageId;
         const modifyTime = t => withTime(t, timestamp() + seconds);
-        const buildPred = t => sameVillage(villageId, t.args) && isBuildingTask(task.name);
-        const trainPred = t => sameVillage(villageId, t.args) && isTrainTroopTask(task.name);
+        const buildPred = t => sameVillage(villageId, t.args) && isBuildingTask(t.name);
+        const trainPred = t => sameVillage(villageId, t.args) && isTrainTroopTask(t.name);
 
         if (isBuildingTask(task.name) && villageId) {
             this.taskQueue.modify(buildPred, modifyTime);
