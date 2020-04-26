@@ -15,6 +15,8 @@ function err(msg): never {
     throw new ActionError(msg);
 }
 
+const TIMEOUT = 15;
+
 @registerAction
 export class SendResourcesAction extends ActionController {
     async run(args: Args, task: Task): Promise<any> {
@@ -32,10 +34,6 @@ export class SendResourcesAction extends ActionController {
         console.log('To transfer res', readyToTransfer);
         console.log('Remaining res', remainingResources);
 
-        if (!remainingResources.empty() && readyToTransfer.amount() < 100) {
-            throw new TryLaterError(aroundMinutes(10), 'Not minimal amount');
-        }
-
         if (!remainingResources.empty()) {
             console.log('Schedule next', remainingResources);
             this.scheduler.scheduleTask(
@@ -44,7 +42,7 @@ export class SendResourcesAction extends ActionController {
                     ...args,
                     resources: remainingResources,
                 },
-                timestamp() + aroundMinutes(10)
+                timestamp() + aroundMinutes(TIMEOUT)
             );
         }
 
@@ -65,7 +63,7 @@ export class SendResourcesAction extends ActionController {
         const merchants = grabMerchantsInfo();
         const capacity = merchants.available * merchants.carry;
         if (!capacity) {
-            throw new TryLaterError(aroundMinutes(10), 'No merchants');
+            throw new TryLaterError(aroundMinutes(TIMEOUT), 'No merchants');
         }
         return capacity;
     }
@@ -78,8 +76,8 @@ export class SendResourcesAction extends ActionController {
         console.log('Sender res', resources);
         console.log('Sender req', requirements);
         console.log('Sender free', free);
-        if (free.empty()) {
-            throw new TryLaterError(aroundMinutes(10), 'No free resources');
+        if (free.amount() < 100) {
+            throw new TryLaterError(aroundMinutes(TIMEOUT), 'Little free resources');
         }
         return free;
     }
@@ -98,7 +96,7 @@ export class SendResourcesAction extends ActionController {
         console.log('Recipient req', requirements);
         console.log('Recipient missing', missing);
         if (missing.empty()) {
-            throw new TryLaterError(aroundMinutes(10), 'No missing resources');
+            throw new TryLaterError(aroundMinutes(TIMEOUT), 'No missing resources');
         }
         return missing;
     }

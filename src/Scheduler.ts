@@ -131,7 +131,9 @@ export class Scheduler {
     }
 
     getTotalVillageRequiredResources(villageId): Resources {
-        const tasks = this.taskQueue.seeItems().filter(t => sameVillage(villageId, t.args) && t.args.resources);
+        const tasks = this.taskQueue
+            .seeItems()
+            .filter(t => sameVillage(villageId, t.args) && t.args.resources && t.name !== SendResourcesTask.name);
         return tasks.reduce((acc, t) => acc.add(t.args.resources!), new Resources(0, 0, 0, 0));
     }
 
