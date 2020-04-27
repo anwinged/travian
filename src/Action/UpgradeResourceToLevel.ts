@@ -1,11 +1,11 @@
 import { ActionController, registerAction } from './ActionController';
 import { Args } from '../Command';
-import { ActionError, TryLaterError } from '../Errors';
+import { AbortTaskError, ActionError, TryLaterError } from '../Errors';
 import { Task } from '../Queue/TaskQueue';
 import { grabResourceDeposits } from '../Page/SlotBlock';
 import { UpgradeBuildingTask } from '../Task/UpgradeBuildingTask';
 import { ResourceDeposit } from '../Game';
-import { aroundMinutes } from '../utils';
+import { aroundMinutes, getNumber } from '../utils';
 
 @registerAction
 export class UpgradeResourceToLevel extends ActionController {
@@ -16,35 +16,38 @@ export class UpgradeResourceToLevel extends ActionController {
         }
 
         const villageId = args.villageId;
-        const requiredLevel = args.level;
-        const tasks = this.scheduler.getTaskItems();
+        if (villageId === undefined) {
+            throw new AbortTaskError('No village id');
+        }
 
-        const allUpgraded = deposits.reduce((memo, dep) => memo && dep.level >= requiredLevel, true);
+        const requiredLevel = getNumber(args.level);
 
-        if (allUpgraded) {
+        const notUpgraded = deposits.filter(dep => requiredLevel > dep.level);
+
+        if (notUpgraded.length === 0) {
             this.scheduler.removeTask(task.id);
             return;
         }
 
-        const isDepositTaskNotInQueue = (dep: ResourceDeposit) =>
+        const firstNotUpgraded = notUpgraded.sort((x, y) => x.level - y.level).shift();
+
+        if (firstNotUpgraded && this.isTaskNotInQueue(villageId, firstNotUpgraded)) {
+            this.scheduler.scheduleTask(UpgradeBuildingTask.name, { villageId, buildId: firstNotUpgraded.buildId });
+        }
+
+        throw new TryLaterError(aroundMinutes(10), 'Sleep for next round');
+    }
+
+    private isTaskNotInQueue(villageId: number, dep: ResourceDeposit): boolean {
+        const tasks = this.scheduler.getTaskItems();
+        return (
             undefined ===
             tasks.find(
                 task =>
                     task.name === UpgradeBuildingTask.name &&
                     task.args.villageId === villageId &&
                     task.args.buildId === dep.buildId
-            );
-
-        const notUpgraded = deposits.sort((x, y) => x.level - y.level).filter(isDepositTaskNotInQueue);
-
-        if (notUpgraded.length === 0) {
-            throw new TryLaterError(aroundMinutes(10), 'No available deposits');
-        }
-
-        for (let dep of notUpgraded) {
-            this.scheduler.scheduleTask(UpgradeBuildingTask.name, { villageId, buildId: dep.buildId });
-        }
-
-        throw new TryLaterError(aroundMinutes(10), 'Sleep for next round');
+            )
+        );
     }
 }

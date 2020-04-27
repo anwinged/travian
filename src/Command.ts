@@ -15,7 +15,9 @@ export interface Args {
     trainCount?: number;
     resources?: ResourcesInterface;
     coordinates?: CoordinatesInterface;
-    [name: string]: any;
+    level?: number;
+    selector?: string;
+    path?: string;
 }
 
 export class Command {

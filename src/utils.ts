@@ -4,25 +4,28 @@ export function sleep(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+function randomInRange(from: number, to: number): number {
+    const delta = to - from;
+    const variation = Math.random() * delta;
+    return from + variation;
+}
+
 export async function sleepMicro() {
-    let ms = 2000 + Math.random() * 500;
-    return await sleep(ms);
+    return await sleep(randomInRange(2000, 2500));
 }
 
 export async function sleepShort() {
-    let ms = 3000 + Math.random() * 1000;
-    return await sleep(ms);
+    return await sleep(randomInRange(3000, 4000));
 }
 
 export async function sleepLong() {
-    let ms = 120_000 + Math.random() * 300_000;
-    return await sleep(ms);
+    return await sleep(randomInRange(120_000, 420_00));
 }
 
 export function aroundMinutes(minutes: number) {
     const seconds = minutes * 60;
-    const delta = Math.floor(seconds * 0.9);
-    return seconds - delta + Math.floor(Math.random() * 2 * delta);
+    const delta = Math.floor(seconds * 0.1);
+    return randomInRange(seconds - delta, seconds + delta);
 }
 
 export async function waitForLoad() {
