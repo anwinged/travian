@@ -60,11 +60,13 @@ export function onResourceSlotCtrlClick(cb: (buildId: number) => void): void {
 function slotToDepositMapper(slot: Slot): ResourceDeposit {
     const el = slot.el;
     const classes = jQuery(el).attr('class');
-    const buildId = getNumber(elClassId(classes, 'buildingSlot'));
-    const level = getNumber(elClassId(classes, 'level'));
-    const type = getNumber(elClassId(classes, 'gid'));
-    const ready = !jQuery(el).hasClass('notNow');
-    return new ResourceDeposit(buildId, numberToResourceType(type), level, ready);
+    return {
+        buildId: getNumber(elClassId(classes, 'buildingSlot')),
+        type: numberToResourceType(getNumber(elClassId(classes, 'gid'))),
+        level: getNumber(elClassId(classes, 'level')),
+        ready: !jQuery(el).hasClass('notNow'),
+        underConstruction: jQuery(el).hasClass('underConstruction'),
+    };
 }
 
 export function grabResourceDeposits(): Array<ResourceDeposit> {

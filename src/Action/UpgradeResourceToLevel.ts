@@ -22,7 +22,7 @@ export class UpgradeResourceToLevel extends ActionController {
 
         const requiredLevel = getNumber(args.level);
 
-        const notUpgraded = deposits.filter(dep => requiredLevel > dep.level);
+        const notUpgraded = deposits.filter(dep => !dep.underConstruction && requiredLevel > dep.level);
 
         if (notUpgraded.length === 0) {
             this.scheduler.removeTask(task.id);
