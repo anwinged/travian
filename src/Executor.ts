@@ -99,7 +99,7 @@ export class Executor {
             await taskController.run(task);
         } else {
             this.logger.warn('TASK NOT FOUND', task.name);
-            this.scheduler.completeTask(task.id);
+            this.scheduler.removeTask(task.id);
         }
     }
 
@@ -108,8 +108,7 @@ export class Executor {
 
         if (err instanceof AbortTaskError) {
             this.logger.warn('ABORT TASK', task.id);
-            this.scheduler.completeTask(task.id);
-            this.scheduler.clearActions();
+            this.scheduler.removeTask(task.id);
             return;
         }
 

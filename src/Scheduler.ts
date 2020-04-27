@@ -70,11 +70,6 @@ export class Scheduler {
         }
     }
 
-    completeTask(taskId: TaskId) {
-        this.taskQueue.remove(taskId);
-        this.actionQueue.clear();
-    }
-
     removeTask(taskId: TaskId) {
         this.taskQueue.remove(taskId);
         this.actionQueue.clear();

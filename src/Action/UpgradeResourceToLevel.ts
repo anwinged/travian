@@ -22,7 +22,7 @@ export class UpgradeResourceToLevel extends ActionController {
         const allUpgraded = deposits.reduce((memo, dep) => memo && dep.level >= requiredLevel, true);
 
         if (allUpgraded) {
-            this.scheduler.completeTask(task.id);
+            this.scheduler.removeTask(task.id);
             return;
         }
 
