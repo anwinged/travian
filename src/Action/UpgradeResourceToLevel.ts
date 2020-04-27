@@ -29,7 +29,9 @@ export class UpgradeResourceToLevel extends ActionController {
             return;
         }
 
-        const firstNotUpgraded = notUpgraded.sort((x, y) => x.level - y.level).shift();
+        notUpgraded.sort((x, y) => x.level - y.level);
+
+        const firstNotUpgraded = notUpgraded.shift();
 
         if (firstNotUpgraded && this.isTaskNotInQueue(villageId, firstNotUpgraded)) {
             this.scheduler.scheduleTask(UpgradeBuildingTask.name, { villageId, buildId: firstNotUpgraded.buildId });
