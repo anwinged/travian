@@ -1,4 +1,4 @@
-import { parseLocation, uniqId, waitForLoad } from './utils';
+import { parseLocation, timestamp, uniqId, waitForLoad } from './utils';
 import { Scheduler } from './Scheduler';
 import { BuildingPageController } from './Page/BuildingPageController';
 import { UpgradeBuildingTask } from './Task/UpgradeBuildingTask';
@@ -20,6 +20,7 @@ import { calcGatheringTimings } from './Core/GatheringTimings';
 import { DataStorage } from './DataStorage';
 import { getBuildingPageAttributes, isBuildingPage } from './Page/PageDetectors';
 import { debounce } from 'debounce';
+import { ExecutionState } from './State/ExecutionState';
 
 interface QuickAction {
     label: string;
@@ -48,6 +49,8 @@ export class ControlPanel {
         const scheduler = this.scheduler;
         const quickActions: QuickAction[] = [];
 
+        const executionState = new ExecutionState();
+
         const state = {
             name: 'Dashboard',
             version: this.version,
@@ -56,10 +59,13 @@ export class ControlPanel {
             taskList: [],
             actionList: [],
             quickActions: quickActions,
+            pauseSeconds: 0,
 
             refresh() {
                 this.taskList = scheduler.getTaskItems();
                 this.actionList = scheduler.getActionItems();
+                const { pauseTs } = executionState.getExecutionSettings();
+                this.pauseSeconds = pauseTs - timestamp();
                 this.refreshVillages();
             },
 
@@ -77,6 +83,10 @@ export class ControlPanel {
                         this.activeVillage = village;
                     }
                 }
+            },
+
+            pause() {
+                executionState.setExecutionSettings({ pauseTs: timestamp() + 120 });
             },
         };
 

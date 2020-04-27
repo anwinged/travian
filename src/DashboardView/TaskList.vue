@@ -25,6 +25,7 @@
 
 <script>
 import * as dateFormat from 'dateformat';
+import { timestamp } from '../utils';
 
 export default {
   data() {

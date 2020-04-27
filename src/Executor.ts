@@ -9,12 +9,18 @@ import { ConsoleLogger, Logger } from './Logger';
 import { GrabberManager } from './Grabber/GrabberManager';
 import { Scheduler } from './Scheduler';
 import { Statistics } from './Statistics';
+import { ExecutionState } from './State/ExecutionState';
+
+export interface ExecutionSettings {
+    pauseTs: number;
+}
 
 export class Executor {
     private readonly version: string;
     private readonly scheduler: Scheduler;
     private grabbers: GrabberManager;
     private statistics: Statistics;
+    private executionState: ExecutionState;
     private logger: Logger;
 
     constructor(version: string, scheduler: Scheduler) {
@@ -22,6 +28,7 @@ export class Executor {
         this.scheduler = scheduler;
         this.grabbers = new GrabberManager();
         this.statistics = new Statistics();
+        this.executionState = new ExecutionState();
         this.logger = new ConsoleLogger(this.constructor.name);
     }
 
@@ -44,6 +51,12 @@ export class Executor {
             } else {
                 await sleepMicro();
             }
+
+            const { pauseTs } = this.executionState.getExecutionSettings();
+            if (pauseTs > timestamp()) {
+                continue;
+            }
+
             await this.doTaskProcessingStep();
         }
     }

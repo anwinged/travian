@@ -3,6 +3,9 @@
     <h1 class="title">
       [{{ shared.name }}] {{ villageName }}
       <span class="version">- {{ shared.version }}</span>
+      <a href="#" v-on:click.prevent="pause()">
+        pause <span v-if="shared.pauseSeconds" v-text="shared.pauseSeconds"></span>
+      </a>
     </h1>
   </section>
 </template>
@@ -18,6 +21,11 @@ export default {
     villageName() {
       let village = this.shared.activeVillage;
       return village ? village.name : 'Unknown';
+    },
+  },
+  methods: {
+    pause() {
+      this.shared.pause();
     },
   },
 };
