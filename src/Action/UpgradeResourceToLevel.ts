@@ -31,10 +31,17 @@ export class UpgradeResourceToLevel extends ActionController {
 
         notUpgraded.sort((x, y) => x.level - y.level);
 
+        // Next two buildings: no delay between start building and scheduling next
+
         const firstNotUpgraded = notUpgraded.shift();
+        const secondNotUpgraded = notUpgraded.shift();
 
         if (firstNotUpgraded && this.isTaskNotInQueue(villageId, firstNotUpgraded)) {
             this.scheduler.scheduleTask(UpgradeBuildingTask.name, { villageId, buildId: firstNotUpgraded.buildId });
+        }
+
+        if (secondNotUpgraded && this.isTaskNotInQueue(villageId, secondNotUpgraded)) {
+            this.scheduler.scheduleTask(UpgradeBuildingTask.name, { villageId, buildId: secondNotUpgraded.buildId });
         }
 
         throw new TryLaterError(aroundMinutes(10), 'Sleep for next round');
