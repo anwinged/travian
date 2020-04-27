@@ -1,5 +1,4 @@
 import { ConsoleLogger, Logger, NullLogger } from './Logger';
-import { Resources } from './Core/Resources';
 
 const NAMESPACE = 'travian:v1';
 
@@ -32,7 +31,11 @@ function createMapper<T>(options: ObjectMapperOptions<T>): ObjectMapper<T> {
     if (factory) {
         return plain => {
             let item = factory();
-            return Object.assign(item, plain) as T;
+            if (typeof plain === 'object' && typeof item === 'object') {
+                return Object.assign(item, plain) as T;
+            } else {
+                return item;
+            }
         };
     }
 
@@ -62,7 +65,7 @@ export class DataStorage {
         try {
             const serialized = storage.getItem(fullKey);
             this.logger.log('GET', fullKey, serialized);
-            return JSON.parse(serialized || '"null"');
+            return JSON.parse(serialized || 'null');
         } catch (e) {
             if (e instanceof SyntaxError) {
                 return null;

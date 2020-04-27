@@ -8,17 +8,20 @@ import { createTask } from './Task/TaskController';
 import { ConsoleLogger, Logger } from './Logger';
 import { GrabberManager } from './Grabber/GrabberManager';
 import { Scheduler } from './Scheduler';
+import { Statistics } from './Statistics';
 
 export class Executor {
     private readonly version: string;
     private readonly scheduler: Scheduler;
     private grabbers: GrabberManager;
+    private statistics: Statistics;
     private logger: Logger;
 
     constructor(version: string, scheduler: Scheduler) {
         this.version = version;
         this.scheduler = scheduler;
         this.grabbers = new GrabberManager();
+        this.statistics = new Statistics();
         this.logger = new ConsoleLogger(this.constructor.name);
     }
 
@@ -86,6 +89,7 @@ export class Executor {
             throw new ActionError(`Action task id ${cmd.args.taskId} not equal current task id ${task.id}`);
         }
         if (actionController) {
+            this.statistics.incrementAction();
             await actionController.run(cmd.args, task);
         } else {
             this.logger.warn('ACTION NOT FOUND', cmd.name);
