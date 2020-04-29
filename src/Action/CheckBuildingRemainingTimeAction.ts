@@ -1,9 +1,9 @@
 import { ActionController, registerAction } from './ActionController';
-import { Args } from '../Command';
 import { Task } from '../Queue/TaskQueue';
 import { GrabError, TryLaterError } from '../Errors';
 import { grabBuildingQueueInfo } from '../Page/VillageBlock';
 import { BuildingQueueInfo } from '../Game';
+import { Args } from '../Args';
 
 @registerAction
 export class CheckBuildingRemainingTimeAction extends ActionController {

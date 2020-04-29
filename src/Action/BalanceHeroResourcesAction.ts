@@ -1,5 +1,4 @@
 import { ActionController, registerAction } from './ActionController';
-import { Args } from '../Command';
 import { Task } from '../Queue/TaskQueue';
 import { grabVillageResources, grabVillageResourceStorage } from '../Page/ResourcesBlock';
 import { changeHeroResource, grabCurrentHeroResource } from '../Page/HeroPage';
@@ -7,6 +6,7 @@ import { grabActiveVillageId } from '../Page/VillageBlock';
 import { HeroState } from '../State/HeroState';
 import { calcHeroResource } from '../Core/HeroBalance';
 import { HeroAllResources } from '../Core/Hero';
+import { Args } from '../Args';
 
 @registerAction
 export class BalanceHeroResourcesAction extends ActionController {

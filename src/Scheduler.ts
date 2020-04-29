@@ -1,17 +1,17 @@
 import { timestamp } from './utils';
 import { UpgradeBuildingTask } from './Task/UpgradeBuildingTask';
 import { ImmutableTaskList, Task, TaskId, TaskQueue } from './Queue/TaskQueue';
-import { Args, Command } from './Command';
 import { SendOnAdventureTask } from './Task/SendOnAdventureTask';
 import { BalanceHeroResourcesTask } from './Task/BalanceHeroResourcesTask';
 import { ConsoleLogger, Logger } from './Logger';
 import { BuildBuildingTask } from './Task/BuildBuildingTask';
 import { GrabVillageState } from './Task/GrabVillageState';
-import { ActionQueue, ImmutableActionList } from './Queue/ActionQueue';
+import { ActionQueue, Action, ImmutableActionList } from './Queue/ActionQueue';
 import { UpdateResourceContracts } from './Task/UpdateResourceContracts';
 import { TrainTroopTask } from './Task/TrainTroopTask';
 import { Resources, ResourcesInterface } from './Core/Resources';
 import { SendResourcesTask } from './Task/SendResourcesTask';
+import { Args } from './Args';
 
 export class Scheduler {
     private taskQueue: TaskQueue;
@@ -106,7 +106,7 @@ export class Scheduler {
         );
     }
 
-    scheduleActions(actions: Array<Command>): void {
+    scheduleActions(actions: Array<Action>): void {
         this.actionQueue.assign(actions);
     }
 
@@ -167,10 +167,6 @@ function withTime(task: Task, ts: number): Task {
 
 function withResources(task: Task, resources: ResourcesInterface): Task {
     return new Task(task.id, task.ts, task.name, { ...task.args, resources });
-}
-
-function firstTaskTime(tasks: ImmutableTaskList, predicate: (t: Task) => boolean): number | undefined {
-    return tasks.find(predicate)?.ts;
 }
 
 function lastTaskTime(tasks: ImmutableTaskList, predicate: (t: Task) => boolean): number | undefined {

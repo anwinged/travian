@@ -1,10 +1,11 @@
-import { Args, Command } from '../Command';
 import { Task } from '../Queue/TaskQueue';
 import { TaskController, registerTask } from './TaskController';
 import { GoToPageAction } from '../Action/GoToPageAction';
 import { CompleteTaskAction } from '../Action/CompleteTaskAction';
 import { TrainTrooperAction } from '../Action/TrainTrooperAction';
 import { path } from '../utils';
+import { Action } from '../Queue/ActionQueue';
+import { Args } from '../Args';
 
 @registerTask
 export class TrainTroopTask extends TaskController {
@@ -21,9 +22,9 @@ export class TrainTroopTask extends TaskController {
         const pagePath = path('/build.php', pathArgs);
 
         this.scheduler.scheduleActions([
-            new Command(GoToPageAction.name, { ...args, path: pagePath }),
-            new Command(TrainTrooperAction.name, args),
-            new Command(CompleteTaskAction.name, args),
+            new Action(GoToPageAction.name, { ...args, path: pagePath }),
+            new Action(TrainTrooperAction.name, args),
+            new Action(CompleteTaskAction.name, args),
         ]);
     }
 }

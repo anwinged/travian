@@ -1,7 +1,6 @@
 import { markPage, sleepMicro, timestamp, waitForLoad } from './utils';
 import { AbortTaskError, ActionError, TryLaterError } from './Errors';
 import { Task } from './Queue/TaskQueue';
-import { Command } from './Command';
 import { TaskQueueRenderer } from './TaskQueueRenderer';
 import { createActionHandler } from './Action/ActionController';
 import { createTaskHandler } from './Task/TaskController';
@@ -10,6 +9,7 @@ import { GrabberManager } from './Grabber/GrabberManager';
 import { Scheduler } from './Scheduler';
 import { Statistics } from './Statistics';
 import { ExecutionState } from './State/ExecutionState';
+import { Action } from './Queue/ActionQueue';
 
 export interface ExecutionSettings {
     pauseTs: number;
@@ -96,7 +96,7 @@ export class Executor {
         }
     }
 
-    private async processActionCommand(cmd: Command, task: Task) {
+    private async processActionCommand(cmd: Action, task: Task) {
         const actionHandler = createActionHandler(cmd.name, this.scheduler);
         this.logger.log('PROCESS ACTION', cmd.name, actionHandler);
         if (cmd.args.taskId !== task.id) {

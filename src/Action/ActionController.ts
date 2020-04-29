@@ -1,9 +1,9 @@
-import { Args } from '../Command';
 import { Task } from '../Queue/TaskQueue';
 import { Scheduler } from '../Scheduler';
 import { ActionError, TryLaterError } from '../Errors';
 import { grabActiveVillageId } from '../Page/VillageBlock';
 import { aroundMinutes } from '../utils';
+import { Args } from '../Args';
 
 const actionMap: { [name: string]: Function | undefined } = {};
 

@@ -1,10 +1,11 @@
-import { Args, Command } from '../Command';
 import { Task } from '../Queue/TaskQueue';
 import { TaskController, registerTask, ActionDefinition } from './TaskController';
 import { GoToPageAction } from '../Action/GoToPageAction';
 import { CompleteTaskAction } from '../Action/CompleteTaskAction';
 import { path } from '../utils';
 import { UpgradeResourceToLevel } from '../Action/UpgradeResourceToLevel';
+import { Action } from '../Queue/ActionQueue';
+import { Args } from '../Args';
 
 @registerTask
 export class ResourcesToLevel extends TaskController {

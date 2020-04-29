@@ -1,13 +1,23 @@
-import { Command } from '../Command';
 import { ConsoleLogger, Logger } from '../Logger';
 import { DataStorage } from '../DataStorage';
+import { Args } from '../Args';
 
 const NAMESPACE = 'actions.v1';
 const QUEUE_NAME = 'queue';
 
-type ActionList = Array<Command>;
+export class Action {
+    readonly name: string;
+    readonly args: Args;
 
-export type ImmutableActionList = ReadonlyArray<Command>;
+    constructor(name: string, args: Args) {
+        this.name = name;
+        this.args = args;
+    }
+}
+
+type ActionList = Array<Action>;
+
+export type ImmutableActionList = ReadonlyArray<Action>;
 
 export class ActionQueue {
     private storage: DataStorage;
@@ -18,14 +28,14 @@ export class ActionQueue {
         this.logger = new ConsoleLogger(this.constructor.name);
     }
 
-    pop(): Command | undefined {
+    pop(): Action | undefined {
         const commands = this.getCommands();
         const first = commands.shift();
         this.flushState(commands);
         return first;
     }
 
-    push(cmd: Command): void {
+    push(cmd: Action): void {
         const commands = this.getCommands();
         commands.push(cmd);
         this.flushState(commands);
@@ -52,7 +62,7 @@ export class ActionQueue {
         const items = serialized as Array<{ [key: string]: any }>;
 
         return items.map(i => {
-            const command = new Command('', {});
+            const command = new Action('', {});
             return Object.assign(command, i);
         });
     }

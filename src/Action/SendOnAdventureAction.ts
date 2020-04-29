@@ -1,8 +1,8 @@
 import { ActionController, registerAction } from './ActionController';
-import { Args } from '../Command';
 import { Task } from '../Queue/TaskQueue';
 import { trimPrefix } from '../utils';
 import { AbortTaskError } from '../Errors';
+import { Args } from '../Args';
 
 const CONFIG = [
     { level: 0, health: 60 },

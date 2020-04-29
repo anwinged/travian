@@ -1,7 +1,8 @@
 import { Task } from '../Queue/TaskQueue';
 import { Scheduler } from '../Scheduler';
-import { Args, Command } from '../Command';
 import { CompleteTaskAction } from '../Action/CompleteTaskAction';
+import { Action } from '../Queue/ActionQueue';
+import { Args } from '../Args';
 
 const taskMap: { [name: string]: Function | undefined } = {};
 
@@ -38,11 +39,11 @@ export class TaskController {
 
     private createCommands(task: Task) {
         const args: Args = { ...task.args, taskId: task.id };
-        const commands: Array<Command> = [];
+        const commands: Array<Action> = [];
         for (let def of this.defineActions(task)) {
-            commands.push(new Command(def[0], { ...args, ...def[1] }));
+            commands.push(new Action(def[0], { ...args, ...def[1] }));
         }
-        commands.push(new Command(CompleteTaskAction.name, args));
+        commands.push(new Action(CompleteTaskAction.name, args));
         return commands;
     }
 }

@@ -19,13 +19,3 @@ export interface Args {
     selector?: string;
     path?: string;
 }
-
-export class Command {
-    readonly name: string;
-    readonly args: Args;
-
-    constructor(name: string, args: Args) {
-        this.name = name;
-        this.args = args;
-    }
-}

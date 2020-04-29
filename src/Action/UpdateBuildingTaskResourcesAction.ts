@@ -1,7 +1,7 @@
 import { ActionController, registerAction } from './ActionController';
-import { Args } from '../Command';
 import { Task } from '../Queue/TaskQueue';
 import { grabContractResources } from '../Page/BuildingPage';
+import { Args } from '../Args';
 
 @registerAction
 export class UpdateBuildingTaskResourcesAction extends ActionController {

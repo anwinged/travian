@@ -1,5 +1,4 @@
 import { ActionController, registerAction } from './ActionController';
-import { Args } from '../Command';
 import { AbortTaskError, ActionError, TryLaterError } from '../Errors';
 import { Task } from '../Queue/TaskQueue';
 import { Resources } from '../Core/Resources';
@@ -10,6 +9,7 @@ import { grabActiveVillageId, grabVillageList } from '../Page/VillageBlock';
 import { SendResourcesTask } from '../Task/SendResourcesTask';
 import { aroundMinutes, timestamp } from '../utils';
 import { VillageState } from '../State/VillageState';
+import { Args } from '../Args';
 
 function err(msg): never {
     throw new ActionError(msg);

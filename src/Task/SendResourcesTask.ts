@@ -1,4 +1,3 @@
-import { Args } from '../Command';
 import { Task } from '../Queue/TaskQueue';
 import { TaskController, registerTask, ActionDefinition } from './TaskController';
 import { GoToPageAction } from '../Action/GoToPageAction';
@@ -7,6 +6,7 @@ import { path } from '../utils';
 import { SendResourcesAction } from '../Action/SendResourcesAction';
 import { ClickButtonAction } from '../Action/ClickButtonAction';
 import { scanAllVillagesBundle } from './ActionBundles';
+import { Args } from '../Args';
 
 @registerTask
 export class SendResourcesTask extends TaskController {
