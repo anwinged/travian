@@ -5,7 +5,7 @@ import { CompleteTaskAction } from '../Action/CompleteTaskAction';
 import { TrainTrooperAction } from '../Action/TrainTrooperAction';
 import { path } from '../utils';
 import { Action } from '../Queue/ActionQueue';
-import { Args } from '../Args';
+import { Args } from '../Queue/Args';
 
 @registerTask
 export class TrainTroopTask extends TaskController {

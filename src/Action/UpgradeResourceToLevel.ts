@@ -5,7 +5,7 @@ import { grabResourceDeposits } from '../Page/SlotBlock';
 import { UpgradeBuildingTask } from '../Task/UpgradeBuildingTask';
 import { ResourceDeposit } from '../Game';
 import { aroundMinutes, getNumber } from '../utils';
-import { Args } from '../Args';
+import { Args } from '../Queue/Args';
 
 @registerAction
 export class UpgradeResourceToLevel extends ActionController {

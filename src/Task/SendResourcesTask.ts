@@ -6,7 +6,7 @@ import { path } from '../utils';
 import { SendResourcesAction } from '../Action/SendResourcesAction';
 import { ClickButtonAction } from '../Action/ClickButtonAction';
 import { scanAllVillagesBundle } from './ActionBundles';
-import { Args } from '../Args';
+import { Args } from '../Queue/Args';
 
 @registerTask
 export class SendResourcesTask extends TaskController {

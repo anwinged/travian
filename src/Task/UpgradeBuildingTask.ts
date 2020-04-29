@@ -6,7 +6,7 @@ import { CheckBuildingRemainingTimeAction } from '../Action/CheckBuildingRemaini
 import { CompleteTaskAction } from '../Action/CompleteTaskAction';
 import { path } from '../utils';
 import { Action } from '../Queue/ActionQueue';
-import { Args } from '../Args';
+import { Args } from '../Queue/Args';
 
 @registerTask
 export class UpgradeBuildingTask extends TaskController {

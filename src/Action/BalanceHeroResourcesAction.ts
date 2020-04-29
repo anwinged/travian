@@ -6,7 +6,7 @@ import { grabActiveVillageId } from '../Page/VillageBlock';
 import { HeroState } from '../State/HeroState';
 import { calcHeroResource } from '../Core/HeroBalance';
 import { HeroAllResources } from '../Core/Hero';
-import { Args } from '../Args';
+import { Args } from '../Queue/Args';
 
 @registerAction
 export class BalanceHeroResourcesAction extends ActionController {

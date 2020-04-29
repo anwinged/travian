@@ -4,7 +4,7 @@ import { grabVillageList } from '../Page/VillageBlock';
 import { grabHeroVillage } from '../Page/HeroPage';
 import { path } from '../utils';
 import { HeroState } from '../State/HeroState';
-import { Args } from '../Args';
+import { Args } from '../Queue/Args';
 
 @registerAction
 export class GoToHeroVillageAction extends ActionController {

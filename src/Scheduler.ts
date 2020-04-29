@@ -11,7 +11,7 @@ import { UpdateResourceContracts } from './Task/UpdateResourceContracts';
 import { TrainTroopTask } from './Task/TrainTroopTask';
 import { Resources, ResourcesInterface } from './Core/Resources';
 import { SendResourcesTask } from './Task/SendResourcesTask';
-import { Args } from './Args';
+import { Args } from './Queue/Args';
 
 export class Scheduler {
     private taskQueue: TaskQueue;

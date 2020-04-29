@@ -6,7 +6,7 @@ import { path } from '../utils';
 import { Task } from '../Queue/TaskQueue';
 import { TaskController, registerTask } from './TaskController';
 import { Action } from '../Queue/ActionQueue';
-import { Args } from '../Args';
+import { Args } from '../Queue/Args';
 
 @registerTask
 export class BuildBuildingTask extends TaskController {

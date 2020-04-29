@@ -3,7 +3,7 @@ import { Scheduler } from '../Scheduler';
 import { ActionError, TryLaterError } from '../Errors';
 import { grabActiveVillageId } from '../Page/VillageBlock';
 import { aroundMinutes } from '../utils';
-import { Args } from '../Args';
+import { Args } from '../Queue/Args';
 
 const actionMap: { [name: string]: Function | undefined } = {};
 

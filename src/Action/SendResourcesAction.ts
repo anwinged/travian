@@ -9,7 +9,7 @@ import { grabActiveVillageId, grabVillageList } from '../Page/VillageBlock';
 import { SendResourcesTask } from '../Task/SendResourcesTask';
 import { aroundMinutes, timestamp } from '../utils';
 import { VillageState } from '../State/VillageState';
-import { Args } from '../Args';
+import { Args } from '../Queue/Args';
 
 function err(msg): never {
     throw new ActionError(msg);

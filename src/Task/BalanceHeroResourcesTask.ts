@@ -6,7 +6,7 @@ import { BalanceHeroResourcesAction } from '../Action/BalanceHeroResourcesAction
 import { path } from '../utils';
 import { GoToHeroVillageAction } from '../Action/GoToHeroVillageAction';
 import { Action } from '../Queue/ActionQueue';
-import { Args } from '../Args';
+import { Args } from '../Queue/Args';
 
 @registerTask
 export class BalanceHeroResourcesTask extends TaskController {

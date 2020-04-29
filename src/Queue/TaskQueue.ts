@@ -1,7 +1,7 @@
 import { uniqId } from '../utils';
 import { ConsoleLogger, Logger } from '../Logger';
 import { DataStorage } from '../DataStorage';
-import { Args } from '../Args';
+import { Args } from './Args';
 
 const NAMESPACE = 'tasks:v1';
 const QUEUE_NAME = 'queue';

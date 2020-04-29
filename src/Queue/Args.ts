@@ -1,6 +1,6 @@
-import { TaskId } from './Queue/TaskQueue';
-import { ResourcesInterface } from './Core/Resources';
-import { CoordinatesInterface } from './Core/Village';
+import { TaskId } from './TaskQueue';
+import { ResourcesInterface } from '../Core/Resources';
+import { CoordinatesInterface } from '../Core/Village';
 
 export interface Args {
     taskId?: TaskId;

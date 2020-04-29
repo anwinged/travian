@@ -6,7 +6,7 @@ import { SendOnAdventureAction } from '../Action/SendOnAdventureAction';
 import { ClickButtonAction } from '../Action/ClickButtonAction';
 import { path } from '../utils';
 import { Action } from '../Queue/ActionQueue';
-import { Args } from '../Args';
+import { Args } from '../Queue/Args';
 
 @registerTask
 export class SendOnAdventureTask extends TaskController {

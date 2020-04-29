@@ -6,7 +6,7 @@ import { UpgradeBuildingTask } from './UpgradeBuildingTask';
 import { UpdateBuildingTaskResourcesAction } from '../Action/UpdateBuildingTaskResourcesAction';
 import { CompleteTaskAction } from '../Action/CompleteTaskAction';
 import { Action } from '../Queue/ActionQueue';
-import { Args } from '../Args';
+import { Args } from '../Queue/Args';
 
 @registerTask
 export class UpdateResourceContracts extends TaskController {

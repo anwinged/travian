@@ -3,7 +3,7 @@ import { Task } from '../Queue/TaskQueue';
 import { GrabError, TryLaterError } from '../Errors';
 import { grabBuildingQueueInfo } from '../Page/VillageBlock';
 import { BuildingQueueInfo } from '../Game';
-import { Args } from '../Args';
+import { Args } from '../Queue/Args';
 
 @registerAction
 export class CheckBuildingRemainingTimeAction extends ActionController {

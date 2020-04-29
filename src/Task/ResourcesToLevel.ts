@@ -5,7 +5,7 @@ import { CompleteTaskAction } from '../Action/CompleteTaskAction';
 import { path } from '../utils';
 import { UpgradeResourceToLevel } from '../Action/UpgradeResourceToLevel';
 import { Action } from '../Queue/ActionQueue';
-import { Args } from '../Args';
+import { Args } from '../Queue/Args';
 
 @registerTask
 export class ResourcesToLevel extends TaskController {

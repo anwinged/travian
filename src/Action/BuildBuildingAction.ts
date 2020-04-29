@@ -3,7 +3,7 @@ import { ActionError, GrabError, TryLaterError } from '../Errors';
 import { Task } from '../Queue/TaskQueue';
 import { clickBuildButton } from '../Page/BuildingPage';
 import { aroundMinutes } from '../utils';
-import { Args } from '../Args';
+import { Args } from '../Queue/Args';
 
 @registerAction
 export class BuildBuildingAction extends ActionController {

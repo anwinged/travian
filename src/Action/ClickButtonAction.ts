@@ -1,7 +1,7 @@
 import { ActionController, registerAction } from './ActionController';
 import { Task } from '../Queue/TaskQueue';
 import { AbortTaskError } from '../Errors';
-import { Args } from '../Args';
+import { Args } from '../Queue/Args';
 
 @registerAction
 export class ClickButtonAction extends ActionController {
