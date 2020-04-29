@@ -3,8 +3,8 @@ import { AbortTaskError, ActionError, TryLaterError } from './Errors';
 import { Task } from './Queue/TaskQueue';
 import { Command } from './Command';
 import { TaskQueueRenderer } from './TaskQueueRenderer';
-import { createAction } from './Action/ActionController';
-import { createTask } from './Task/TaskController';
+import { createActionHandler } from './Action/ActionController';
+import { createTaskHandler } from './Task/TaskController';
 import { ConsoleLogger, Logger } from './Logger';
 import { GrabberManager } from './Grabber/GrabberManager';
 import { Scheduler } from './Scheduler';
@@ -36,29 +36,30 @@ export class Executor {
         await waitForLoad();
         await sleepMicro();
 
+        this.renderInfo();
+
+        const sleep = createExecutionLoopSleeper();
+
+        while (true) {
+            await sleep();
+            if (!this.isPaused()) {
+                await this.doTaskProcessingStep();
+            }
+        }
+    }
+
+    private renderInfo() {
         try {
             markPage('Executor', this.version);
             this.renderTaskQueue();
         } catch (e) {
             this.logger.warn(e);
         }
+    }
 
-        let skipFirstSleep = true;
-
-        while (true) {
-            if (skipFirstSleep) {
-                skipFirstSleep = false;
-            } else {
-                await sleepMicro();
-            }
-
-            const { pauseTs } = this.executionState.getExecutionSettings();
-            if (pauseTs > timestamp()) {
-                continue;
-            }
-
-            await this.doTaskProcessingStep();
-        }
+    private isPaused(): boolean {
+        const { pauseTs } = this.executionState.getExecutionSettings();
+        return pauseTs > timestamp();
     }
 
     private renderTaskQueue() {
@@ -96,24 +97,24 @@ export class Executor {
     }
 
     private async processActionCommand(cmd: Command, task: Task) {
-        const actionController = createAction(cmd.name, this.scheduler);
-        this.logger.log('PROCESS ACTION', cmd.name, actionController);
+        const actionHandler = createActionHandler(cmd.name, this.scheduler);
+        this.logger.log('PROCESS ACTION', cmd.name, actionHandler);
         if (cmd.args.taskId !== task.id) {
             throw new ActionError(`Action task id ${cmd.args.taskId} not equal current task id ${task.id}`);
         }
-        if (actionController) {
+        if (actionHandler) {
             this.statistics.incrementAction();
-            await actionController.run(cmd.args, task);
+            await actionHandler.run(cmd.args, task);
         } else {
             this.logger.warn('ACTION NOT FOUND', cmd.name);
         }
     }
 
     private async processTaskCommand(task: Task) {
-        const taskController = createTask(task.name, this.scheduler);
-        this.logger.log('PROCESS TASK', task.name, task, taskController);
-        if (taskController) {
-            await taskController.run(task);
+        const taskHandler = createTaskHandler(task.name, this.scheduler);
+        this.logger.log('PROCESS TASK', task.name, task, taskHandler);
+        if (taskHandler) {
+            await taskHandler.run(task);
         } else {
             this.logger.warn('TASK NOT FOUND', task.name);
             this.scheduler.removeTask(task.id);
@@ -152,4 +153,15 @@ export class Executor {
             this.logger.warn('Grabbers fails with', e.message);
         }
     }
+}
+
+function createExecutionLoopSleeper() {
+    let skipFirstSleep = true;
+    return async () => {
+        if (skipFirstSleep) {
+            skipFirstSleep = false;
+        } else {
+            await sleepMicro();
+        }
+    };
 }

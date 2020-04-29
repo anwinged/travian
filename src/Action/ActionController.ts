@@ -11,7 +11,7 @@ export function registerAction(constructor: Function) {
     actionMap[constructor.name] = constructor;
 }
 
-export function createAction(name: string, scheduler: Scheduler): ActionController | undefined {
+export function createActionHandler(name: string, scheduler: Scheduler): ActionController | undefined {
     const storedFunction = actionMap[name];
     if (storedFunction === undefined) {
         return undefined;

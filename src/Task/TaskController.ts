@@ -9,7 +9,7 @@ export function registerTask(constructor: Function) {
     taskMap[constructor.name] = constructor;
 }
 
-export function createTask(name: string, scheduler: Scheduler): TaskController | undefined {
+export function createTaskHandler(name: string, scheduler: Scheduler): TaskController | undefined {
     const storedFunction = taskMap[name];
     if (storedFunction === undefined) {
         return undefined;
