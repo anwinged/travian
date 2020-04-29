@@ -3,10 +3,10 @@ import { CheckBuildingRemainingTimeAction } from '../Action/CheckBuildingRemaini
 import { CompleteTaskAction } from '../Action/CompleteTaskAction';
 import { GoToPageAction } from '../Action/GoToPageAction';
 import { path } from '../utils';
-import { Task } from '../Queue/TaskQueue';
 import { TaskController, registerTask } from './TaskController';
 import { Action } from '../Queue/ActionQueue';
 import { Args } from '../Queue/Args';
+import { Task } from '../Queue/TaskProvider';
 
 @registerTask
 export class BuildBuildingTask extends TaskController {

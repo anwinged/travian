@@ -1,4 +1,3 @@
-import { Task } from '../Queue/TaskQueue';
 import { TaskController, registerTask } from './TaskController';
 import { GoToPageAction } from '../Action/GoToPageAction';
 import { CompleteTaskAction } from '../Action/CompleteTaskAction';
@@ -7,6 +6,7 @@ import { ClickButtonAction } from '../Action/ClickButtonAction';
 import { path } from '../utils';
 import { Action } from '../Queue/ActionQueue';
 import { Args } from '../Queue/Args';
+import { Task } from '../Queue/TaskProvider';
 
 @registerTask
 export class SendOnAdventureTask extends TaskController {

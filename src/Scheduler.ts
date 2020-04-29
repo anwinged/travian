@@ -1,6 +1,6 @@
 import { timestamp } from './utils';
 import { UpgradeBuildingTask } from './Task/UpgradeBuildingTask';
-import { ImmutableTaskList, Task, TaskId, TaskQueue } from './Queue/TaskQueue';
+import { TaskQueue } from './Queue/TaskQueue';
 import { SendOnAdventureTask } from './Task/SendOnAdventureTask';
 import { BalanceHeroResourcesTask } from './Task/BalanceHeroResourcesTask';
 import { Logger } from './Logger';
@@ -12,6 +12,7 @@ import { TrainTroopTask } from './Task/TrainTroopTask';
 import { Resources, ResourcesInterface } from './Core/Resources';
 import { SendResourcesTask } from './Task/SendResourcesTask';
 import { Args } from './Queue/Args';
+import { ImmutableTaskList, Task, TaskId } from './Queue/TaskProvider';
 
 export class Scheduler {
     private taskQueue: TaskQueue;

@@ -1,9 +1,9 @@
 import { ActionController, registerAction } from './ActionController';
 import { ActionError, GrabError, TryLaterError } from '../Errors';
-import { Task } from '../Queue/TaskQueue';
 import { clickBuildButton } from '../Page/BuildingPage';
 import { aroundMinutes } from '../utils';
 import { Args } from '../Queue/Args';
+import { Task } from '../Queue/TaskProvider';
 
 @registerAction
 export class BuildBuildingAction extends ActionController {

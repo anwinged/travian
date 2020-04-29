@@ -1,6 +1,5 @@
 import { markPage, sleepMicro, timestamp, waitForLoad } from './utils';
 import { AbortTaskError, ActionError, TryLaterError } from './Errors';
-import { Task } from './Queue/TaskQueue';
 import { TaskQueueRenderer } from './TaskQueueRenderer';
 import { createActionHandler } from './Action/ActionController';
 import { createTaskHandler } from './Task/TaskController';
@@ -10,6 +9,7 @@ import { Scheduler } from './Scheduler';
 import { Statistics } from './Statistics';
 import { ExecutionState } from './State/ExecutionState';
 import { Action } from './Queue/ActionQueue';
+import { Task } from './Queue/TaskProvider';
 
 export interface ExecutionSettings {
     pauseTs: number;

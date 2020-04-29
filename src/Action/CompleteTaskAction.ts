@@ -1,6 +1,6 @@
 import { ActionController, registerAction } from './ActionController';
-import { Task } from '../Queue/TaskQueue';
 import { Args } from '../Queue/Args';
+import { Task } from '../Queue/TaskProvider';
 
 @registerAction
 export class CompleteTaskAction extends ActionController {

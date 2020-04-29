@@ -1,4 +1,3 @@
-import { Task } from '../Queue/TaskQueue';
 import { TaskController, registerTask } from './TaskController';
 import { GoToPageAction } from '../Action/GoToPageAction';
 import { CompleteTaskAction } from '../Action/CompleteTaskAction';
@@ -7,6 +6,7 @@ import { path } from '../utils';
 import { GoToHeroVillageAction } from '../Action/GoToHeroVillageAction';
 import { Action } from '../Queue/ActionQueue';
 import { Args } from '../Queue/Args';
+import { Task } from '../Queue/TaskProvider';
 
 @registerTask
 export class BalanceHeroResourcesTask extends TaskController {

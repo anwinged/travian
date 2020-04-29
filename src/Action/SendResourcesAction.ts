@@ -1,6 +1,5 @@
 import { ActionController, registerAction } from './ActionController';
 import { AbortTaskError, ActionError, TryLaterError } from '../Errors';
-import { Task } from '../Queue/TaskQueue';
 import { Resources } from '../Core/Resources';
 import { Coordinates, Village } from '../Core/Village';
 import { clickSendButton, fillSendResourcesForm, grabMerchantsInfo } from '../Page/BuildingPage';
@@ -10,6 +9,7 @@ import { SendResourcesTask } from '../Task/SendResourcesTask';
 import { aroundMinutes, timestamp } from '../utils';
 import { VillageState } from '../State/VillageState';
 import { Args } from '../Queue/Args';
+import { Task } from '../Queue/TaskProvider';
 
 function err(msg): never {
     throw new ActionError(msg);

@@ -1,5 +1,4 @@
 import { UpgradeBuildingAction } from '../Action/UpgradeBuildingAction';
-import { Task } from '../Queue/TaskQueue';
 import { TaskController, registerTask } from './TaskController';
 import { GoToPageAction } from '../Action/GoToPageAction';
 import { CheckBuildingRemainingTimeAction } from '../Action/CheckBuildingRemainingTimeAction';
@@ -7,6 +6,7 @@ import { CompleteTaskAction } from '../Action/CompleteTaskAction';
 import { path } from '../utils';
 import { Action } from '../Queue/ActionQueue';
 import { Args } from '../Queue/Args';
+import { Task } from '../Queue/TaskProvider';
 
 @registerTask
 export class UpgradeBuildingTask extends TaskController {

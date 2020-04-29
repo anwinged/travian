@@ -1,9 +1,10 @@
 import { Scheduler } from './Scheduler';
-import { DataStorageTaskProvider, TaskQueue } from './Queue/TaskQueue';
+import { TaskQueue } from './Queue/TaskQueue';
 import { ConsoleLogger } from './Logger';
 import { ActionQueue } from './Queue/ActionQueue';
 import { Executor } from './Executor';
 import { ControlPanel } from './ControlPanel';
+import { DataStorageTaskProvider } from './Queue/DataStorageTaskProvider';
 
 export class Container {
     private readonly version: string;

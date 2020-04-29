@@ -1,11 +1,11 @@
 import { ActionController, registerAction } from './ActionController';
 import { AbortTaskError, ActionError, TryLaterError } from '../Errors';
-import { Task } from '../Queue/TaskQueue';
 import { grabResourceDeposits } from '../Page/SlotBlock';
 import { UpgradeBuildingTask } from '../Task/UpgradeBuildingTask';
 import { ResourceDeposit } from '../Game';
 import { aroundMinutes, getNumber } from '../utils';
 import { Args } from '../Queue/Args';
+import { Task } from '../Queue/TaskProvider';
 
 @registerAction
 export class UpgradeResourceToLevel extends ActionController {

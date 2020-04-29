@@ -1,8 +1,8 @@
-import { Task } from '../Queue/TaskQueue';
 import { Scheduler } from '../Scheduler';
 import { CompleteTaskAction } from '../Action/CompleteTaskAction';
 import { Action } from '../Queue/ActionQueue';
 import { Args } from '../Queue/Args';
+import { Task } from '../Queue/TaskProvider';
 
 const taskMap: { [name: string]: Function | undefined } = {};
 
