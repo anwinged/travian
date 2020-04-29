@@ -1,6 +1,5 @@
 import { DataStorage } from '../DataStorage';
-import { uniqId } from '../utils';
-import { Task, TaskList, TaskProvider } from './TaskProvider';
+import {Task, TaskList, TaskProvider, uniqTaskId} from './TaskProvider';
 
 const NAMESPACE = 'tasks:v1';
 const QUEUE_NAME = 'queue';
@@ -25,7 +24,7 @@ export class DataStorageTaskProvider implements TaskProvider {
         const storedItems = serialized as Array<{ [key: string]: any }>;
 
         return storedItems.map(i => {
-            const task = new Task(uniqId(), 0, '', {});
+            const task = new Task(uniqTaskId(), 0, '', {});
             return Object.assign(task, i);
         });
     }

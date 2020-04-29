@@ -11,14 +11,14 @@ describe('Task Queue', function() {
         const provider = new ArrayTaskProvider([new Task('1', 0, 'task', {})]);
         const queue = new TaskQueue(provider, new NullLogger());
         const task = queue.get(1);
-        expect(task).instanceOf(Task);
+        expect(task).to.be.instanceOf(Task);
     });
 
     it("Don't get unready task from queue", function() {
         const provider = new ArrayTaskProvider([new Task('1', 5, 'task', {})]);
         const queue = new TaskQueue(provider, new NullLogger());
         const task = queue.get(1);
-        expect(task).is.equals(undefined);
+        expect(task).to.be.undefined;
     });
 
     it('Can remove task by id', function() {
@@ -26,8 +26,8 @@ describe('Task Queue', function() {
         const queue = new TaskQueue(provider, new NullLogger());
         queue.remove('id1');
         const tasks = provider.getTasks();
-        expect(1).is.equals(tasks.length);
-        expect(2).is.equals(tasks[0].ts);
+        expect(tasks).to.have.lengthOf(1);
+        expect(tasks[0].ts).to.be.equals(2);
     });
 
     it('Can modify tasks', function() {

@@ -36,6 +36,5 @@ export type ImmutableTaskList = ReadonlyArray<Task>;
 
 export interface TaskProvider {
     getTasks(): TaskList;
-
     setTasks(tasks: TaskList): void;
 }
