@@ -3,7 +3,7 @@ import { UpgradeBuildingTask } from './Task/UpgradeBuildingTask';
 import { ImmutableTaskList, Task, TaskId, TaskQueue } from './Queue/TaskQueue';
 import { SendOnAdventureTask } from './Task/SendOnAdventureTask';
 import { BalanceHeroResourcesTask } from './Task/BalanceHeroResourcesTask';
-import { ConsoleLogger, Logger } from './Logger';
+import { Logger } from './Logger';
 import { BuildBuildingTask } from './Task/BuildBuildingTask';
 import { GrabVillageState } from './Task/GrabVillageState';
 import { ActionQueue, Action, ImmutableActionList } from './Queue/ActionQueue';
@@ -18,10 +18,10 @@ export class Scheduler {
     private actionQueue: ActionQueue;
     private logger: Logger;
 
-    constructor() {
-        this.taskQueue = new TaskQueue();
-        this.actionQueue = new ActionQueue();
-        this.logger = new ConsoleLogger(this.constructor.name);
+    constructor(taskQueue: TaskQueue, actionQueue: ActionQueue, logger: Logger) {
+        this.taskQueue = taskQueue;
+        this.actionQueue = actionQueue;
+        this.logger = logger;
 
         // this.taskQueue.push(GrabVillageState.name, {}, timestamp());
         // this.taskQueue.push(UpdateResourceContracts.name, {}, timestamp());

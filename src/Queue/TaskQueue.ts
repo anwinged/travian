@@ -1,5 +1,5 @@
 import { uniqId } from '../utils';
-import { ConsoleLogger, Logger } from '../Logger';
+import { Logger } from '../Logger';
 import { DataStorage } from '../DataStorage';
 import { Args } from './Args';
 
@@ -39,13 +39,48 @@ type TaskList = Array<Task>;
 
 export type ImmutableTaskList = ReadonlyArray<Task>;
 
-export class TaskQueue {
-    private readonly logger: Logger;
+export interface TaskProvider {
+    getTasks(): TaskList;
+    setTasks(tasks: TaskList): void;
+}
+
+export class DataStorageTaskProvider implements TaskProvider {
     private storage: DataStorage;
 
-    constructor() {
-        this.storage = new DataStorage(NAMESPACE);
-        this.logger = new ConsoleLogger(this.constructor.name);
+    constructor(storage: DataStorage) {
+        this.storage = storage;
+    }
+
+    static create() {
+        return new DataStorageTaskProvider(new DataStorage(NAMESPACE));
+    }
+
+    getTasks(): TaskList {
+        const serialized = this.storage.get(QUEUE_NAME);
+        if (!Array.isArray(serialized)) {
+            return [];
+        }
+
+        const storedItems = serialized as Array<{ [key: string]: any }>;
+
+        return storedItems.map(i => {
+            const task = new Task(uniqId(), 0, '', {});
+            return Object.assign(task, i);
+        });
+    }
+
+    setTasks(tasks: TaskList): void {
+        this.storage.set(QUEUE_NAME, tasks);
+    }
+}
+
+export class TaskQueue {
+    private provider: TaskProvider;
+    private readonly logger: Logger;
+
+    constructor(provider: TaskProvider, logger: Logger) {
+        this.provider = provider;
+        this.logger = logger;
     }
 
     push(name: string, args: Args, ts: number): Task {
@@ -105,21 +140,11 @@ export class TaskQueue {
     }
 
     private getItems(): TaskList {
-        const serialized = this.storage.get(QUEUE_NAME);
-        if (!Array.isArray(serialized)) {
-            return [];
-        }
-
-        const storedItems = serialized as Array<{ [key: string]: any }>;
-
-        return storedItems.map(i => {
-            const task = new Task(uniqId(), 0, '', {});
-            return Object.assign(task, i);
-        });
+        return this.provider.getTasks();
     }
 
     private flushItems(items: TaskList): void {
-        const normalized = items.sort((x, y) => x.ts - y.ts || x.id.localeCompare(y.id));
-        this.storage.set(QUEUE_NAME, normalized);
+        items.sort((x, y) => x.ts - y.ts || x.id.localeCompare(y.id));
+        this.provider.setTasks(items);
     }
 }
