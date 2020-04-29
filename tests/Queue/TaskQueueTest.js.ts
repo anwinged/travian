@@ -20,4 +20,30 @@ describe('Task Queue', function() {
         const task = queue.get(1);
         expect(task).is.equals(undefined);
     });
+
+    it('Can remove task by id', function() {
+        const provider = new ArrayTaskProvider([new Task('id1', 1, 'task1', {}), new Task('id2', 2, 'task2', {})]);
+        const queue = new TaskQueue(provider, new NullLogger());
+        queue.remove('id1');
+        const tasks = provider.getTasks();
+        expect(1).is.equals(tasks.length);
+        expect(2).is.equals(tasks[0].ts);
+    });
+
+    it('Can modify tasks', function() {
+        const provider = new ArrayTaskProvider([
+            new Task('1', 1, 'task1', {}),
+            new Task('2', 3, 'task2', {}),
+            new Task('3', 4, 'task3', {}),
+        ]);
+        const queue = new TaskQueue(provider, new NullLogger());
+        queue.modify(
+            t => t.ts < 4,
+            t => new Task(t.id, 10, t.name, t.args)
+        );
+        const tasks = provider.getTasks();
+        expect(4).is.equals(tasks[0].ts);
+        expect(10).is.equals(tasks[1].ts);
+        expect(10).is.equals(tasks[2].ts);
+    });
 });
