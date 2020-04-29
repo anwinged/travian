@@ -96,11 +96,11 @@ export class ControlPanel {
             state.refresh();
         }, 3000);
 
-        DataStorage.onChange(() => {
+        DataStorage.onChange(
             debounce(() => {
                 state.refresh();
-            }, 500);
-        });
+            }, 500)
+        );
 
         const tasks = this.scheduler.getTaskItems();
         const buildingsInQueue = tasks
