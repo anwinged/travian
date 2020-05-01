@@ -1,31 +1,31 @@
-export abstract class Logger {
-    abstract log(...args): void;
-    abstract warn(...args): void;
-    abstract error(...args): void;
+export interface Logger {
+    info(...args: any[]): void;
+    warn(...args: any[]): void;
+    error(...args: any[]): void;
 }
 
-export class NullLogger extends Logger {
-    log(...args): void {}
-    warn(...args): void {}
-    error(...args): void {}
+export class NullLogger implements Logger {
+    info(...args: any[]): void {}
+    warn(...args: any[]): void {}
+    error(...args: any[]): void {}
 }
 
-export class ConsoleLogger extends Logger {
+export class ConsoleLogger implements Logger {
     private readonly name: string;
+
     constructor(name: string) {
-        super();
         this.name = name.toUpperCase();
     }
 
-    log(...args): void {
+    info(...args: any[]): void {
         console.log(this.name + ':', ...args);
     }
 
-    warn(...args): void {
+    warn(...args: any[]): void {
         console.warn(this.name + ':', ...args);
     }
 
-    error(...args): void {
+    error(...args: any[]): void {
         console.error(this.name + ':', ...args);
     }
 }

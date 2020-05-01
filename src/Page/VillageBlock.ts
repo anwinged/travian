@@ -35,7 +35,7 @@ export function grabActiveVillageId(): number {
     return grabActiveVillage()?.id || 0;
 }
 
-function grabVillageInfo($el): Village {
+function grabVillageInfo($el: JQuery): Village {
     const href = $el.attr('href');
     const parsedHref = parseLocation(href || '');
     const id = getNumber(parsedHref.query.newdid);

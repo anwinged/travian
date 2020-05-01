@@ -64,7 +64,7 @@ export class DataStorage {
         const fullKey = join(NAMESPACE, this.name, key);
         try {
             const serialized = storage.getItem(fullKey);
-            this.logger.log('GET', fullKey, serialized);
+            this.logger.info('GET', fullKey, serialized);
             return JSON.parse(serialized || 'null');
         } catch (e) {
             if (e instanceof SyntaxError) {
@@ -97,7 +97,7 @@ export class DataStorage {
     set(key: string, value: any) {
         const fullKey = join(NAMESPACE, this.name, key);
         let serialized = JSON.stringify(value);
-        this.logger.log('SET', fullKey, serialized);
+        this.logger.info('SET', fullKey, serialized);
         storage.setItem(fullKey, serialized);
     }
 }

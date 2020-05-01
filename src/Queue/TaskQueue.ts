@@ -14,7 +14,7 @@ export class TaskQueue {
     push(name: string, args: Args, ts: number): Task {
         const id = uniqTaskId();
         const task = new Task(id, ts, name, args);
-        this.logger.log('PUSH TASK', id, ts, name, args);
+        this.logger.info('PUSH TASK', id, ts, name, args);
         let items = this.getItems();
         items.push(task);
         this.flushItems(items);

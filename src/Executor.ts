@@ -72,14 +72,14 @@ export class Executor {
 
         // текущего таска нет, очищаем очередь действий по таску
         if (!task) {
-            this.logger.log('NO ACTIVE TASK');
+            this.logger.info('NO ACTIVE TASK');
             this.scheduler.clearActions();
             return;
         }
 
         const actionCommand = this.scheduler.nextAction();
 
-        this.logger.log('CURRENT JOB', 'TASK', task, 'ACTION', actionCommand);
+        this.logger.info('CURRENT JOB', 'TASK', task, 'ACTION', actionCommand);
 
         this.runGrabbers();
 
@@ -98,7 +98,7 @@ export class Executor {
 
     private async processActionCommand(cmd: Action, task: Task) {
         const actionHandler = createActionHandler(cmd.name, this.scheduler);
-        this.logger.log('PROCESS ACTION', cmd.name, actionHandler);
+        this.logger.info('PROCESS ACTION', cmd.name, actionHandler);
         if (cmd.args.taskId !== task.id) {
             throw new ActionError(`Action task id ${cmd.args.taskId} not equal current task id ${task.id}`);
         }
@@ -112,7 +112,7 @@ export class Executor {
 
     private async processTaskCommand(task: Task) {
         const taskHandler = createTaskHandler(task.name, this.scheduler);
-        this.logger.log('PROCESS TASK', task.name, task, taskHandler);
+        this.logger.info('PROCESS TASK', task.name, task, taskHandler);
         if (taskHandler) {
             await taskHandler.run(task);
         } else {
@@ -147,7 +147,7 @@ export class Executor {
 
     private runGrabbers() {
         try {
-            this.logger.log('Rug grabbers');
+            this.logger.info('Rug grabbers');
             this.grabbers.grab();
         } catch (e) {
             this.logger.warn('Grabbers fails with', e.message);

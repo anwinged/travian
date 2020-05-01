@@ -60,12 +60,12 @@ export function createUpgradeButton(onClickHandler: (resources: Resources) => vo
     });
 }
 
-function grabResourcesFromList($els) {
-    const getText = n =>
+function grabResourcesFromList($els: JQuery) {
+    const getText = (n: number) =>
         jQuery($els.get(n))
             .find('.value')
             .text();
-    const grab = n => getNumber(getText(n));
+    const grab = (n: number) => getNumber(getText(n));
     return new Resources(grab(0), grab(1), grab(2), grab(3));
 }
 
@@ -120,7 +120,9 @@ export function createSendResourcesButton(
         <a id="${id1000}" href="#">x1000</a>
     </div>`);
 
-    const createHandler = (handler, scale) => evt => {
+    const createHandler = (handler: (resources: Resources, crd: Coordinates, scale: number) => void, scale: number) => (
+        evt: JQuery.Event
+    ) => {
         evt.preventDefault();
         const sendSelect = jQuery('#send_select');
         const resources = new Resources(

@@ -3,7 +3,7 @@ import { UpgradeBuildingTask } from '../Task/UpgradeBuildingTask';
 import { Scheduler } from '../Scheduler';
 import { TrainTroopTask } from '../Task/TrainTroopTask';
 import { grabActiveVillageId } from './VillageBlock';
-import { ConsoleLogger } from '../Logger';
+import { ConsoleLogger, Logger } from '../Logger';
 import {
     createBuildButton,
     createSendResourcesButton,
@@ -21,7 +21,7 @@ import { BuildingPageAttributes, isMarketSendResourcesPage } from './PageDetecto
 export class BuildingPageController {
     private scheduler: Scheduler;
     private readonly attributes: BuildingPageAttributes;
-    private readonly logger;
+    private readonly logger: Logger;
 
     constructor(scheduler: Scheduler, attributes: BuildingPageAttributes) {
         this.scheduler = scheduler;
@@ -31,7 +31,7 @@ export class BuildingPageController {
 
     run() {
         const { buildTypeId, sheetId } = this.attributes;
-        this.logger.log('BUILD PAGE DETECTED', 'ID', this.attributes.buildId, this.attributes);
+        this.logger.info('BUILD PAGE DETECTED', 'ID', this.attributes.buildId, this.attributes);
 
         if (buildTypeId) {
             createUpgradeButton(res => this.onScheduleUpgradeBuilding(res));

@@ -15,12 +15,13 @@ import { ResourcesToLevel } from './Task/ResourcesToLevel';
 import { ConsoleLogger, Logger } from './Logger';
 import { VillageState } from './State/VillageState';
 import { Resources } from './Core/Resources';
-import { Village } from './Core/Village';
+import { Coordinates, Village } from './Core/Village';
 import { calcGatheringTimings } from './Core/GatheringTimings';
 import { DataStorage } from './DataStorage';
 import { getBuildingPageAttributes, isBuildingPage } from './Page/PageDetectors';
 import { debounce } from 'debounce';
 import { ExecutionState } from './State/ExecutionState';
+import { ResourceStorage } from './Core/ResourceStorage';
 
 interface QuickAction {
     label: string;
@@ -42,7 +43,7 @@ export class ControlPanel {
         await waitForLoad();
 
         const p = parseLocation();
-        this.logger.log('PARSED LOCATION', p);
+        this.logger.info('PARSED LOCATION', p);
 
         const villageId = grabActiveVillageId();
 
@@ -51,7 +52,7 @@ export class ControlPanel {
 
         const executionState = new ExecutionState();
 
-        const state = {
+        const state: any = {
             name: 'Dashboard',
             version: this.version,
             activeVillage: {},
@@ -125,7 +126,7 @@ export class ControlPanel {
         this.createControlPanel(state);
     }
 
-    private createControlPanel(state) {
+    private createControlPanel(state: any) {
         const appId = `app-${uniqId()}`;
         jQuery('body').prepend(`<div id="${appId}"></div>`);
         new Vue({
@@ -135,7 +136,7 @@ export class ControlPanel {
         });
     }
 
-    private createDepositsQuickActions(villageId) {
+    private createDepositsQuickActions(villageId: number) {
         const deposits = grabResourceDeposits();
         if (deposits.length === 0) {
             return [];
@@ -162,25 +163,25 @@ export class ControlPanel {
 }
 
 class VillageController {
-    public readonly id;
-    public readonly name;
-    public readonly crd;
-    public readonly active;
-    public readonly lumber;
-    public readonly clay;
-    public readonly iron;
-    public readonly crop;
-    public readonly resources;
-    public readonly performance;
+    public readonly id: number;
+    public readonly name: string;
+    public readonly crd: Coordinates;
+    public readonly active: boolean;
+    public readonly lumber: number;
+    public readonly clay: number;
+    public readonly iron: number;
+    public readonly crop: number;
+    public readonly resources: Resources;
+    public readonly performance: Resources;
     public readonly requiredResources: Resources;
     public readonly requiredBalance: Resources;
     public readonly totalRequiredResources: Resources;
     public readonly totalRequiredBalance: Resources;
     public readonly incomingResources: Resources;
-    public readonly storage;
-    public readonly warehouse;
-    public readonly granary;
-    public readonly buildRemainingSeconds;
+    public readonly storage: ResourceStorage;
+    public readonly warehouse: number;
+    public readonly granary: number;
+    public readonly buildRemainingSeconds: number;
 
     constructor(village: Village, state: VillageState, scheduler: Scheduler) {
         const resources = state.getResources();

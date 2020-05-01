@@ -56,7 +56,7 @@ export class Scheduler {
     }
 
     scheduleTask(name: string, args: Args, ts?: number | undefined): void {
-        this.logger.log('PUSH TASK', name, args, ts);
+        this.logger.info('PUSH TASK', name, args, ts);
         let insertedTs = calculateInsertTime(this.taskQueue.seeItems(), name, args, ts);
         this.taskQueue.push(name, args, insertedTs);
         if (args.villageId) {
@@ -83,9 +83,9 @@ export class Scheduler {
         }
 
         const villageId = task.args.villageId;
-        const modifyTime = t => withTime(t, timestamp() + seconds);
-        const buildPred = t => sameVillage(villageId, t.args) && isBuildingTask(t.name);
-        const trainPred = t => sameVillage(villageId, t.args) && isTrainTroopTask(t.name);
+        const modifyTime = (t: Task) => withTime(t, timestamp() + seconds);
+        const buildPred = (t: Task) => sameVillage(villageId, t.args) && isBuildingTask(t.name);
+        const trainPred = (t: Task) => sameVillage(villageId, t.args) && isTrainTroopTask(t.name);
 
         if (isBuildingTask(task.name) && villageId) {
             this.taskQueue.modify(buildPred, modifyTime);
@@ -115,7 +115,7 @@ export class Scheduler {
         this.actionQueue.clear();
     }
 
-    getVillageRequiredResources(villageId): Resources {
+    getVillageRequiredResources(villageId: number): Resources {
         const tasks = this.taskQueue
             .seeItems()
             .filter(t => sameVillage(villageId, t.args) && t.args.resources && t.name !== SendResourcesTask.name);
@@ -123,10 +123,10 @@ export class Scheduler {
         if (first && first.args.resources) {
             return Resources.fromObject(first.args.resources);
         }
-        return new Resources(0, 0, 0, 0);
+        return Resources.zero();
     }
 
-    getTotalVillageRequiredResources(villageId): Resources {
+    getTotalVillageRequiredResources(villageId: number): Resources {
         const tasks = this.taskQueue
             .seeItems()
             .filter(t => sameVillage(villageId, t.args) && t.args.resources && t.name !== SendResourcesTask.name);
@@ -135,8 +135,8 @@ export class Scheduler {
 
     private reorderVillageTasks(villageId: number) {
         const tasks = this.taskQueue.seeItems();
-        const trainPred = t => isTrainTroopTask(t.name) && sameVillage(villageId, t.args);
-        const buildPred = t => isBuildingTask(t.name) && sameVillage(villageId, t.args);
+        const trainPred = (t: Task) => isTrainTroopTask(t.name) && sameVillage(villageId, t.args);
+        const buildPred = (t: Task) => isBuildingTask(t.name) && sameVillage(villageId, t.args);
         const lastTrainTaskTs = lastTaskTime(tasks, trainPred);
         if (lastTrainTaskTs) {
             this.taskQueue.modify(buildPred, t => withTime(t, lastTrainTaskTs + 1));
@@ -196,7 +196,8 @@ function calculateInsertTime(tasks: ImmutableTaskList, name: string, args: Args,
 
     if (villageId && !insertedTs) {
         for (let taskTypePred of TASK_TYPE_PREDICATES) {
-            const sameVillageAndTypePred = t => taskTypePred(name) && t.args.villageId === villageId && t.name === name;
+            const sameVillageAndTypePred = (t: Task) =>
+                taskTypePred(name) && t.args.villageId === villageId && t.name === name;
             insertedTs = lastTaskTime(tasks, sameVillageAndTypePred);
             if (insertedTs) {
                 insertedTs += 1;

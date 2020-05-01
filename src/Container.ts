@@ -13,7 +13,7 @@ export class Container {
         this.version = version;
     }
 
-    private _scheduler;
+    private _scheduler: Scheduler | undefined;
 
     get scheduler(): Scheduler {
         this._scheduler =
@@ -27,7 +27,7 @@ export class Container {
         return this._scheduler;
     }
 
-    private _executor;
+    private _executor: Executor | undefined;
 
     get executor(): Executor {
         this._executor =
@@ -38,7 +38,7 @@ export class Container {
         return this._executor;
     }
 
-    private _controlPanel;
+    private _controlPanel: ControlPanel | undefined;
 
     get controlPanel(): ControlPanel {
         this._controlPanel =

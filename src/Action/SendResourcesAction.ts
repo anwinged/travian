@@ -11,7 +11,7 @@ import { VillageState } from '../State/VillageState';
 import { Args } from '../Queue/Args';
 import { Task } from '../Queue/TaskProvider';
 
-function err(msg): never {
+function err(msg: string): never {
     throw new ActionError(msg);
 }
 
@@ -101,7 +101,7 @@ export class SendResourcesAction extends ActionController {
         return missing;
     }
 
-    private getResourcesForTransfer(recipientVillageId): Resources {
+    private getResourcesForTransfer(recipientVillageId: number): Resources {
         const senderResources = this.getSenderAvailableResources();
         const recipientNeeds = this.getRecipientRequirements(recipientVillageId);
         const prepared = senderResources.min(recipientNeeds);
