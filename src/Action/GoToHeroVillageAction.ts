@@ -2,7 +2,7 @@ import { ActionController, registerAction } from './ActionController';
 import { grabVillageList } from '../Page/VillageBlock';
 import { grabHeroVillage } from '../Page/HeroPage';
 import { path } from '../utils';
-import { HeroState } from '../State/HeroState';
+import { HeroStorage } from '../Storage/HeroStorage';
 import { Args } from '../Queue/Args';
 import { Task } from '../Queue/TaskProvider';
 
@@ -25,6 +25,6 @@ export class GoToHeroVillageAction extends ActionController {
             }
         }
 
-        return new HeroState().getVillageId();
+        return new HeroStorage().getVillageId();
     }
 }

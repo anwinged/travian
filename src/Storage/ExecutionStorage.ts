@@ -5,7 +5,7 @@ const NAMESPACE = 'execution.v1';
 
 const SETTINGS_KEY = 'settings';
 
-export class ExecutionState {
+export class ExecutionStorage {
     private storage: DataStorage;
     constructor() {
         this.storage = new DataStorage(NAMESPACE);

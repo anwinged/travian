@@ -13,14 +13,14 @@ import Vue from 'vue';
 import DashboardApp from './DashboardView/Dashboard.vue';
 import { ResourcesToLevel } from './Task/ResourcesToLevel';
 import { ConsoleLogger, Logger } from './Logger';
-import { VillageState } from './State/VillageState';
+import { VillageStorage } from './Storage/VillageStorage';
 import { Resources } from './Core/Resources';
 import { Coordinates, Village } from './Core/Village';
 import { calcGatheringTimings } from './Core/GatheringTimings';
 import { DataStorage } from './DataStorage';
 import { getBuildingPageAttributes, isBuildingPage } from './Page/PageDetectors';
 import { debounce } from 'debounce';
-import { ExecutionState } from './State/ExecutionState';
+import { ExecutionStorage } from './Storage/ExecutionStorage';
 import { ResourceStorage } from './Core/ResourceStorage';
 
 interface QuickAction {
@@ -50,7 +50,7 @@ export class ControlPanel {
         const scheduler = this.scheduler;
         const quickActions: QuickAction[] = [];
 
-        const executionState = new ExecutionState();
+        const executionState = new ExecutionStorage();
 
         const state: any = {
             name: 'Dashboard',
@@ -77,7 +77,7 @@ export class ControlPanel {
 
             refreshVillages() {
                 this.villages = grabVillageList().map(village => {
-                    return new VillageController(village, new VillageState(village.id), scheduler);
+                    return new VillageController(village, new VillageStorage(village.id), scheduler);
                 });
                 for (let village of this.villages) {
                     if (village.active) {
@@ -183,7 +183,7 @@ class VillageController {
     public readonly granary: number;
     public readonly buildRemainingSeconds: number;
 
-    constructor(village: Village, state: VillageState, scheduler: Scheduler) {
+    constructor(village: Village, state: VillageStorage, scheduler: Scheduler) {
         const resources = state.getResources();
         const storage = state.getResourceStorage();
         const performance = state.getResourcesPerformance();
@@ -228,7 +228,7 @@ class VillageController {
         return timings.hours * 3600;
     }
 
-    private calcIncomingResources(state: VillageState): Resources {
+    private calcIncomingResources(state: VillageStorage): Resources {
         return state.getIncomingMerchants().reduce((m, i) => m.add(i.resources), new Resources(0, 0, 0, 0));
     }
 }

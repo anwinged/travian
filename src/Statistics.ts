@@ -1,4 +1,4 @@
-import { StatisticsState } from './State/StatisticsState';
+import { StatisticsStorage } from './Storage/StatisticsStorage';
 import * as dateFormat from 'dateformat';
 
 export interface ActionStatistics {
@@ -6,10 +6,10 @@ export interface ActionStatistics {
 }
 
 export class Statistics {
-    private state: StatisticsState;
+    private state: StatisticsStorage;
 
     constructor() {
-        this.state = new StatisticsState();
+        this.state = new StatisticsStorage();
     }
 
     incrementAction(): void {

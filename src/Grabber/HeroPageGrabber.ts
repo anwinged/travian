@@ -1,6 +1,6 @@
 import { Grabber } from './Grabber';
 import { grabVillageList } from '../Page/VillageBlock';
-import { HeroState } from '../State/HeroState';
+import { HeroStorage } from '../Storage/HeroStorage';
 import { grabHeroAttributes, grabHeroVillage } from '../Page/HeroPage';
 import { isHeroPage } from '../Page/PageDetectors';
 
@@ -10,7 +10,7 @@ export class HeroPageGrabber extends Grabber {
             return;
         }
 
-        const state = new HeroState();
+        const state = new HeroStorage();
 
         state.storeAttributes(grabHeroAttributes());
 

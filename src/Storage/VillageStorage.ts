@@ -14,7 +14,7 @@ const ResourceOptions = {
     factory: () => new Resources(0, 0, 0, 0),
 };
 
-export class VillageState {
+export class VillageStorage {
     private storage: DataStorage;
     constructor(villageId: number) {
         this.storage = new DataStorage(`village.${villageId}`);

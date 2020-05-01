@@ -1,4 +1,4 @@
-import { ConsoleLogger, Logger, NullLogger } from './Logger';
+import { Logger, NullLogger } from './Logger';
 
 const NAMESPACE = 'travian:v1';
 
@@ -48,7 +48,6 @@ export class DataStorage {
 
     constructor(name: string) {
         this.name = name;
-        // this.logger = new ConsoleLogger(this.constructor.name);
         this.logger = new NullLogger();
     }
 
@@ -87,11 +86,6 @@ export class DataStorage {
         }
         const mapper = createMapper(options);
         return (plain as Array<any>).map(mapper);
-    }
-
-    has(key: string): boolean {
-        const fullKey = join(NAMESPACE, this.name, key);
-        return storage.getItem(fullKey) !== null;
     }
 
     set(key: string, value: any) {

@@ -1,6 +1,6 @@
 import { Grabber } from './Grabber';
 import { grabActiveVillageId, grabBuildingQueueInfo, grabResourcesPerformance } from '../Page/VillageBlock';
-import { VillageState } from '../State/VillageState';
+import { VillageStorage } from '../Storage/VillageStorage';
 import { parseLocation } from '../utils';
 import { GrabError } from '../Errors';
 import { BuildingQueueInfo } from '../Game';
@@ -13,7 +13,7 @@ export class VillageOverviewPageGrabber extends Grabber {
         }
 
         const villageId = grabActiveVillageId();
-        const state = new VillageState(villageId);
+        const state = new VillageStorage(villageId);
         state.storeResourcesPerformance(grabResourcesPerformance());
         state.storeBuildingQueueInfo(this.grabBuildingQueueInfoOrDefault());
     }

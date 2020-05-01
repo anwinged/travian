@@ -4,7 +4,7 @@ import { HeroAttributes } from '../Core/Hero';
 const VILLAGE_ID_KEY = 'village_id';
 const ATTRIBUTES_KEY = 'attr';
 
-export class HeroState {
+export class HeroStorage {
     private storage: DataStorage;
     constructor() {
         this.storage = new DataStorage('hero.v1');

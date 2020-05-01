@@ -5,7 +5,7 @@ const NAMESPACE = 'statistics.v1';
 
 const ACTION_STATISTICS_KEY = 'actions';
 
-export class StatisticsState {
+export class StatisticsStorage {
     private storage: DataStorage;
     constructor() {
         this.storage = new DataStorage(NAMESPACE);

@@ -2,7 +2,7 @@ import { ActionController, registerAction } from './ActionController';
 import { grabVillageResources, grabVillageResourceStorage } from '../Page/ResourcesBlock';
 import { changeHeroResource, grabCurrentHeroResource } from '../Page/HeroPage';
 import { grabActiveVillageId } from '../Page/VillageBlock';
-import { HeroState } from '../State/HeroState';
+import { HeroStorage } from '../Storage/HeroStorage';
 import { calcHeroResource } from '../Core/HeroBalance';
 import { HeroAllResources } from '../Core/Hero';
 import { Args } from '../Queue/Args';
@@ -12,7 +12,7 @@ import { Task } from '../Queue/TaskProvider';
 export class BalanceHeroResourcesAction extends ActionController {
     async run(args: Args, task: Task): Promise<any> {
         const activeVillageId = grabActiveVillageId();
-        const heroVillageId = new HeroState().getVillageId();
+        const heroVillageId = new HeroStorage().getVillageId();
 
         if (heroVillageId === undefined || activeVillageId !== heroVillageId) {
             changeHeroResource(HeroAllResources);

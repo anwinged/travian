@@ -7,7 +7,7 @@ import { grabVillageResources } from '../Page/ResourcesBlock';
 import { grabActiveVillageId, grabVillageList } from '../Page/VillageBlock';
 import { SendResourcesTask } from '../Task/SendResourcesTask';
 import { aroundMinutes, timestamp } from '../utils';
-import { VillageState } from '../State/VillageState';
+import { VillageStorage } from '../Storage/VillageStorage';
 import { Args } from '../Queue/Args';
 import { Task } from '../Queue/TaskProvider';
 
@@ -83,7 +83,7 @@ export class SendResourcesAction extends ActionController {
     }
 
     private getRecipientRequirements(villageId: number): Resources {
-        const state = new VillageState(villageId);
+        const state = new VillageStorage(villageId);
         const resources = state.getResources();
         const incoming = state.getIncomingMerchants().reduce((m, i) => m.add(i.resources), Resources.zero());
         const requirements = this.scheduler.getVillageRequiredResources(villageId);
