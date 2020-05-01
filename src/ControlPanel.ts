@@ -1,4 +1,4 @@
-import { parseLocation, timestamp, uniqId, waitForLoad } from './utils';
+import { notify, parseLocation, timestamp, uniqId, waitForLoad } from './utils';
 import { Scheduler } from './Scheduler';
 import { BuildingPageController } from './Page/BuildingPageController';
 import { UpgradeBuildingTask } from './Task/UpgradeBuildingTask';
@@ -13,19 +13,33 @@ import Vue from 'vue';
 import DashboardApp from './DashboardView/Dashboard.vue';
 import { ResourcesToLevel } from './Task/ResourcesToLevel';
 import { ConsoleLogger, Logger } from './Logger';
-import { VillageStorage } from './Storage/VillageStorage';
-import { Resources } from './Core/Resources';
-import { Coordinates, Village } from './Core/Village';
-import { calcGatheringTimings } from './Core/GatheringTimings';
 import { DataStorage } from './DataStorage';
 import { getBuildingPageAttributes, isBuildingPage } from './Page/PageDetectors';
 import { debounce } from 'debounce';
 import { ExecutionStorage } from './Storage/ExecutionStorage';
-import { ResourceStorage } from './Core/ResourceStorage';
+import { createVillageStates, VillageState } from './VillageState';
+import { Task } from './Queue/TaskProvider';
+import { Action } from './Queue/ActionQueue';
 
 interface QuickAction {
     label: string;
     cb: () => void;
+}
+
+interface GameState {
+    name: string;
+    version: string;
+    activeVillageState: VillageState | undefined;
+    villageStates: ReadonlyArray<VillageState>;
+    taskList: ReadonlyArray<Task>;
+    actionList: ReadonlyArray<Action>;
+    quickActions: Array<QuickAction>;
+    pauseSeconds: number;
+
+    refresh(): void;
+    removeTask(taskId: string): void;
+    refreshVillages(): void;
+    pause(): void;
 }
 
 export class ControlPanel {
@@ -48,18 +62,17 @@ export class ControlPanel {
         const villageId = grabActiveVillageId();
 
         const scheduler = this.scheduler;
-        const quickActions: QuickAction[] = [];
 
         const executionState = new ExecutionStorage();
 
-        const state: any = {
-            name: 'Dashboard',
+        const state: GameState = {
+            name: 'Control',
             version: this.version,
-            activeVillage: {},
-            villages: [],
+            activeVillageState: undefined,
+            villageStates: [],
             taskList: [],
             actionList: [],
-            quickActions: quickActions,
+            quickActions: [],
             pauseSeconds: 0,
 
             refresh() {
@@ -76,12 +89,10 @@ export class ControlPanel {
             },
 
             refreshVillages() {
-                this.villages = grabVillageList().map(village => {
-                    return new VillageController(village, new VillageStorage(village.id), scheduler);
-                });
-                for (let village of this.villages) {
-                    if (village.active) {
-                        this.activeVillage = village;
+                this.villageStates = createVillageStates(grabVillageList(), scheduler);
+                for (let state of this.villageStates) {
+                    if (state.village.active) {
+                        this.activeVillageState = state;
                     }
                 }
             },
@@ -111,7 +122,7 @@ export class ControlPanel {
         if (p.pathname === '/dorf1.php') {
             showResourceSlotIds(buildingsInQueue);
             onResourceSlotCtrlClick(buildId => this.onResourceSlotCtrlClick(villageId, buildId));
-            quickActions.push(...this.createDepositsQuickActions(villageId));
+            state.quickActions.push(...this.createDepositsQuickActions(villageId));
         }
 
         if (p.pathname === '/dorf2.php') {
@@ -126,12 +137,12 @@ export class ControlPanel {
         this.createControlPanel(state);
     }
 
-    private createControlPanel(state: any) {
+    private createControlPanel(gameState: GameState) {
         const appId = `app-${uniqId()}`;
         jQuery('body').prepend(`<div id="${appId}"></div>`);
         new Vue({
             el: `#${appId}`,
-            data: state,
+            data: gameState,
             render: h => h(DashboardApp),
         });
     }
@@ -157,78 +168,6 @@ export class ControlPanel {
 
     private onResourceSlotCtrlClick(villageId: number, buildId: number) {
         this.scheduler.scheduleTask(UpgradeBuildingTask.name, { villageId, buildId });
-        const n = new Notification(`Building ${buildId} scheduled`);
-        setTimeout(() => n && n.close(), 4000);
-    }
-}
-
-class VillageController {
-    public readonly id: number;
-    public readonly name: string;
-    public readonly crd: Coordinates;
-    public readonly active: boolean;
-    public readonly lumber: number;
-    public readonly clay: number;
-    public readonly iron: number;
-    public readonly crop: number;
-    public readonly resources: Resources;
-    public readonly performance: Resources;
-    public readonly requiredResources: Resources;
-    public readonly requiredBalance: Resources;
-    public readonly totalRequiredResources: Resources;
-    public readonly totalRequiredBalance: Resources;
-    public readonly incomingResources: Resources;
-    public readonly storage: ResourceStorage;
-    public readonly warehouse: number;
-    public readonly granary: number;
-    public readonly buildRemainingSeconds: number;
-
-    constructor(village: Village, state: VillageStorage, scheduler: Scheduler) {
-        const resources = state.getResources();
-        const storage = state.getResourceStorage();
-        const performance = state.getResourcesPerformance();
-        const buildQueueInfo = state.getBuildingQueueInfo();
-        const requiredResources = scheduler.getVillageRequiredResources(village.id);
-        const totalRequiredResources = scheduler.getTotalVillageRequiredResources(village.id);
-        this.id = village.id;
-        this.name = village.name;
-        this.crd = village.crd;
-        this.active = village.active;
-        this.lumber = resources.lumber;
-        this.clay = resources.clay;
-        this.iron = resources.iron;
-        this.crop = resources.crop;
-        this.resources = resources;
-        this.performance = performance;
-        this.requiredResources = requiredResources;
-        this.requiredBalance = resources.sub(requiredResources);
-        this.totalRequiredResources = totalRequiredResources;
-        this.totalRequiredBalance = resources.sub(totalRequiredResources);
-        this.storage = storage;
-        this.warehouse = storage.warehouse;
-        this.granary = storage.granary;
-        this.buildRemainingSeconds = buildQueueInfo.seconds;
-        this.incomingResources = this.calcIncomingResources(state);
-    }
-
-    timeToRequired() {
-        return this.timeToResources(this.requiredResources);
-    }
-
-    timeToTotalRequired() {
-        return this.timeToResources(this.totalRequiredResources);
-    }
-
-    private timeToResources(resources: Resources): number {
-        const timings = calcGatheringTimings(this.resources, resources, this.performance);
-        if (timings.never) {
-            return -1;
-        }
-
-        return timings.hours * 3600;
-    }
-
-    private calcIncomingResources(state: VillageStorage): Resources {
-        return state.getIncomingMerchants().reduce((m, i) => m.add(i.resources), new Resources(0, 0, 0, 0));
+        notify(`Building ${buildId} scheduled`);
     }
 }

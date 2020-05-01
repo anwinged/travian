@@ -6,6 +6,7 @@ export interface Args {
     taskId?: TaskId;
     targetTaskId?: TaskId;
     villageId?: number;
+    targetVillageId?: number;
     buildId?: number;
     categoryId?: number;
     sheetId?: number;

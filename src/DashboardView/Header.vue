@@ -19,8 +19,8 @@ export default {
   },
   computed: {
     villageName() {
-      let village = this.shared.activeVillage;
-      return village ? village.name : 'Unknown';
+      let state = this.shared.activeVillageState;
+      return state ? state.village.name : 'Unknown';
     },
   },
   methods: {

@@ -25,13 +25,12 @@
 
 <script>
 import * as dateFormat from 'dateformat';
-import { timestamp } from '../utils';
 
 export default {
   data() {
     return {
       shared: this.$root.$data,
-      activeVillage: this.$root.$data.activeVillage,
+      activeVillageState: this.$root.$data.activeVillageState,
     };
   },
   computed: {
@@ -49,7 +48,7 @@ export default {
     },
     isThisVillageTask(task) {
       const taskVillageId = (task.args || {}).villageId;
-      const currentVillageId = this.activeVillage.id;
+      const currentVillageId = this.activeVillageState.id;
       return taskVillageId !== undefined && taskVillageId === currentVillageId;
     },
     onRemove(taskId) {
