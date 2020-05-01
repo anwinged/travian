@@ -32,11 +32,6 @@ export function createBuildButton(onClickHandler: (buildTypeId: number, resource
     });
 }
 
-export function hasUpgradeButton(): boolean {
-    const btn = jQuery('.upgradeButtonsContainer .section1 button.green.build');
-    return btn.length === 1;
-}
-
 export function clickUpgradeButton() {
     const btn = jQuery('.upgradeButtonsContainer .section1 button.green.build');
     if (btn.length !== 1) {
@@ -105,9 +100,11 @@ export function createTrainTroopButtons(
     });
 }
 
-export function createSendResourcesButton(
-    onClickHandler: (resources: Resources, crd: Coordinates, scale: number) => void
-) {
+interface SendResourcesClickHandler {
+    (resources: Resources, crd: Coordinates, scale: number): void;
+}
+
+export function createSendResourcesButton(onClickHandler: SendResourcesClickHandler) {
     const id1 = uniqId();
     const id10 = uniqId();
     const id100 = uniqId();
@@ -120,9 +117,7 @@ export function createSendResourcesButton(
         <a id="${id1000}" href="#">x1000</a>
     </div>`);
 
-    const createHandler = (handler: (resources: Resources, crd: Coordinates, scale: number) => void, scale: number) => (
-        evt: JQuery.Event
-    ) => {
+    const createHandler = (handler: SendResourcesClickHandler, scale: number) => (evt: JQuery.Event) => {
         evt.preventDefault();
         const sendSelect = jQuery('#send_select');
         const resources = new Resources(

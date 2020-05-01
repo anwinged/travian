@@ -9,7 +9,6 @@ import {
     createSendResourcesButton,
     createTrainTroopButtons,
     createUpgradeButton,
-    grabIncomingMerchants,
 } from './BuildingPage';
 import { BuildBuildingTask } from '../Task/BuildBuildingTask';
 import { Resources } from '../Core/Resources';
