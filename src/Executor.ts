@@ -125,13 +125,13 @@ export class Executor {
         this.scheduler.clearActions();
 
         if (err instanceof AbortTaskError) {
-            this.logger.warn('ABORT TASK', task.id);
+            this.logger.warn('ABORT TASK', task.id, 'MSG', err.message);
             this.scheduler.removeTask(task.id);
             return;
         }
 
         if (err instanceof TryLaterError) {
-            this.logger.warn('TRY', task.id, 'AFTER', err.seconds);
+            this.logger.warn('TRY', task.id, 'AFTER', err.seconds, 'MSG', err.message);
             this.scheduler.postponeTask(task.id, err.seconds);
             return;
         }

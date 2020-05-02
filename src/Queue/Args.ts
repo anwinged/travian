@@ -16,6 +16,7 @@ export interface Args {
     trainCount?: number;
     resources?: ResourcesInterface;
     coordinates?: CoordinatesInterface;
+    unitId?: number;
     level?: number;
     selector?: string;
     path?: string;

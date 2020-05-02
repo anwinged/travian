@@ -26,9 +26,9 @@ export class SendResourcesTask extends TaskController {
 
         return [
             [GoToPageAction.name, { path: pagePath }],
-            [SendResourcesAction.name, {}],
+            [SendResourcesAction.name],
             [ClickButtonAction.name, { selector: '#enabledButton.green.sendRessources' }],
-            [CompleteTaskAction.name, {}],
+            [CompleteTaskAction.name],
         ];
     }
 }

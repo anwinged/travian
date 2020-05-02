@@ -1,5 +1,5 @@
 import { elClassId, getNumber, parseLocation } from '../utils';
-import { MARKET_ID } from '../Core/Buildings';
+import { FORGE_ID, MARKET_ID } from '../Core/Buildings';
 
 export interface BuildingPageAttributes {
     buildId: number;
@@ -39,4 +39,12 @@ export function isMarketSendResourcesPage(): boolean {
     }
     const { buildTypeId, tabId } = getBuildingPageAttributes();
     return buildTypeId === MARKET_ID && tabId === 5;
+}
+
+export function isForgePage(): boolean {
+    if (!isBuildingPage()) {
+        return false;
+    }
+    const { buildTypeId } = getBuildingPageAttributes();
+    return buildTypeId === FORGE_ID;
 }

@@ -4,18 +4,17 @@ import { Scheduler } from '../Scheduler';
 import { TrainTroopTask } from '../Task/TrainTroopTask';
 import { grabActiveVillageId, grabVillageList } from './VillageBlock';
 import { ConsoleLogger, Logger } from '../Logger';
-import {
-    createBuildButton,
-    createSendResourcesButton,
-    createTrainTroopButtons,
-    createUpgradeButton,
-} from './BuildingPage';
+import { createBuildButton, createUpgradeButton } from './BuildingPage/BuildingPage';
 import { BuildBuildingTask } from '../Task/BuildBuildingTask';
 import { Resources } from '../Core/Resources';
 import { Coordinates } from '../Core/Village';
 import { SendResourcesTask } from '../Task/SendResourcesTask';
 import { EMBASSY_ID, HORSE_STABLE_ID, QUARTERS_ID } from '../Core/Buildings';
-import { BuildingPageAttributes, isMarketSendResourcesPage } from './PageDetectors';
+import { BuildingPageAttributes, isForgePage, isMarketSendResourcesPage } from './PageDetectors';
+import { createTrainTroopButtons } from './BuildingPage/TrooperPage';
+import { createSendResourcesButton } from './BuildingPage/MarketPage';
+import { createResearchButtons } from './BuildingPage/ForgePage';
+import { ResearchTask } from '../Task/ResearchTask';
 
 export class BuildingPageController {
     private scheduler: Scheduler;
@@ -52,6 +51,10 @@ export class BuildingPageController {
 
         if (isMarketSendResourcesPage()) {
             createSendResourcesButton((res, crd, scale) => this.onSendResources(res, crd, scale));
+        }
+
+        if (isForgePage()) {
+            createResearchButtons((res, unitId) => this.onResearch(res, unitId));
         }
     }
 
@@ -100,5 +103,17 @@ export class BuildingPageController {
             coordinates,
         });
         notify(`Send resources ${JSON.stringify(resources)} from ${villageId} to ${JSON.stringify(coordinates)}`);
+    }
+
+    private onResearch(resources: Resources, unitId: number) {
+        const villageId = grabActiveVillageId();
+        this.scheduler.scheduleTask(ResearchTask.name, {
+            villageId,
+            buildTypeId: this.attributes.buildTypeId,
+            buildId: this.attributes.buildId,
+            unitId,
+            resources,
+        });
+        notify(`Researching ${unitId} scheduled`);
     }
 }

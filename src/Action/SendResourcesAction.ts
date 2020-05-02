@@ -1,8 +1,7 @@
-import { ActionController, registerAction } from './ActionController';
-import { AbortTaskError, ActionError, TryLaterError } from '../Errors';
+import { ActionController, err, registerAction } from './ActionController';
+import { AbortTaskError, TryLaterError } from '../Errors';
 import { Resources } from '../Core/Resources';
 import { Coordinates, Village } from '../Core/Village';
-import { clickSendButton, fillSendResourcesForm, grabMerchantsInfo } from '../Page/BuildingPage';
 import { grabVillageResources } from '../Page/ResourcesBlock';
 import { grabActiveVillageId, grabVillageList } from '../Page/VillageBlock';
 import { SendResourcesTask } from '../Task/SendResourcesTask';
@@ -10,10 +9,7 @@ import { aroundMinutes, timestamp } from '../utils';
 import { VillageStorage } from '../Storage/VillageStorage';
 import { Args } from '../Queue/Args';
 import { Task } from '../Queue/TaskProvider';
-
-function err(msg: string): never {
-    throw new ActionError(msg);
-}
+import { clickSendButton, fillSendResourcesForm, grabMerchantsInfo } from '../Page/BuildingPage/MarketPage';
 
 const TIMEOUT = 15;
 

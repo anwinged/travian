@@ -20,6 +20,10 @@ export function createActionHandler(name: string, scheduler: Scheduler): ActionC
     return new constructor(scheduler);
 }
 
+export function err(msg: string): never {
+    throw new ActionError(msg);
+}
+
 export class ActionController {
     protected scheduler: Scheduler;
     constructor(scheduler: Scheduler) {
@@ -29,11 +33,7 @@ export class ActionController {
     async run(args: Args, task: Task) {}
 
     ensureSameVillage(args: Args, task: Task) {
-        let villageId = args.villageId;
-        if (villageId === undefined) {
-            throw new ActionError('Undefined village id');
-        }
-
+        let villageId = args.villageId || err('Undefined village id');
         const activeVillageId = grabActiveVillageId();
         if (villageId !== activeVillageId) {
             throw new TryLaterError(aroundMinutes(1), 'Not same village');

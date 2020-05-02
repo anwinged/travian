@@ -1,6 +1,6 @@
 import { ActionController, registerAction } from './ActionController';
 import { GrabError, TryLaterError } from '../Errors';
-import { clickUpgradeButton } from '../Page/BuildingPage';
+import { clickUpgradeButton } from '../Page/BuildingPage/BuildingPage';
 import { aroundMinutes } from '../utils';
 import { Args } from '../Queue/Args';
 import { Task } from '../Queue/TaskProvider';
@@ -8,9 +8,8 @@ import { Task } from '../Queue/TaskProvider';
 @registerAction
 export class UpgradeBuildingAction extends ActionController {
     async run(args: Args, task: Task): Promise<any> {
-        this.ensureSameVillage(args, task);
-
         try {
+            this.ensureSameVillage(args, task);
             clickUpgradeButton();
         } catch (e) {
             if (e instanceof GrabError) {

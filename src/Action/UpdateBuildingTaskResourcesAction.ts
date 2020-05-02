@@ -1,5 +1,5 @@
 import { ActionController, registerAction } from './ActionController';
-import { grabContractResources } from '../Page/BuildingPage';
+import { grabContractResources } from '../Page/BuildingPage/BuildingPage';
 import { Args } from '../Queue/Args';
 import { Task } from '../Queue/TaskProvider';
 

@@ -19,7 +19,7 @@ export function createTaskHandler(name: string, scheduler: Scheduler): TaskContr
     return new constructor(scheduler);
 }
 
-export type ActionDefinition = [string, Args];
+export type ActionDefinition = [string] | [string, Args];
 
 export class TaskController {
     protected scheduler: Scheduler;
@@ -41,7 +41,11 @@ export class TaskController {
         const args: Args = { ...task.args, taskId: task.id };
         const commands: Array<Action> = [];
         for (let def of this.defineActions(task)) {
-            commands.push(new Action(def[0], { ...args, ...def[1] }));
+            if (def.length === 1) {
+                commands.push(new Action(def[0], args));
+            } else {
+                commands.push(new Action(def[0], { ...args, ...def[1] }));
+            }
         }
         commands.push(new Action(CompleteTaskAction.name, args));
         return commands;
