@@ -4,51 +4,18 @@ import { expect } from 'chai';
 import { calcHeroResource } from '../../src/Core/HeroBalance';
 import { Resources } from '../../src/Core/Resources';
 import { ResourceType } from '../../src/Core/ResourceType';
-import { ResourceStorage } from '../../src/Core/ResourceStorage';
 
 describe('HeroBalance', function() {
-    it('Get resource for requirement', function() {
-        const current = new Resources(100, 100, 100, 100);
-        const required = new Resources(200, 200, 400, 300);
-        const totalRequired = new Resources(200, 200, 400, 300);
-        const storage = new ResourceStorage(1000, 1000);
-        const heroRes = calcHeroResource(current, required, totalRequired, storage);
-        expect(ResourceType.Iron).to.equals(heroRes);
+    it('Get resource for single requirement', function() {
+        const req = new Resources(0, 0, -100, 0);
+        const heroRes = calcHeroResource([req]);
+        expect(heroRes).to.equals(ResourceType.Iron);
     });
 
-    it('Get resource if one is enough, others non equal', function() {
-        const current = new Resources(100, 100, 100, 500);
-        const required = new Resources(200, 200, 400, 300);
-        const totalRequired = new Resources(200, 200, 400, 300);
-        const storage = new ResourceStorage(1000, 1000);
-        const heroRes = calcHeroResource(current, required, totalRequired, storage);
-        expect(ResourceType.Iron).to.equals(heroRes);
-    });
-
-    it('Get resource if one is enough, others three equal', function() {
-        const current = new Resources(100, 100, 100, 500);
-        const required = new Resources(400, 400, 400, 300);
-        const totalRequired = new Resources(400, 400, 400, 300);
-        const storage = new ResourceStorage(1000, 1000);
-        const heroRes = calcHeroResource(current, required, totalRequired, storage);
-        expect(ResourceType.Lumber).to.equals(heroRes);
-    });
-
-    it('Get resource if all are enough, but storage non optimal', function() {
-        const current = new Resources(500, 400, 300, 600);
-        const required = new Resources(100, 100, 100, 100);
-        const totalRequired = new Resources(100, 100, 100, 100);
-        const storage = new ResourceStorage(1000, 1000);
-        const heroRes = calcHeroResource(current, required, totalRequired, storage);
-        expect(ResourceType.Iron).to.equals(heroRes);
-    });
-
-    it('Get resource if enough, but total not enough', function() {
-        const current = new Resources(300, 300, 300, 300);
-        const required = new Resources(100, 100, 100, 100);
-        const totalRequired = new Resources(500, 600, 200, 200);
-        const storage = new ResourceStorage(1000, 1000);
-        const heroRes = calcHeroResource(current, required, totalRequired, storage);
-        expect(ResourceType.Clay).to.equals(heroRes);
+    it('Get resource for second requirement', function() {
+        const req1 = new Resources(0, 0, 100, 0);
+        const req2 = new Resources(0, -200, 20, 0);
+        const heroRes = calcHeroResource([req1, req2]);
+        expect(heroRes).to.equals(ResourceType.Clay);
     });
 });
