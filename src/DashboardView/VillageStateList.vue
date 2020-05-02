@@ -139,7 +139,7 @@
             <td class="right" v-text="secondsToRequiredTime(villageState.totalRequired.time)"></td>
             <td></td>
           </tr>
-          <tr class="commitments-line">
+          <tr class="commitments-line" v-if="!villageState.commitments.empty()">
             <td class="right">Обязательства:</td>
             <td class="right">
               <resource :value="villageState.commitments.lumber" :hide-zero="true"></resource>
@@ -156,7 +156,7 @@
             <td></td>
             <td></td>
           </tr>
-          <tr class="incoming-line">
+          <tr class="incoming-line" v-if="!villageState.incomingResources.empty()">
             <td class="right">Торговцы:</td>
             <td class="right">
               <resource :value="villageState.incomingResources.lumber" :hide-zero="true"></resource>

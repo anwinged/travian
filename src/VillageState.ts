@@ -87,10 +87,11 @@ function createVillageState(
     scheduler: Scheduler
 ): VillageState {
     const villageIds = scheduler.getResourceCommitments(state.id);
-    const commitments = villageIds.reduce(
-        (res, villageId) => res.add(ownStates[villageId].required.balance),
-        Resources.zero()
-    );
+    const commitments = villageIds.reduce((res, villageId) => {
+        const villageRequired = ownStates[villageId].required;
+        const missing = villageRequired.balance.min(Resources.zero());
+        return res.add(missing);
+    }, Resources.zero());
     return { ...state, commitments };
 }
 

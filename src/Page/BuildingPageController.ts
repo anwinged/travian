@@ -2,7 +2,7 @@ import { notify, split } from '../utils';
 import { UpgradeBuildingTask } from '../Task/UpgradeBuildingTask';
 import { Scheduler } from '../Scheduler';
 import { TrainTroopTask } from '../Task/TrainTroopTask';
-import { grabActiveVillageId } from './VillageBlock';
+import { grabActiveVillageId, grabVillageList } from './VillageBlock';
 import { ConsoleLogger, Logger } from '../Logger';
 import {
     createBuildButton,
@@ -89,8 +89,10 @@ export class BuildingPageController {
 
     private onSendResources(resources: Resources, coordinates: Coordinates, scale: number) {
         const villageId = grabActiveVillageId();
+        const targetVillage = grabVillageList().find(v => v.crd.eq(coordinates));
         this.scheduler.scheduleTask(SendResourcesTask.name, {
             villageId: villageId,
+            targetVillageId: targetVillage?.id,
             buildTypeId: this.attributes.buildTypeId,
             buildId: this.attributes.buildId,
             tabId: this.attributes.tabId,

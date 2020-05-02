@@ -25,7 +25,10 @@ export class SendResourcesAction extends ActionController {
 
         console.log('Send', resources, 'to', coordinates);
 
-        const recipientVillage = this.findRecipientVillage(coordinates);
+        const recipientVillage = args.targetVillageId
+            ? this.findRecipientVillageById(args.targetVillageId)
+            : this.findRecipientVillage(coordinates);
+
         const readyToTransfer = this.getResourcesForTransfer(recipientVillage.id).min(resources);
 
         const remainingResources = resources.sub(readyToTransfer).max(Resources.zero());
@@ -48,6 +51,15 @@ export class SendResourcesAction extends ActionController {
 
         fillSendResourcesForm(readyToTransfer, coordinates);
         clickSendButton();
+    }
+
+    private findRecipientVillageById(villageId: number): Village {
+        const villageList = grabVillageList();
+        const village = villageList.find(v => v.id === villageId);
+        if (!village) {
+            throw new AbortTaskError('No village');
+        }
+        return village;
     }
 
     private findRecipientVillage(coordinates: Coordinates): Village {
