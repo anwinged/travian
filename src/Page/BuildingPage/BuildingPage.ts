@@ -62,8 +62,16 @@ export function grabResourcesFromList($els: JQuery) {
     return new Resources(grab(0), grab(1), grab(2), grab(3));
 }
 
+function findContractResourceElements() {
+    return jQuery('#contract .resource');
+}
+
+export function hasContractResources(): boolean {
+    return findContractResourceElements().length !== 0;
+}
+
 export function grabContractResources(): Resources {
-    const $els = jQuery('#contract .resource');
+    const $els = findContractResourceElements();
     if ($els.length === 0) {
         throw new GrabError('No resource contract element');
     }

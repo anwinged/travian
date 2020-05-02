@@ -2,11 +2,12 @@ import { elClassId, getNumber, parseLocation } from '../utils';
 import { FORGE_ID, MARKET_ID } from '../Core/Buildings';
 
 export interface BuildingPageAttributes {
-    buildId: number;
     buildTypeId: number;
-    categoryId: number;
-    sheetId: number;
-    tabId: number;
+    level: number;
+    buildId: number | undefined;
+    categoryId: number | undefined;
+    sheetId: number | undefined;
+    tabId: number | undefined;
 }
 
 export function isBuildingPage() {
@@ -24,12 +25,14 @@ export function getBuildingPageAttributes(): BuildingPageAttributes {
         throw Error('Not building page');
     }
     const p = parseLocation();
+    const $buildEl = jQuery('#build');
     return {
-        buildId: getNumber(p.query.id),
-        buildTypeId: getNumber(elClassId(jQuery('#build').attr('class'), 'gid')),
+        buildTypeId: getNumber(elClassId($buildEl.attr('class'), 'gid')),
+        level: getNumber(elClassId($buildEl.attr('class'), 'level')),
+        buildId: getNumber(p.query.id) || undefined,
         categoryId: getNumber(p.query.category, 1),
-        sheetId: getNumber(p.query.s, 0),
-        tabId: getNumber(p.query.t, 0),
+        sheetId: getNumber(p.query.s) || undefined,
+        tabId: getNumber(p.query.t) || undefined,
     };
 }
 

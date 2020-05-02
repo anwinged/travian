@@ -14,6 +14,18 @@ import { SendResourcesTask } from './Task/SendResourcesTask';
 import { Args } from './Queue/Args';
 import { ImmutableTaskList, Task, TaskId } from './Queue/TaskProvider';
 
+export enum ContractType {
+    UpgradeBuilding,
+    ImproveTrooper,
+}
+
+interface ContractAttributes {
+    type: ContractType;
+    villageId?: number;
+    buildId?: number;
+    unitId?: number;
+}
+
 export class Scheduler {
     private taskQueue: TaskQueue;
     private actionQueue: ActionQueue;
@@ -100,11 +112,28 @@ export class Scheduler {
         }
     }
 
-    updateResources(taskId: TaskId, resources: Resources): void {
-        this.taskQueue.modify(
-            t => t.id === taskId,
-            t => withResources(t, resources)
-        );
+    updateResources(resources: Resources, attr: ContractAttributes): void {
+        if (attr.type === ContractType.UpgradeBuilding && attr.villageId && attr.buildId) {
+            this.taskQueue.modify(
+                t =>
+                    t.name === UpgradeBuildingTask.name &&
+                    t.args.villageId === attr.villageId &&
+                    t.args.buildId === attr.buildId,
+                t => withResources(t, resources)
+            );
+            this.logger.info('Update upgrade contracts', attr, resources);
+        }
+        if (attr.type === ContractType.ImproveTrooper && attr.villageId && attr.buildId && attr.unitId) {
+            this.taskQueue.modify(
+                t =>
+                    t.name === UpgradeBuildingTask.name &&
+                    t.args.villageId === attr.villageId &&
+                    t.args.buildId === attr.buildId &&
+                    t.args.unitId === attr.unitId,
+                t => withResources(t, resources)
+            );
+            this.logger.info('Update improve contracts', attr, resources);
+        }
     }
 
     scheduleActions(actions: Array<Action>): void {

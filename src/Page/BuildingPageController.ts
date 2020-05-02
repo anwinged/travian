@@ -84,7 +84,6 @@ export class BuildingPageController {
                 resources: resources.scale(chunk),
                 trainCount: chunk,
             };
-            console.log('TRAIN TROOP', args);
             this.scheduler.scheduleTask(TrainTroopTask.name, args);
         }
         notify(`Training ${count} troopers scheduled`);

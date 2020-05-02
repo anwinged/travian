@@ -26,7 +26,7 @@ export class Executor {
     constructor(version: string, scheduler: Scheduler, statistics: Statistics) {
         this.version = version;
         this.scheduler = scheduler;
-        this.grabbers = new GrabberManager();
+        this.grabbers = new GrabberManager(scheduler);
         this.statistics = statistics;
         this.executionState = new ExecutionStorage();
         this.logger = new ConsoleLogger(this.constructor.name);

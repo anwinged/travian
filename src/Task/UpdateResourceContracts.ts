@@ -1,36 +1,33 @@
-import { TaskController, registerTask } from './TaskController';
+import { TaskController, registerTask, ActionDefinition } from './TaskController';
 import { GoToPageAction } from '../Action/GoToPageAction';
 import { path } from '../utils';
 import { UpgradeBuildingTask } from './UpgradeBuildingTask';
-import { UpdateBuildingTaskResourcesAction } from '../Action/UpdateBuildingTaskResourcesAction';
-import { CompleteTaskAction } from '../Action/CompleteTaskAction';
-import { Action } from '../Queue/ActionQueue';
-import { Args } from '../Queue/Args';
-import { Task } from '../Queue/TaskProvider';
+import { ImmutableTaskList, Task } from '../Queue/TaskProvider';
+import { ForgeImprovementTask } from './ForgeImprovementTask';
 
 @registerTask
 export class UpdateResourceContracts extends TaskController {
-    async run(task: Task) {
-        const args: Args = { ...task.args, taskId: task.id };
-
-        const actions: Array<Action> = [];
-
+    defineActions(task: Task): Array<ActionDefinition> {
         const tasks = this.scheduler.getTaskItems();
-        for (let task of tasks) {
-            const { villageId, buildId } = task.args;
-            if (task.name === UpgradeBuildingTask.name && villageId && buildId) {
-                actions.push(
-                    new Action(GoToPageAction.name, {
-                        ...args,
-                        path: path('/build.php', { newdid: villageId, id: buildId }),
-                    })
-                );
-                actions.push(new Action(UpdateBuildingTaskResourcesAction.name, { ...args, targetTaskId: task.id }));
-            }
-        }
 
-        actions.push(new Action(CompleteTaskAction.name, args));
+        return [...this.walkUpgradeTasks(tasks), ...this.walkImprovementTask(tasks)];
+    }
 
-        this.scheduler.scheduleActions(actions);
+    private walkUpgradeTasks(tasks: ImmutableTaskList): Array<ActionDefinition> {
+        return tasks
+            .filter(t => t.name === UpgradeBuildingTask.name && t.args.villageId && t.args.buildId)
+            .map(t => [
+                GoToPageAction.name,
+                { path: path('/build.php', { newdid: t.args.villageId, id: t.args.buildId }) },
+            ]);
+    }
+
+    private walkImprovementTask(tasks: ImmutableTaskList): Array<ActionDefinition> {
+        return tasks
+            .filter(t => t.name === ForgeImprovementTask.name && t.args.villageId && t.args.buildId)
+            .map(t => [
+                GoToPageAction.name,
+                { path: path('/build.php', { newdid: t.args.villageId, id: t.args.buildId }) },
+            ]);
     }
 }

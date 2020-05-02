@@ -9,16 +9,15 @@ interface ResearchClickHandler {
 
 export function createResearchButtons(onClickHandler: ResearchClickHandler) {
     const $els = jQuery('.research');
-    $els.each((index, $el) => createResearchButton(jQuery($el), onClickHandler));
+    $els.each((index, el) => createResearchButton(jQuery(el), onClickHandler));
 }
 
-function createResearchButton($el: JQuery, onClickHandler: ResearchClickHandler) {
-    const unitId = grabUnitId($el);
-    const resElement = $el.find('.resourceWrapper .resource');
-    const resources = grabResourcesFromList(resElement);
+function createResearchButton($researchBlockEl: JQuery, onClickHandler: ResearchClickHandler) {
+    const unitId = grabUnitId($researchBlockEl);
+    const resources = grabResources($researchBlockEl);
 
     const id = uniqId();
-    $el.find('.cta').after(`<div style="padding: 8px">
+    $researchBlockEl.find('.cta').after(`<div style="padding: 8px">
         <a id="${id}" href="#">Исследовать</a>
     </div>`);
 
@@ -28,9 +27,14 @@ function createResearchButton($el: JQuery, onClickHandler: ResearchClickHandler)
     });
 }
 
-function grabUnitId($el: JQuery) {
-    const unitImg = $el.find('img.unit');
+function grabUnitId($researchBlockEl: JQuery) {
+    const unitImg = $researchBlockEl.find('img.unit');
     return getNumber(elClassId(unitImg.attr('class'), 'u'));
+}
+
+function grabResources($researchBlockEl: JQuery) {
+    const $resEls = $researchBlockEl.find('.resourceWrapper .resource');
+    return grabResourcesFromList($resEls);
 }
 
 export function clickResearchButton(unitId: number) {
@@ -56,4 +60,21 @@ function findResearchBlockByUnitId(unitId: number): JQuery | undefined {
         }
     });
     return $blockEl;
+}
+
+interface ImprovementContract {
+    unitId: number;
+    resources: Resources;
+}
+
+export function grabImprovementContracts(): Array<ImprovementContract> {
+    const result: Array<ImprovementContract> = [];
+    const $els = jQuery('.research');
+    $els.each((index, el) => {
+        const $researchBlockEl = jQuery(el);
+        const unitId = grabUnitId($researchBlockEl);
+        const resources = grabResources($researchBlockEl);
+        result.push({ unitId, resources });
+    });
+    return result;
 }
