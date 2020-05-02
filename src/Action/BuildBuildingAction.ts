@@ -10,6 +10,7 @@ export class BuildBuildingAction extends ActionController {
     async run(args: Args, task: Task): Promise<any> {
         try {
             this.ensureSameVillage(args, task);
+            this.ensureBuildingQueueIsEmpty();
             const buildTypeId = args.buildTypeId || err('Undefined build type id');
             clickBuildButton(buildTypeId);
         } catch (e) {

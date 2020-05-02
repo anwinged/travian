@@ -10,6 +10,7 @@ export class UpgradeBuildingAction extends ActionController {
     async run(args: Args, task: Task): Promise<any> {
         try {
             this.ensureSameVillage(args, task);
+            this.ensureBuildingQueueIsEmpty();
             clickUpgradeButton();
         } catch (e) {
             if (e instanceof GrabError) {

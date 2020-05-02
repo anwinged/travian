@@ -14,7 +14,7 @@ import { BuildingPageAttributes, isForgePage, isMarketSendResourcesPage } from '
 import { createTrainTroopButtons } from './BuildingPage/TrooperPage';
 import { createSendResourcesButton } from './BuildingPage/MarketPage';
 import { createResearchButtons } from './BuildingPage/ForgePage';
-import { ResearchTask } from '../Task/ResearchTask';
+import { ForgeImprovementTask } from '../Task/ForgeImprovementTask';
 
 export class BuildingPageController {
     private scheduler: Scheduler;
@@ -107,7 +107,7 @@ export class BuildingPageController {
 
     private onResearch(resources: Resources, unitId: number) {
         const villageId = grabActiveVillageId();
-        this.scheduler.scheduleTask(ResearchTask.name, {
+        this.scheduler.scheduleTask(ForgeImprovementTask.name, {
             villageId,
             buildTypeId: this.attributes.buildTypeId,
             buildId: this.attributes.buildId,

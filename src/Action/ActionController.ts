@@ -4,6 +4,7 @@ import { grabActiveVillageId } from '../Page/VillageBlock';
 import { aroundMinutes } from '../utils';
 import { Args } from '../Queue/Args';
 import { Task } from '../Queue/TaskProvider';
+import { VillageStorage } from '../Storage/VillageStorage';
 
 const actionMap: { [name: string]: Function | undefined } = {};
 
@@ -37,6 +38,14 @@ export class ActionController {
         const activeVillageId = grabActiveVillageId();
         if (villageId !== activeVillageId) {
             throw new TryLaterError(aroundMinutes(1), 'Not same village');
+        }
+    }
+
+    ensureBuildingQueueIsEmpty() {
+        const storage = new VillageStorage(grabActiveVillageId());
+        const info = storage.getBuildingQueueInfo();
+        if (info.seconds > 0) {
+            throw new TryLaterError(info.seconds + 1, 'Building queue is full');
         }
     }
 }

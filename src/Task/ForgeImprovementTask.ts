@@ -1,15 +1,11 @@
 import { TaskController, registerTask, ActionDefinition } from './TaskController';
 import { GoToPageAction } from '../Action/GoToPageAction';
-import { CompleteTaskAction } from '../Action/CompleteTaskAction';
-import { TrainTrooperAction } from '../Action/TrainTrooperAction';
 import { path } from '../utils';
-import { Action } from '../Queue/ActionQueue';
-import { Args } from '../Queue/Args';
 import { Task } from '../Queue/TaskProvider';
-import { ResearchAction } from '../Action/ResearchAction';
+import { ForgeImprovementAction } from '../Action/ForgeImprovementAction';
 
 @registerTask
-export class ResearchTask extends TaskController {
+export class ForgeImprovementTask extends TaskController {
     defineActions(task: Task): Array<ActionDefinition> {
         const args = task.args;
 
@@ -19,6 +15,6 @@ export class ResearchTask extends TaskController {
             id: args.buildId || undefined,
         };
 
-        return [[GoToPageAction.name, { ...args, path: path('/build.php', pathArgs) }], [ResearchAction.name]];
+        return [[GoToPageAction.name, { ...args, path: path('/build.php', pathArgs) }], [ForgeImprovementAction.name]];
     }
 }

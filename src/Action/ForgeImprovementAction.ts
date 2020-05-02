@@ -6,7 +6,7 @@ import { Task } from '../Queue/TaskProvider';
 import { clickResearchButton } from '../Page/BuildingPage/ForgePage';
 
 @registerAction
-export class ResearchAction extends ActionController {
+export class ForgeImprovementAction extends ActionController {
     async run(args: Args, task: Task): Promise<any> {
         try {
             this.ensureSameVillage(args, task);

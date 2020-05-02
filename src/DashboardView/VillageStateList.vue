@@ -69,7 +69,7 @@
             <td></td>
           </tr>
           <tr class="required-line">
-            <td class="right">След:</td>
+            <td class="right">След. задача:</td>
             <td class="right">
               <resource
                 :value="villageState.required.resources.lumber"
@@ -106,7 +106,7 @@
             <td></td>
           </tr>
           <tr class="required-line">
-            <td class="right">Баланс:</td>
+            <td class="right">Баланс задачи:</td>
             <td class="right">
               <resource :value="villageState.required.balance.lumber"></resource>
             </td>
