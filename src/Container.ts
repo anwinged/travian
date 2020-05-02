@@ -5,6 +5,8 @@ import { ActionQueue } from './Queue/ActionQueue';
 import { Executor } from './Executor';
 import { ControlPanel } from './ControlPanel';
 import { DataStorageTaskProvider } from './Queue/DataStorageTaskProvider';
+import { Statistics } from './Statistics';
+import { StatisticsStorage } from './Storage/StatisticsStorage';
 
 export class Container {
     private readonly version: string;
@@ -33,7 +35,7 @@ export class Container {
         this._executor =
             this._executor ||
             (() => {
-                return new Executor(this.version, this.scheduler);
+                return new Executor(this.version, this.scheduler, this.statistics);
             })();
         return this._executor;
     }
@@ -47,5 +49,16 @@ export class Container {
                 return new ControlPanel(this.version, this.scheduler);
             })();
         return this._controlPanel;
+    }
+
+    private _statistics: Statistics | undefined;
+
+    get statistics(): Statistics {
+        this._statistics =
+            this._statistics ||
+            (() => {
+                return new Statistics(new StatisticsStorage());
+            })();
+        return this._statistics;
     }
 }

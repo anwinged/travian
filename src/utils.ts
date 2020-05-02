@@ -115,6 +115,10 @@ export function notify(msg: string): void {
     setTimeout(() => n && n.close(), 4000);
 }
 
+export interface NowTimeGenerator {
+    (): number;
+}
+
 export function markPage(text: string, version: string) {
     jQuery('body').append(
         '<div style="' +

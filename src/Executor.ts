@@ -23,11 +23,11 @@ export class Executor {
     private executionState: ExecutionStorage;
     private logger: Logger;
 
-    constructor(version: string, scheduler: Scheduler) {
+    constructor(version: string, scheduler: Scheduler, statistics: Statistics) {
         this.version = version;
         this.scheduler = scheduler;
         this.grabbers = new GrabberManager();
-        this.statistics = new Statistics();
+        this.statistics = statistics;
         this.executionState = new ExecutionStorage();
         this.logger = new ConsoleLogger(this.constructor.name);
     }
@@ -103,7 +103,7 @@ export class Executor {
             throw new ActionError(`Action task id ${cmd.args.taskId} not equal current task id ${task.id}`);
         }
         if (actionHandler) {
-            this.statistics.incrementAction();
+            this.statistics.incrementAction(timestamp());
             await actionHandler.run(cmd.args, task);
         } else {
             this.logger.warn('ACTION NOT FOUND', cmd.name);
