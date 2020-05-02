@@ -182,10 +182,11 @@
                 v-if="s.id !== villageState.id"
                 :href="marketPath(villageState.village, s.village)"
                 :title="'Отправить ресурсы из ' + villageState.village.name + ' в ' + s.village.name"
-                >->{{ s.village.name }}</a
+                >$->{{ s.village.name }}</a
               >
               <a class="village-quick-link" :href="quartersPath(villageState.village)">Казармы</a>
               <a class="village-quick-link" :href="horseStablePath(villageState.village)">Конюшни</a>
+              <a class="village-quick-link" :href="collectionPointPath(villageState.village)">Войска</a>
             </td>
           </tr>
         </template>
@@ -198,7 +199,7 @@
 import { path } from '../utils';
 import ResourceBalance from './ResourceBalance';
 import VillageResource from './VillageResource';
-import { HORSE_STABLE_ID, MARKET_ID, QUARTERS_ID, WAREHOUSE_ID } from '../Core/Buildings';
+import { COLLECTION_POINT_ID, HORSE_STABLE_ID, MARKET_ID, QUARTERS_ID, WAREHOUSE_ID } from '../Core/Buildings';
 
 export default {
   components: {
@@ -226,6 +227,9 @@ export default {
     },
     warehousePath(village) {
       return path('/build.php', { newdid: village.id, gid: WAREHOUSE_ID });
+    },
+    collectionPointPath(village) {
+      return path('/build.php', { newdid: village.id, gid: COLLECTION_POINT_ID, tt: 1 });
     },
     quartersPath(village) {
       return path('/build.php', { newdid: village.id, gid: QUARTERS_ID });
