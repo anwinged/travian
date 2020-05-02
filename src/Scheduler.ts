@@ -166,7 +166,7 @@ export class Scheduler {
         return tasks.reduce((acc, t) => acc.add(t.args.resources!), Resources.zero());
     }
 
-    getResourceCommitments(villageId: number): Array<number> {
+    getResourceShipmentVillageIds(villageId: number): Array<number> {
         const tasks = this.taskQueue
             .seeItems()
             .filter(t => t.name === SendResourcesTask.name && t.args.villageId === villageId && t.args.targetVillageId);

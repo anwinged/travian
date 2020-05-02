@@ -28,6 +28,7 @@ interface VillageOwnStateDictionary {
 
 export interface VillageState extends VillageOwnState {
     commitments: Resources;
+    shipment: Array<number>;
 }
 
 function calcResourceBalance(resources: Resources, current: Resources, performance: Resources): RequiredResources {
@@ -86,13 +87,13 @@ function createVillageState(
     ownStates: VillageOwnStateDictionary,
     scheduler: Scheduler
 ): VillageState {
-    const villageIds = scheduler.getResourceCommitments(state.id);
+    const villageIds = scheduler.getResourceShipmentVillageIds(state.id);
     const commitments = villageIds.reduce((res, villageId) => {
         const villageRequired = ownStates[villageId].required;
         const missing = villageRequired.balance.min(Resources.zero());
         return res.add(missing);
     }, Resources.zero());
-    return { ...state, commitments };
+    return { ...state, commitments, shipment: villageIds };
 }
 
 export function createVillageStates(villages: Array<Village>, scheduler: Scheduler): Array<VillageState> {

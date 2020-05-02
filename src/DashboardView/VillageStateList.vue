@@ -177,9 +177,10 @@
             <td></td>
             <td class="right" colspan="6">
               <a
-                class="village-quick-link"
                 v-for="s in shared.villageStates"
                 v-if="s.id !== villageState.id"
+                class="village-quick-link"
+                :class="{ active: villageState.shipment.includes(s.id) }"
                 :href="marketPath(villageState.village, s.village)"
                 :title="'Отправить ресурсы из ' + villageState.village.name + ' в ' + s.village.name"
                 >$->{{ s.village.name }}</a
@@ -293,6 +294,10 @@ export default {
 
 .village-quick-link {
   display: inline-block;
+}
+
+.village-quick-link.active {
+  color: midnightblue;
 }
 
 .village-quick-link + .village-quick-link {
