@@ -34,10 +34,12 @@ export class TaskQueue {
         return matched.length > 0;
     }
 
-    modify(predicate: (t: Task) => boolean, modifier: (t: Task) => Task) {
+    modify(predicate: (t: Task) => boolean, modifier: (t: Task) => Task): number {
         const [matched, other] = this.split(predicate);
         const modified = matched.map(modifier);
+        const modifiedCount = modified.length;
         this.flushItems(modified.concat(other));
+        return modifiedCount;
     }
 
     remove(id: TaskId) {

@@ -13,6 +13,7 @@ import { Resources, ResourcesInterface } from './Core/Resources';
 import { SendResourcesTask } from './Task/SendResourcesTask';
 import { Args } from './Queue/Args';
 import { ImmutableTaskList, Task, TaskId } from './Queue/TaskProvider';
+import { ForgeImprovementTask } from './Task/ForgeImprovementTask';
 
 export enum ContractType {
     UpgradeBuilding,
@@ -96,14 +97,17 @@ export class Scheduler {
 
         const villageId = task.args.villageId;
         const modifyTime = (t: Task) => withTime(t, timestamp() + seconds);
-        const buildPred = (t: Task) => sameVillage(villageId, t.args) && isBuildingTask(t.name);
-        const trainPred = (t: Task) => sameVillage(villageId, t.args) && isTrainTroopTask(t.name);
 
-        if (isBuildingTask(task.name) && villageId) {
-            this.taskQueue.modify(buildPred, modifyTime);
-        } else if (isTrainTroopTask(task.name) && villageId) {
-            this.taskQueue.modify(trainPred, modifyTime);
-        } else {
+        let predicateUsed = false;
+
+        for (let taskTypePred of TASK_TYPE_PREDICATES) {
+            if (taskTypePred(task.name) && villageId) {
+                this.taskQueue.modify(t => sameVillage(villageId, t.args) && taskTypePred(t.name), modifyTime);
+                predicateUsed = true;
+            }
+        }
+
+        if (!predicateUsed) {
             this.taskQueue.modify(t => t.id === taskId, modifyTime);
         }
 
@@ -114,25 +118,25 @@ export class Scheduler {
 
     updateResources(resources: Resources, attr: ContractAttributes): void {
         if (attr.type === ContractType.UpgradeBuilding && attr.villageId && attr.buildId) {
-            this.taskQueue.modify(
+            const count = this.taskQueue.modify(
                 t =>
                     t.name === UpgradeBuildingTask.name &&
                     t.args.villageId === attr.villageId &&
                     t.args.buildId === attr.buildId,
                 t => withResources(t, resources)
             );
-            this.logger.info('Update upgrade contracts', attr, resources);
+            this.logger.info('Update', count, 'upgrade contracts', attr, resources);
         }
         if (attr.type === ContractType.ImproveTrooper && attr.villageId && attr.buildId && attr.unitId) {
-            this.taskQueue.modify(
+            const count = this.taskQueue.modify(
                 t =>
-                    t.name === UpgradeBuildingTask.name &&
+                    t.name === ForgeImprovementTask.name &&
                     t.args.villageId === attr.villageId &&
                     t.args.buildId === attr.buildId &&
                     t.args.unitId === attr.unitId,
                 t => withResources(t, resources)
             );
-            this.logger.info('Update improve contracts', attr, resources);
+            this.logger.info('Update', count, 'improve contracts', attr, resources);
         }
     }
 
@@ -159,28 +163,31 @@ export class Scheduler {
         const tasks = this.taskQueue
             .seeItems()
             .filter(t => sameVillage(villageId, t.args) && t.args.resources && t.name !== SendResourcesTask.name);
-        return tasks.reduce((acc, t) => acc.add(t.args.resources!), new Resources(0, 0, 0, 0));
+        return tasks.reduce((acc, t) => acc.add(t.args.resources!), Resources.zero());
     }
 
     getResourceCommitments(villageId: number): Array<number> {
         const tasks = this.taskQueue
             .seeItems()
-            .filter(
-                t =>
-                    t.name === SendResourcesTask.name &&
-                    t.args.villageId === villageId &&
-                    t.args.targetVillageId !== undefined
-            );
+            .filter(t => t.name === SendResourcesTask.name && t.args.villageId === villageId && t.args.targetVillageId);
         return tasks.map(t => t.args.targetVillageId!);
     }
 
     private reorderVillageTasks(villageId: number) {
         const tasks = this.taskQueue.seeItems();
-        const trainPred = (t: Task) => isTrainTroopTask(t.name) && sameVillage(villageId, t.args);
-        const buildPred = (t: Task) => isBuildingTask(t.name) && sameVillage(villageId, t.args);
-        const lastTrainTaskTs = lastTaskTime(tasks, trainPred);
-        if (lastTrainTaskTs) {
-            this.taskQueue.modify(buildPred, t => withTime(t, lastTrainTaskTs + 1));
+
+        for (let i = 0; i < TASK_TYPE_PREDICATES.length; ++i) {
+            const taskTypePred = TASK_TYPE_PREDICATES[i];
+            const lowTaskTypePredicates = TASK_TYPE_PREDICATES.slice(i + 1);
+            const lastTaskTs = lastTaskTime(tasks, t => taskTypePred(t.name) && sameVillage(villageId, t.args));
+            if (lastTaskTs) {
+                for (let pred of lowTaskTypePredicates) {
+                    this.taskQueue.modify(
+                        t => pred(t.name) && sameVillage(villageId, t.args),
+                        t => withTime(t, lastTaskTs + 1)
+                    );
+                }
+            }
         }
     }
 }
@@ -193,11 +200,20 @@ function isTrainTroopTask(taskName: string) {
     return taskName === TrainTroopTask.name;
 }
 
+function isForgeImprovementTask(taskName: string) {
+    return taskName === ForgeImprovementTask.name;
+}
+
 function isBuildingTask(taskName: string) {
     return taskName === BuildBuildingTask.name || taskName === UpgradeBuildingTask.name;
 }
 
-const TASK_TYPE_PREDICATES: Array<TaskNamePredicate> = [isTrainTroopTask, isBuildingTask];
+/**
+ * List on non intersected task type predicates.
+ *
+ * Placed in order of execution priority. Order is important!
+ */
+const TASK_TYPE_PREDICATES: Array<TaskNamePredicate> = [isTrainTroopTask, isForgeImprovementTask, isBuildingTask];
 
 function sameVillage(villageId: number | undefined, args: Args) {
     return villageId !== undefined && args.villageId === villageId;
@@ -231,6 +247,9 @@ function findLastIndex(tasks: ImmutableTaskList, predicate: (t: Task) => boolean
     return count - 1 - indexInReversed;
 }
 
+/**
+ * Calculates insert time for new task based on task type.
+ */
 function calculateInsertTime(tasks: ImmutableTaskList, name: string, args: Args, ts: number | undefined): number {
     const villageId = args.villageId;
     let insertedTs = ts;
