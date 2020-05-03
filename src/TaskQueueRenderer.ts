@@ -14,13 +14,13 @@ export class TaskQueueRenderer {
         const ul = jQuery('<ul></ul>')
             .attr({ id: ID })
             .css({
-                position: 'absolute',
+                'position': 'absolute',
                 'background-color': 'white',
-                left: 0,
-                top: '40px',
-                color: 'black',
+                'left': 0,
+                'top': '40px',
+                'color': 'black',
                 'z-index': '9999',
-                padding: '8px 6px',
+                'padding': '8px 6px',
             });
         tasks.forEach(task => {
             ul.append(

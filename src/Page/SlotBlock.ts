@@ -19,15 +19,23 @@ function slotElements(prefix: string): Array<Slot> {
 function showSlotIds(prefix: string, buildingIds: Array<number>): void {
     const slots = slotElements(prefix);
     slots.forEach(slot => {
-        const oldLabel = jQuery(slot.el)
-            .find('.labelLayer')
-            .text();
-        jQuery(slot.el)
-            .find('.labelLayer')
-            .text(slot.buildId + ':' + oldLabel);
-        const inQueue = buildingIds.includes(slot.buildId);
-        if (inQueue) {
-            jQuery(slot.el).css({
+        const upCount = buildingIds.filter(id => id === slot.buildId).length;
+        const $slotEl = jQuery(slot.el);
+        const $labelEl = $slotEl.find('.labelLayer');
+        const oldLabel = $labelEl.text();
+        $labelEl.text(slot.buildId + ':' + oldLabel + (upCount > 0 ? '+' + upCount : ''));
+        $slotEl.css({ 'border-radius': '20%', 'width': upCount > 0 ? '56px' : '42px' });
+        $labelEl.css({
+            'border-radius': '10%',
+            'top': '3px',
+            'left': '3px',
+            'height': '19px',
+            'line-height': '19px',
+            'width': upCount > 0 ? '50px' : '36px',
+        });
+
+        if (upCount) {
+            $slotEl.css({
                 'background-image': 'linear-gradient(to top, #f00, #f00 100%)',
             });
         }

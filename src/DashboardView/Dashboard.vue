@@ -18,7 +18,7 @@ import QuickActions from './QuickActions';
 import VillageStateList from './VillageStateList';
 export default {
   components: {
-    hdr: Header,
+    'hdr': Header,
     'task-list': TaskList,
     'quick-actions': QuickActions,
     'village-state-list': VillageStateList,
