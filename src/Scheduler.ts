@@ -257,7 +257,7 @@ function calculateInsertTime(tasks: ImmutableTaskList, name: string, args: Args,
     if (villageId && !insertedTs) {
         for (let taskTypePred of TASK_TYPE_PREDICATES) {
             const sameVillageAndTypePred = (t: Task) =>
-                taskTypePred(name) && t.args.villageId === villageId && t.name === name;
+                taskTypePred(name) && taskTypePred(t.name) && sameVillage(villageId, t.args);
             insertedTs = lastTaskTime(tasks, sameVillageAndTypePred);
             if (insertedTs) {
                 insertedTs += 1;
