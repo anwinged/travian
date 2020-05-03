@@ -22,7 +22,8 @@ function showSlotIds(prefix: string, buildingIds: Array<number>): void {
         const upCount = buildingIds.filter(id => id === slot.buildId).length;
         const $slotEl = jQuery(slot.el);
         const $labelEl = $slotEl.find('.labelLayer');
-        const oldLabel = $labelEl.text();
+        const oldLabel = $labelEl.data('oldLabel') || $labelEl.text();
+        $labelEl.data('oldLabel', oldLabel);
         $labelEl.text(slot.buildId + ':' + oldLabel + (upCount > 0 ? '+' + upCount : ''));
         $slotEl.css({ 'border-radius': '20%', 'width': upCount > 0 ? '56px' : '42px' });
         $labelEl.css({
@@ -50,8 +51,8 @@ export function showBuildingSlotIds(buildingIds: number[]): void {
     showSlotIds('aid', buildingIds);
 }
 
-export function onResourceSlotCtrlClick(cb: (buildId: number) => void): void {
-    const slots = slotElements('buildingSlot');
+function onSlotCtrlClick(prefix: string, onClickHandler: (buildId: number) => void): void {
+    const slots = slotElements(prefix);
     slots.forEach(slot => {
         jQuery(slot.el)
             .find('.labelLayer')
@@ -59,10 +60,18 @@ export function onResourceSlotCtrlClick(cb: (buildId: number) => void): void {
                 if (evt.ctrlKey) {
                     evt.preventDefault();
                     evt.stopPropagation();
-                    cb(slot.buildId);
+                    onClickHandler(slot.buildId);
                 }
             });
     });
+}
+
+export function onResourceSlotCtrlClick(onClickHandler: (buildId: number) => void): void {
+    onSlotCtrlClick('buildingSlot', onClickHandler);
+}
+
+export function onBuildingSlotCtrlClick(onClickHandler: (buildId: number) => void): void {
+    onSlotCtrlClick('aid', onClickHandler);
 }
 
 function slotToDepositMapper(slot: Slot): ResourceDeposit {

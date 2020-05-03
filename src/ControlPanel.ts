@@ -5,6 +5,7 @@ import { UpgradeBuildingTask } from './Task/UpgradeBuildingTask';
 import { grabActiveVillageId, grabVillageList } from './Page/VillageBlock';
 import {
     grabResourceDeposits,
+    onBuildingSlotCtrlClick,
     onResourceSlotCtrlClick,
     showBuildingSlotIds,
     showResourceSlotIds,
@@ -114,19 +115,27 @@ export class ControlPanel {
             }, 500)
         );
 
-        const tasks = this.scheduler.getTaskItems();
-        const buildingsInQueue = tasks
-            .filter(t => t.name === UpgradeBuildingTask.name && t.args.villageId === villageId)
-            .map(t => t.args.buildId || 0);
+        const getBuildingsInQueue = () =>
+            this.scheduler
+                .getTaskItems()
+                .filter(t => t.name === UpgradeBuildingTask.name && t.args.villageId === villageId)
+                .map(t => t.args.buildId || 0);
 
         if (p.pathname === '/dorf1.php') {
-            showResourceSlotIds(buildingsInQueue);
-            onResourceSlotCtrlClick(buildId => this.onResourceSlotCtrlClick(villageId, buildId));
+            showResourceSlotIds(getBuildingsInQueue());
             state.quickActions.push(...this.createDepositsQuickActions(villageId));
+            onResourceSlotCtrlClick(buildId => {
+                this.onSlotCtrlClick(villageId, buildId);
+                showResourceSlotIds(getBuildingsInQueue());
+            });
         }
 
         if (p.pathname === '/dorf2.php') {
-            showBuildingSlotIds(buildingsInQueue);
+            showBuildingSlotIds(getBuildingsInQueue());
+            onBuildingSlotCtrlClick(buildId => {
+                this.onSlotCtrlClick(villageId, buildId);
+                showBuildingSlotIds(getBuildingsInQueue());
+            });
         }
 
         if (isBuildingPage()) {
@@ -166,7 +175,7 @@ export class ControlPanel {
         return quickActions;
     }
 
-    private onResourceSlotCtrlClick(villageId: number, buildId: number) {
+    private onSlotCtrlClick(villageId: number, buildId: number) {
         this.scheduler.scheduleTask(UpgradeBuildingTask.name, { villageId, buildId });
         notify(`Building ${buildId} scheduled`);
     }
