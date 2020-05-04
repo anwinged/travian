@@ -30,7 +30,7 @@ export function getBuildingPageAttributes(): BuildingPageAttributes {
         buildTypeId: getNumber(elClassId($buildEl.attr('class'), 'gid')),
         level: getNumber(elClassId($buildEl.attr('class'), 'level')),
         buildId: getNumber(p.query.id) || undefined,
-        categoryId: getNumber(p.query.category, 1),
+        categoryId: getNumber(p.query.category) || 1,
         sheetId: getNumber(p.query.s) || undefined,
         tabId: getNumber(p.query.t) || undefined,
     };

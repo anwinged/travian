@@ -1,8 +1,8 @@
 import { ActionDefinition } from './TaskController';
 import { grabVillageList } from '../Page/VillageBlock';
 import { GoToPageAction } from '../Action/GoToPageAction';
-import { path } from '../utils';
 import { MARKET_ID } from '../Core/Buildings';
+import { path } from '../Helpers/Path';
 
 export function scanAllVillagesBundle(): Array<ActionDefinition> {
     const actions: Array<ActionDefinition> = [];

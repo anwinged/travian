@@ -1,8 +1,8 @@
 import { TaskController, registerTask, ActionDefinition } from './TaskController';
 import { GoToPageAction } from '../Action/GoToPageAction';
-import { path } from '../utils';
 import { Task } from '../Queue/TaskProvider';
 import { ForgeImprovementAction } from '../Action/ForgeImprovementAction';
+import { path } from '../Helpers/Path';
 
 @registerTask
 export class ForgeImprovementTask extends TaskController {

@@ -92,23 +92,9 @@ export function parseLocation(location?: string | undefined) {
     return new URLParse(location || window.location.href, true);
 }
 
-export function path(p: string, query: { [key: string]: string | number | undefined } = {}) {
-    let parts: string[] = [];
-    for (let k in query) {
-        if (query[k] !== undefined) {
-            parts.push(`${k}=${query[k]}`);
-        }
-    }
-    return p + (parts.length ? '?' + parts.join('&') : '');
-}
-
 export function notify(msg: string): void {
     const n = new Notification(msg);
     setTimeout(() => n && n.close(), 4000);
-}
-
-export interface NowTimeGenerator {
-    (): number;
 }
 
 export function markPage(text: string, version: string) {

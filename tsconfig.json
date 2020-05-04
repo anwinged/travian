@@ -9,7 +9,7 @@
     "strictNullChecks": true,
     "strictPropertyInitialization": true,
     "target": "es2018",
-    "types": ["node", "url-parse", "jquery", "mocha", "chai", "debounce"]
+    "types": ["node", "url-parse", "jquery", "underscore", "mocha", "chai"]
   },
   "include": [
     "./src/**/*"

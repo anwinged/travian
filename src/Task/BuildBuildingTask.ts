@@ -1,8 +1,8 @@
 import { BuildBuildingAction } from '../Action/BuildBuildingAction';
 import { GoToPageAction } from '../Action/GoToPageAction';
-import { path } from '../utils';
 import { TaskController, registerTask, ActionDefinition } from './TaskController';
 import { Task } from '../Queue/TaskProvider';
+import { path } from '../Helpers/Path';
 
 @registerTask
 export class BuildBuildingTask extends TaskController {

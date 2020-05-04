@@ -1,10 +1,10 @@
 import { ActionController, registerAction } from './ActionController';
 import { grabVillageList } from '../Page/VillageBlock';
 import { grabHeroVillage } from '../Page/HeroPage';
-import { path } from '../utils';
 import { HeroStorage } from '../Storage/HeroStorage';
 import { Args } from '../Queue/Args';
 import { Task } from '../Queue/TaskProvider';
+import { path } from '../Helpers/Path';
 
 @registerAction
 export class GoToHeroVillageAction extends ActionController {

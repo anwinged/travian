@@ -1,8 +1,8 @@
 import { UpgradeBuildingAction } from '../Action/UpgradeBuildingAction';
 import { TaskController, registerTask, ActionDefinition } from './TaskController';
 import { GoToPageAction } from '../Action/GoToPageAction';
-import { path } from '../utils';
 import { Task } from '../Queue/TaskProvider';
+import { path } from '../Helpers/Path';
 
 @registerTask
 export class UpgradeBuildingTask extends TaskController {

@@ -2,10 +2,10 @@ import { registerTask, TaskController } from './TaskController';
 import { GoToPageAction } from '../Action/GoToPageAction';
 import { CompleteTaskAction } from '../Action/CompleteTaskAction';
 import { TrainTrooperAction } from '../Action/TrainTrooperAction';
-import { path } from '../utils';
 import { Action } from '../Queue/ActionQueue';
 import { Args } from '../Queue/Args';
 import { Task } from '../Queue/TaskProvider';
+import { path } from '../Helpers/Path';
 
 @registerTask
 export class TrainTroopTask extends TaskController {

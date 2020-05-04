@@ -16,11 +16,11 @@ import { ResourcesToLevel } from './Task/ResourcesToLevel';
 import { ConsoleLogger, Logger } from './Logger';
 import { DataStorage } from './DataStorage';
 import { getBuildingPageAttributes, isBuildingPage } from './Page/PageDetectors';
-import { debounce } from 'debounce';
 import { ExecutionStorage } from './Storage/ExecutionStorage';
 import { createVillageStates, VillageState } from './VillageState';
 import { Task } from './Queue/TaskProvider';
 import { Action } from './Queue/ActionQueue';
+import * as _ from 'underscore';
 
 interface QuickAction {
     label: string;
@@ -110,7 +110,7 @@ export class ControlPanel {
         }, 3000);
 
         DataStorage.onChange(
-            debounce(() => {
+            _.debounce(() => {
                 state.refresh();
             }, 500)
         );

@@ -197,10 +197,10 @@
 </template>
 
 <script>
-import { path } from '../utils';
 import ResourceBalance from './ResourceBalance';
 import VillageResource from './VillageResource';
 import { COLLECTION_POINT_ID, HORSE_STABLE_ID, MARKET_ID, QUARTERS_ID, WAREHOUSE_ID } from '../Core/Buildings';
+import { path } from '../Helpers/Path';
 
 export default {
   components: {
