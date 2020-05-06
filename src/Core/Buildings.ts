@@ -5,4 +5,5 @@ export const COLLECTION_POINT_ID = 16;
 export const MARKET_ID = 17;
 export const QUARTERS_ID = 19;
 export const HORSE_STABLE_ID = 20;
+export const GUILD_HALL_ID = 24;
 export const EMBASSY_ID = 25;

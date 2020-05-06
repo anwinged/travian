@@ -10,11 +10,13 @@ import { Resources } from '../Core/Resources';
 import { Coordinates } from '../Core/Village';
 import { SendResourcesTask } from '../Task/SendResourcesTask';
 import { EMBASSY_ID, HORSE_STABLE_ID, QUARTERS_ID } from '../Core/Buildings';
-import { BuildingPageAttributes, isForgePage, isMarketSendResourcesPage } from './PageDetectors';
+import { BuildingPageAttributes, isForgePage, isGuildHallPage, isMarketSendResourcesPage } from './PageDetectors';
 import { createTrainTroopButtons } from './BuildingPage/TrooperPage';
 import { createSendResourcesButton } from './BuildingPage/MarketPage';
 import { createResearchButtons } from './BuildingPage/ForgePage';
 import { ForgeImprovementTask } from '../Task/ForgeImprovementTask';
+import { createCelebrationButtons } from './BuildingPage/GuildHallPage';
+import { CelebrationTask } from '../Task/CelebrationTask';
 
 export class BuildingPageController {
     private scheduler: Scheduler;
@@ -55,6 +57,10 @@ export class BuildingPageController {
 
         if (isForgePage()) {
             createResearchButtons((res, unitId) => this.onResearch(res, unitId));
+        }
+
+        if (isGuildHallPage()) {
+            createCelebrationButtons((res, idx) => this.onCelebration(res, idx));
         }
     }
 
@@ -114,5 +120,16 @@ export class BuildingPageController {
             resources,
         });
         notify(`Researching ${unitId} scheduled`);
+    }
+
+    private onCelebration(resources: Resources, idx: number) {
+        const villageId = grabActiveVillageId();
+        this.scheduler.scheduleTask(CelebrationTask.name, {
+            villageId,
+            buildTypeId: this.attributes.buildTypeId,
+            buildId: this.attributes.buildId,
+            resources,
+        });
+        notify(`Celebration scheduled`);
     }
 }

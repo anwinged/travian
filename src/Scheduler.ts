@@ -14,6 +14,7 @@ import { SendResourcesTask } from './Task/SendResourcesTask';
 import { Args } from './Queue/Args';
 import { ImmutableTaskList, Task, TaskId } from './Queue/TaskProvider';
 import { ForgeImprovementTask } from './Task/ForgeImprovementTask';
+import { CelebrationTask } from './Task/CelebrationTask';
 
 export enum ContractType {
     UpgradeBuilding,
@@ -208,12 +209,21 @@ function isBuildingTask(taskName: string) {
     return taskName === BuildBuildingTask.name || taskName === UpgradeBuildingTask.name;
 }
 
+function isCelebrationTask(taskName: string) {
+    return taskName === CelebrationTask.name;
+}
+
 /**
  * List on non intersected task type predicates.
  *
  * Placed in order of execution priority. Order is important!
  */
-const TASK_TYPE_PREDICATES: Array<TaskNamePredicate> = [isTrainTroopTask, isForgeImprovementTask, isBuildingTask];
+const TASK_TYPE_PREDICATES: Array<TaskNamePredicate> = [
+    isTrainTroopTask,
+    isForgeImprovementTask,
+    isBuildingTask,
+    isCelebrationTask,
+];
 
 function sameVillage(villageId: number | undefined, args: Args) {
     return villageId !== undefined && args.villageId === villageId;
