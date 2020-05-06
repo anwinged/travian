@@ -26,5 +26,6 @@ function main() {
 try {
     main();
 } catch (e) {
+    console.error('Main func error', e);
     setTimeout(() => location.reload(), 5000);
 }

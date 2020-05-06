@@ -11,7 +11,8 @@ function randomInRange(from: number, to: number): number {
 }
 
 export async function sleepMicro() {
-    return await sleep(randomInRange(1500, 2500));
+    const timeInMs = randomInRange(1500, 2500);
+    return await sleep(timeInMs);
 }
 
 export function aroundMinutes(minutes: number) {
