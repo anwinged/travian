@@ -9,7 +9,7 @@ import { BuildBuildingTask } from '../Task/BuildBuildingTask';
 import { Resources } from '../Core/Resources';
 import { Coordinates } from '../Core/Village';
 import { SendResourcesTask } from '../Task/SendResourcesTask';
-import { EMBASSY_ID, HORSE_STABLE_ID, QUARTERS_ID } from '../Core/Buildings';
+import { EMBASSY_ID, HORSE_STABLE_ID, PALACE_ID, QUARTERS_ID } from '../Core/Buildings';
 import { BuildingPageAttributes, isForgePage, isGuildHallPage, isMarketSendResourcesPage } from './PageDetectors';
 import { createTrainTroopButtons } from './BuildingPage/TrooperPage';
 import { createSendResourcesButton } from './BuildingPage/MarketPage';
@@ -48,6 +48,10 @@ export class BuildingPageController {
         }
 
         if (buildTypeId === EMBASSY_ID && sheetId === 1) {
+            createTrainTroopButtons((troopId, res, count) => this.onScheduleTrainTroopers(troopId, res, count));
+        }
+
+        if (buildTypeId === PALACE_ID && sheetId === 1) {
             createTrainTroopButtons((troopId, res, count) => this.onScheduleTrainTroopers(troopId, res, count));
         }
 

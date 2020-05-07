@@ -7,3 +7,4 @@ export const QUARTERS_ID = 19;
 export const HORSE_STABLE_ID = 20;
 export const GUILD_HALL_ID = 24;
 export const EMBASSY_ID = 25;
+export const PALACE_ID = 26;
