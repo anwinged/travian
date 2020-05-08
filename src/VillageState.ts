@@ -27,7 +27,13 @@ interface VillageOwnStateDictionary {
 }
 
 export interface VillageState extends VillageOwnState {
+    /**
+     * Resource commitments of this village to other
+     */
     commitments: Resources;
+    /**
+     * List of village id, from which resources ship to this village
+     */
     shipment: Array<number>;
 }
 
@@ -88,10 +94,12 @@ function createVillageState(
     scheduler: Scheduler
 ): VillageState {
     const villageIds = scheduler.getResourceShipmentVillageIds(state.id);
-    const commitments = villageIds.reduce((res, villageId) => {
-        const villageRequired = ownStates[villageId].required;
-        const missing = villageRequired.balance.min(Resources.zero());
-        return res.add(missing);
+    const commitments = villageIds.reduce((memo, shipmentVillageId) => {
+        const shipmentVillageState = ownStates[shipmentVillageId];
+        const shipmentVillageRequired = shipmentVillageState.required;
+        const shipmentVillageIncoming = shipmentVillageState.incomingResources;
+        const targetVillageMissing = shipmentVillageRequired.balance.add(shipmentVillageIncoming).min(Resources.zero());
+        return memo.add(targetVillageMissing);
     }, Resources.zero());
     return { ...state, commitments, shipment: villageIds };
 }
