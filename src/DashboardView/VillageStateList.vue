@@ -8,8 +8,7 @@
           <th class="right">Глина</th>
           <th class="right">Железо</th>
           <th class="right">Зерно</th>
-          <th class="right">Склад</th>
-          <th class="right">Амбар</th>
+          <th class="right">Время</th>
         </tr>
       </thead>
       <tbody>
@@ -46,10 +45,7 @@
                 :speed="villageState.performance.crop"
               ></filling>
             </td>
-            <td class="right">
-              <a :href="warehousePath(villageState.village)" v-text="villageState.storage.lumber"></a>
-            </td>
-            <td class="right" v-text="villageState.storage.crop"></td>
+            <td class="right" v-text="storageTime(villageState)"></td>
           </tr>
           <tr class="performance-line">
             <td class="right">Прирост:</td>
@@ -65,7 +61,6 @@
             <td class="right">
               <resource :value="villageState.performance.crop"></resource>
             </td>
-            <td></td>
             <td></td>
           </tr>
           <tr class="required-line">
@@ -102,8 +97,7 @@
                 :sign="false"
               ></resource>
             </td>
-            <td class="right" v-text="secondsToRequiredTime(villageState.buildRemainingSeconds)"></td>
-            <td></td>
+            <td class="right" v-text="renderTimeInSeconds(villageState.buildRemainingSeconds)"></td>
           </tr>
           <tr class="required-line">
             <td class="right">Баланс задачи:</td>
@@ -119,8 +113,7 @@
             <td class="right">
               <resource :value="villageState.required.balance.crop"></resource>
             </td>
-            <td class="right" v-text="secondsToRequiredTime(villageState.required.time)"></td>
-            <td></td>
+            <td class="right" v-text="renderGatheringTime(villageState.required.time)"></td>
           </tr>
           <tr class="required-line">
             <td class="right">Баланс очереди:</td>
@@ -136,8 +129,7 @@
             <td class="right">
               <resource :value="villageState.totalRequired.balance.crop"></resource>
             </td>
-            <td class="right" v-text="secondsToRequiredTime(villageState.totalRequired.time)"></td>
-            <td></td>
+            <td class="right" v-text="renderGatheringTime(villageState.totalRequired.time)"></td>
           </tr>
           <tr class="commitments-line" v-if="!villageState.commitments.empty()">
             <td class="right">Обязательства:</td>
@@ -153,7 +145,6 @@
             <td class="right">
               <resource :value="villageState.commitments.crop" :hide-zero="true"></resource>
             </td>
-            <td></td>
             <td></td>
           </tr>
           <tr class="incoming-line" v-if="!villageState.incomingResources.empty()">
@@ -171,11 +162,10 @@
               <resource :value="villageState.incomingResources.crop" :hide-zero="true"></resource>
             </td>
             <td></td>
-            <td></td>
           </tr>
           <tr class="normal-line">
             <td></td>
-            <td class="right" colspan="6">
+            <td class="right" colspan="5">
               <a
                 v-for="s in shared.villageStates"
                 v-if="s.id !== villageState.id"
@@ -199,8 +189,18 @@
 <script>
 import ResourceBalance from './ResourceBalance';
 import VillageResource from './VillageResource';
-import { COLLECTION_POINT_ID, HORSE_STABLE_ID, MARKET_ID, QUARTERS_ID, WAREHOUSE_ID } from '../Core/Buildings';
+import { COLLECTION_POINT_ID, HORSE_STABLE_ID, MARKET_ID, QUARTERS_ID } from '../Core/Buildings';
 import { path } from '../Helpers/Path';
+
+function secondsToTime(value) {
+  if (value === 0) {
+    return '';
+  }
+  const hours = Math.floor(value / 3600);
+  const minutes = Math.floor((value % 3600) / 60);
+  const seconds = Math.floor(value % 60);
+  return `${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+}
 
 export default {
   components: {
@@ -217,6 +217,11 @@ export default {
     path(name, args) {
       return path(name, args);
     },
+    storageTime(villageState) {
+      const toZero = villageState.storageBalance.timeToZero;
+      const toFull = villageState.storageBalance.timeToFull;
+      return this.renderGatheringTime(toFull.never ? toZero : toFull);
+    },
     marketPath(fromVillage, toVillage) {
       return path('/build.php', {
         newdid: fromVillage.id,
@@ -225,9 +230,6 @@ export default {
         x: toVillage.crd.x,
         y: toVillage.crd.y,
       });
-    },
-    warehousePath(village) {
-      return path('/build.php', { newdid: village.id, gid: WAREHOUSE_ID });
     },
     collectionPointPath(village) {
       return path('/build.php', { newdid: village.id, gid: COLLECTION_POINT_ID, tt: 1 });
@@ -238,20 +240,18 @@ export default {
     horseStablePath(village) {
       return path('/build.php', { newdid: village.id, gid: HORSE_STABLE_ID });
     },
-    secondsToTime(value) {
-      if (value === 0) {
-        return '';
-      }
-      const hours = Math.floor(value / 3600);
-      const minutes = Math.floor((value % 3600) / 60);
-      const seconds = Math.floor(value % 60);
-      return `${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    renderTimeInSeconds(value) {
+      return secondsToTime(value);
     },
-    secondsToRequiredTime(value) {
-      if (value === -1) {
+    /**
+     * @param {GatheringTime} value
+     * @returns {string}
+     */
+    renderGatheringTime(value) {
+      if (value.never) {
         return 'never';
       }
-      return this.secondsToTime(value);
+      return secondsToTime(value.seconds);
     },
   },
 };

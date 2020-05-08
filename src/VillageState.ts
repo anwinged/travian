@@ -2,12 +2,21 @@ import { Village } from './Core/Village';
 import { Scheduler } from './Scheduler';
 import { Resources } from './Core/Resources';
 import { VillageStorage } from './Storage/VillageStorage';
-import { calcGatheringTimings } from './Core/GatheringTimings';
+import { calcGatheringTimings, GatheringTime } from './Core/GatheringTimings';
+
+interface StorageBalance {
+    resources: Resources;
+    storage: Resources;
+    balance: Resources;
+    performance: Resources;
+    timeToZero: GatheringTime;
+    timeToFull: GatheringTime;
+}
 
 interface RequiredResources {
     resources: Resources;
     balance: Resources;
-    time: number;
+    time: GatheringTime;
 }
 
 interface VillageOwnState {
@@ -15,10 +24,11 @@ interface VillageOwnState {
     village: Village;
     resources: Resources;
     performance: Resources;
+    storage: Resources;
+    storageBalance: StorageBalance;
     required: RequiredResources;
     totalRequired: RequiredResources;
     incomingResources: Resources;
-    storage: Resources;
     buildRemainingSeconds: number;
 }
 
@@ -39,19 +49,31 @@ export interface VillageState extends VillageOwnState {
 
 function calcResourceBalance(resources: Resources, current: Resources, performance: Resources): RequiredResources {
     return {
-        resources: resources,
+        resources,
         balance: current.sub(resources),
-        time: timeToResources(current, resources, performance),
+        time: timeToAllResources(current, resources, performance),
     };
 }
 
-function timeToResources(current: Resources, desired: Resources, performance: Resources): number {
-    const timings = calcGatheringTimings(current, desired, performance);
-    if (timings.never) {
-        return -1;
-    }
+function calcStorageBalance(resources: Resources, storage: Resources, performance: Resources): StorageBalance {
+    return {
+        resources,
+        storage,
+        performance,
+        balance: storage.sub(resources),
+        timeToZero: timeToFastestResource(resources, Resources.zero(), performance),
+        timeToFull: timeToFastestResource(resources, storage, performance),
+    };
+}
 
-    return timings.hours * 3600;
+function timeToAllResources(current: Resources, desired: Resources, performance: Resources): GatheringTime {
+    const timings = calcGatheringTimings(current, desired, performance);
+    return timings.slowest;
+}
+
+function timeToFastestResource(current: Resources, desired: Resources, performance: Resources): GatheringTime {
+    const timings = calcGatheringTimings(current, desired, performance);
+    return timings.fastest;
 }
 
 function calcIncomingResources(storage: VillageStorage): Resources {
@@ -72,9 +94,10 @@ function createVillageOwnState(village: Village, scheduler: Scheduler): VillageO
         village,
         resources,
         performance,
+        storage: Resources.fromStorage(resourceStorage),
+        storageBalance: calcStorageBalance(resources, Resources.fromStorage(resourceStorage), performance),
         required: calcResourceBalance(requiredResources, resources, performance),
         totalRequired: calcResourceBalance(totalRequiredResources, resources, performance),
-        storage: Resources.fromStorage(resourceStorage),
         buildRemainingSeconds: buildQueueInfo.seconds,
         incomingResources: calcIncomingResources(storage),
     };

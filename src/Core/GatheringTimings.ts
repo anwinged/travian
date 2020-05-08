@@ -1,13 +1,57 @@
 import { Resources } from './Resources';
 
-type GatheringNever = 'never';
-type GatheringTime = number | GatheringNever;
+type GatheringPlain = number | 'never';
+
+enum GatheringType {
+    Counting,
+    Never,
+}
+
+export class GatheringTime {
+    private readonly _type: GatheringType;
+    private readonly _seconds: number;
+
+    static makeNever(): GatheringTime {
+        return new GatheringTime(GatheringType.Never, 0);
+    }
+
+    static makeCounting(value: number): GatheringTime {
+        return new GatheringTime(GatheringType.Counting, value);
+    }
+
+    constructor(type: GatheringType, seconds: number) {
+        this._type = type;
+        this._seconds = seconds;
+    }
+
+    get never(): boolean {
+        return this._type === GatheringType.Never;
+    }
+
+    get seconds(): number {
+        if (this.never) {
+            throw new Error('Never');
+        }
+        return this._seconds;
+    }
+}
 
 export class GatheringTimings {
     readonly lumber: GatheringTime;
     readonly clay: GatheringTime;
     readonly iron: GatheringTime;
     readonly crop: GatheringTime;
+
+    static create(
+        lumber: GatheringPlain,
+        clay: GatheringPlain,
+        iron: GatheringPlain,
+        crop: GatheringPlain
+    ): GatheringTimings {
+        const factory = (p: GatheringPlain) =>
+            p === 'never' ? GatheringTime.makeNever() : GatheringTime.makeCounting(p);
+        return new GatheringTimings(factory(lumber), factory(clay), factory(iron), factory(crop));
+    }
 
     constructor(lumber: GatheringTime, clay: GatheringTime, iron: GatheringTime, crop: GatheringTime) {
         this.lumber = lumber;
@@ -16,34 +60,41 @@ export class GatheringTimings {
         this.crop = crop;
     }
 
-    private get common(): GatheringTime {
+    get slowest(): GatheringTime {
         const xs = [this.lumber, this.clay, this.iron, this.crop];
-        return xs.reduce((m, t) => (m === 'never' || t === 'never' ? 'never' : Math.max(m, t)), 0);
+        const init = new GatheringTime(GatheringType.Counting, 0);
+        return xs.reduce(
+            (m, t) =>
+                m.never || t.never
+                    ? GatheringTime.makeNever()
+                    : GatheringTime.makeCounting(Math.max(m.seconds, t.seconds)),
+            init
+        );
     }
 
-    get hours(): number {
-        const common = this.common;
-        if (common === 'never') {
-            throw Error('Never');
-        }
-        return common;
-    }
-
-    get never(): boolean {
-        return this.common === 'never';
+    get fastest(): GatheringTime {
+        const xs = [this.lumber, this.clay, this.iron, this.crop];
+        const init = new GatheringTime(GatheringType.Counting, Number.MAX_SAFE_INTEGER);
+        return xs.reduce(
+            (m, t) =>
+                m.never || t.never
+                    ? GatheringTime.makeNever()
+                    : GatheringTime.makeCounting(Math.min(m.seconds, t.seconds)),
+            init
+        );
     }
 }
 
 function calcGatheringTime(val: number, desired: number, speed: number): GatheringTime {
     const diff = desired - val;
     if (diff > 0 && speed <= 0) {
-        return 'never';
+        return GatheringTime.makeNever();
     }
     if (diff <= 0) {
-        return 0;
+        return GatheringTime.makeCounting(0);
     }
 
-    return diff / speed;
+    return GatheringTime.makeCounting((diff / speed) * 3600);
 }
 
 export function calcGatheringTimings(resources: Resources, desired: Resources, speed: Resources): GatheringTimings {

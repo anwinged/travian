@@ -6,18 +6,18 @@ import { calcGatheringTimings, GatheringTimings } from '../../src/Core/Gathering
 
 describe('Gathering timings', function() {
     it('Can calc common from numbers', function() {
-        const timings = new GatheringTimings(10, 20, 15, 5);
-        expect(20).to.equals(timings.hours);
+        const timings = GatheringTimings.create(10, 20, 15, 5);
+        expect(20).to.equals(timings.slowest.seconds);
     });
 
     it('Can calc common with never', function() {
-        const timings = new GatheringTimings(10, 20, 'never', 5);
-        expect(true).to.equals(timings.never);
+        const timings = GatheringTimings.create(10, 20, 'never', 5);
+        expect(true).to.equals(timings.slowest.never);
     });
 
     it('Can calc common with all never', function() {
-        const timings = new GatheringTimings('never', 'never', 'never', 'never');
-        expect(true).to.equals(timings.never);
+        const timings = GatheringTimings.create('never', 'never', 'never', 'never');
+        expect(true).to.equals(timings.slowest.never);
     });
 
     it('Can calc timings', function() {
@@ -25,7 +25,7 @@ describe('Gathering timings', function() {
         const desired = new Resources(60, 60, 60, 60);
         const speed = new Resources(5, 5, 5, 5);
         const timings = calcGatheringTimings(resources, desired, speed);
-        expect(10).to.equals(timings.hours);
+        expect(10 * 3600).to.equals(timings.slowest.seconds);
     });
 
     it('Can calc timings with different speed', function() {
@@ -33,11 +33,11 @@ describe('Gathering timings', function() {
         const desired = new Resources(60, 60, 60, 60);
         const speed = new Resources(5, 10, 25, 5);
         const timings = calcGatheringTimings(resources, desired, speed);
-        expect(10).to.equals(timings.lumber);
-        expect(5).to.equals(timings.clay);
-        expect(2).to.equals(timings.iron);
-        expect(10).to.equals(timings.crop);
-        expect(10).to.equals(timings.hours);
+        expect(10 * 3600).to.equals(timings.lumber.seconds);
+        expect(5 * 3600).to.equals(timings.clay.seconds);
+        expect(2 * 3600).to.equals(timings.iron.seconds);
+        expect(10 * 3600).to.equals(timings.crop.seconds);
+        expect(10 * 3600).to.equals(timings.slowest.seconds);
     });
 
     it('Can calc timings with negative speed', function() {
@@ -45,10 +45,10 @@ describe('Gathering timings', function() {
         const desired = new Resources(60, 60, 60, 60);
         const speed = new Resources(5, 10, 25, -5);
         const timings = calcGatheringTimings(resources, desired, speed);
-        expect(10).to.equals(timings.lumber);
-        expect(5).to.equals(timings.clay);
-        expect(2).to.equals(timings.iron);
-        expect('never').to.equals(timings.crop);
-        expect(true).to.equals(timings.never);
+        expect(10 * 3600).to.equals(timings.lumber.seconds);
+        expect(5 * 3600).to.equals(timings.clay.seconds);
+        expect(2 * 3600).to.equals(timings.iron.seconds);
+        expect(true).to.equals(timings.crop.never);
+        expect(true).to.equals(timings.slowest.never);
     });
 });
