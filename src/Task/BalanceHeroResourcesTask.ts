@@ -1,4 +1,4 @@
-import { TaskController, registerTask } from './TaskController';
+import { TaskController } from './TaskController';
 import { GoToPageAction } from '../Action/GoToPageAction';
 import { CompleteTaskAction } from '../Action/CompleteTaskAction';
 import { BalanceHeroResourcesAction } from '../Action/BalanceHeroResourcesAction';
@@ -7,8 +7,9 @@ import { Action } from '../Queue/ActionQueue';
 import { Args } from '../Queue/Args';
 import { Task } from '../Queue/TaskProvider';
 import { path } from '../Helpers/Path';
+import { registerTask } from './TaskMap';
 
-@registerTask
+@registerTask()
 export class BalanceHeroResourcesTask extends TaskController {
     async run(task: Task) {
         const args: Args = { ...task.args, taskId: task.id };

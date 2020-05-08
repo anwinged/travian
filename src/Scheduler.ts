@@ -4,17 +4,15 @@ import { TaskQueue } from './Queue/TaskQueue';
 import { SendOnAdventureTask } from './Task/SendOnAdventureTask';
 import { BalanceHeroResourcesTask } from './Task/BalanceHeroResourcesTask';
 import { Logger } from './Logger';
-import { BuildBuildingTask } from './Task/BuildBuildingTask';
 import { GrabVillageState } from './Task/GrabVillageState';
-import { ActionQueue, Action, ImmutableActionList } from './Queue/ActionQueue';
+import { Action, ActionQueue, ImmutableActionList } from './Queue/ActionQueue';
 import { UpdateResourceContracts } from './Task/UpdateResourceContracts';
-import { TrainTroopTask } from './Task/TrainTroopTask';
 import { Resources, ResourcesInterface } from './Core/Resources';
 import { SendResourcesTask } from './Task/SendResourcesTask';
 import { Args } from './Queue/Args';
 import { ImmutableTaskList, Task, TaskId } from './Queue/TaskProvider';
 import { ForgeImprovementTask } from './Task/ForgeImprovementTask';
-import { CelebrationTask } from './Task/CelebrationTask';
+import { getTaskType, TaskType } from './Task/TaskMap';
 
 export enum ContractType {
     UpgradeBuilding,
@@ -197,32 +195,16 @@ interface TaskNamePredicate {
     (name: string): boolean;
 }
 
-function isTrainTroopTask(taskName: string) {
-    return taskName === TrainTroopTask.name;
-}
-
-function isForgeImprovementTask(taskName: string) {
-    return taskName === ForgeImprovementTask.name;
-}
-
-function isBuildingTask(taskName: string) {
-    return taskName === BuildBuildingTask.name || taskName === UpgradeBuildingTask.name;
-}
-
-function isCelebrationTask(taskName: string) {
-    return taskName === CelebrationTask.name;
-}
-
 /**
  * List on non intersected task type predicates.
  *
  * Placed in order of execution priority. Order is important!
  */
 const TASK_TYPE_PREDICATES: Array<TaskNamePredicate> = [
-    isTrainTroopTask,
-    isForgeImprovementTask,
-    isBuildingTask,
-    isCelebrationTask,
+    (taskName: string) => getTaskType(taskName) === TaskType.TrainUnit,
+    (taskName: string) => getTaskType(taskName) === TaskType.UpgradeUnit,
+    (taskName: string) => getTaskType(taskName) === TaskType.Building,
+    (taskName: string) => getTaskType(taskName) === TaskType.Celebration,
 ];
 
 function sameVillage(villageId: number | undefined, args: Args) {

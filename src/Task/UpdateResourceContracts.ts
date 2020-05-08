@@ -1,11 +1,12 @@
-import { TaskController, registerTask, ActionDefinition } from './TaskController';
+import { TaskController, ActionDefinition } from './TaskController';
 import { GoToPageAction } from '../Action/GoToPageAction';
 import { UpgradeBuildingTask } from './UpgradeBuildingTask';
 import { ImmutableTaskList, Task } from '../Queue/TaskProvider';
 import { ForgeImprovementTask } from './ForgeImprovementTask';
 import { path, PathList, uniqPaths } from '../Helpers/Path';
+import { registerTask } from './TaskMap';
 
-@registerTask
+@registerTask()
 export class UpdateResourceContracts extends TaskController {
     defineActions(task: Task): Array<ActionDefinition> {
         const tasks = this.scheduler.getTaskItems();

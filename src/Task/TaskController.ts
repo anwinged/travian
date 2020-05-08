@@ -4,21 +4,6 @@ import { Action } from '../Queue/ActionQueue';
 import { Args } from '../Queue/Args';
 import { Task } from '../Queue/TaskProvider';
 
-const taskMap: { [name: string]: Function | undefined } = {};
-
-export function registerTask(constructor: Function) {
-    taskMap[constructor.name] = constructor;
-}
-
-export function createTaskHandler(name: string, scheduler: Scheduler): TaskController | undefined {
-    const storedFunction = taskMap[name];
-    if (storedFunction === undefined) {
-        return undefined;
-    }
-    const constructor = (storedFunction as unknown) as typeof TaskController;
-    return new constructor(scheduler);
-}
-
 export type ActionDefinition = [string] | [string, Args];
 
 export class TaskController {

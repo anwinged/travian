@@ -1,4 +1,4 @@
-import { TaskController, registerTask, ActionDefinition } from './TaskController';
+import { TaskController, ActionDefinition } from './TaskController';
 import { GoToPageAction } from '../Action/GoToPageAction';
 import { CompleteTaskAction } from '../Action/CompleteTaskAction';
 import { SendResourcesAction } from '../Action/SendResourcesAction';
@@ -7,8 +7,9 @@ import { scanAllVillagesBundle } from './ActionBundles';
 import { Args } from '../Queue/Args';
 import { Task } from '../Queue/TaskProvider';
 import { path } from '../Helpers/Path';
+import { registerTask } from './TaskMap';
 
-@registerTask
+@registerTask()
 export class SendResourcesTask extends TaskController {
     defineActions(task: Task): Array<ActionDefinition> {
         return [...scanAllVillagesBundle(), ...this.sendResourcesActions(task.args)];

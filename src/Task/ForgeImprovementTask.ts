@@ -1,10 +1,11 @@
-import { TaskController, registerTask, ActionDefinition } from './TaskController';
+import { TaskController, ActionDefinition } from './TaskController';
 import { GoToPageAction } from '../Action/GoToPageAction';
 import { Task } from '../Queue/TaskProvider';
 import { ForgeImprovementAction } from '../Action/ForgeImprovementAction';
 import { path } from '../Helpers/Path';
+import { registerTask, TaskType } from './TaskMap';
 
-@registerTask
+@registerTask({ type: TaskType.UpgradeUnit })
 export class ForgeImprovementTask extends TaskController {
     defineActions(task: Task): Array<ActionDefinition> {
         const args = task.args;
@@ -15,6 +16,6 @@ export class ForgeImprovementTask extends TaskController {
             id: args.buildId || undefined,
         };
 
-        return [[GoToPageAction.name, { ...args, path: path('/build.php', pathArgs) }], [ForgeImprovementAction.name]];
+        return [[GoToPageAction.name, { path: path('/build.php', pathArgs) }], [ForgeImprovementAction.name]];
     }
 }

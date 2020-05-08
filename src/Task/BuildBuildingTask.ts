@@ -1,10 +1,11 @@
 import { BuildBuildingAction } from '../Action/BuildBuildingAction';
 import { GoToPageAction } from '../Action/GoToPageAction';
-import { TaskController, registerTask, ActionDefinition } from './TaskController';
+import { ActionDefinition, TaskController } from './TaskController';
 import { Task } from '../Queue/TaskProvider';
 import { path } from '../Helpers/Path';
+import { registerTask, TaskType } from './TaskMap';
 
-@registerTask
+@registerTask({ type: TaskType.Building })
 export class BuildBuildingTask extends TaskController {
     defineActions(task: Task): Array<ActionDefinition> {
         const args = task.args;

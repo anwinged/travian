@@ -1,8 +1,9 @@
-import { TaskController, registerTask, ActionDefinition } from './TaskController';
+import { TaskController, ActionDefinition } from './TaskController';
 import { scanAllVillagesBundle } from './ActionBundles';
 import { Task } from '../Queue/TaskProvider';
+import { registerTask } from './TaskMap';
 
-@registerTask
+@registerTask()
 export class GrabVillageState extends TaskController {
     defineActions(task: Task): Array<ActionDefinition> {
         return scanAllVillagesBundle();
