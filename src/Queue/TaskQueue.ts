@@ -42,9 +42,11 @@ export class TaskQueue {
         return modifiedCount;
     }
 
-    remove(id: TaskId) {
-        const [_, items] = this.shiftTask(id);
-        this.flushItems(items);
+    remove(predicate: (t: Task) => boolean): number {
+        const [_, other] = this.split(predicate);
+        const result = other.length;
+        this.flushItems(other);
+        return result;
     }
 
     seeItems(): ImmutableTaskList {

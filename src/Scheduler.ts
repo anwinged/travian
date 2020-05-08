@@ -13,6 +13,8 @@ import { Args } from './Queue/Args';
 import { ImmutableTaskList, Task, TaskId } from './Queue/TaskProvider';
 import { ForgeImprovementTask } from './Task/ForgeImprovementTask';
 import { getTaskType, TaskType } from './Task/TaskMap';
+import { MARKET_ID } from './Core/Buildings';
+import { grabVillageList } from './Page/VillageBlock';
 
 export enum ContractType {
     UpgradeBuilding,
@@ -84,7 +86,7 @@ export class Scheduler {
     }
 
     removeTask(taskId: TaskId) {
-        this.taskQueue.remove(taskId);
+        this.taskQueue.remove(t => t.id === taskId);
         this.actionQueue.clear();
     }
 
@@ -170,6 +172,30 @@ export class Scheduler {
             .seeItems()
             .filter(t => t.name === SendResourcesTask.name && t.args.villageId === villageId && t.args.targetVillageId);
         return tasks.map(t => t.args.targetVillageId!);
+    }
+
+    dropResourceTransferTasks(fromVillageId: number, toVillageId: number): void {
+        this.taskQueue.remove(
+            t =>
+                t.name === SendResourcesTask.name &&
+                t.args.villageId === fromVillageId &&
+                t.args.targetVillageId === toVillageId
+        );
+    }
+
+    scheduleResourceTransferTasks(fromVillageId: number, toVillageId: number): void {
+        this.dropResourceTransferTasks(fromVillageId, toVillageId);
+        const village = grabVillageList().find(v => v.id === toVillageId);
+        if (!village) {
+            throw new Error('No village');
+        }
+        this.scheduleTask(SendResourcesTask.name, {
+            villageId: fromVillageId,
+            targetVillageId: toVillageId,
+            coordinates: village.crd,
+            buildTypeId: MARKET_ID,
+            tabId: 5,
+        });
     }
 
     private reorderVillageTasks(villageId: number) {

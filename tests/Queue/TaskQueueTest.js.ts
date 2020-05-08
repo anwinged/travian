@@ -24,7 +24,7 @@ describe('Task Queue', function() {
     it('Can remove task by id', function() {
         const provider = new ArrayTaskProvider([new Task('id1', 1, 'task1', {}), new Task('id2', 2, 'task2', {})]);
         const queue = new TaskQueue(provider, new NullLogger());
-        queue.remove('id1');
+        queue.remove(t => t.id === 'id1');
         const tasks = provider.getTasks();
         expect(tasks).to.have.lengthOf(1);
         expect(tasks[0].ts).to.be.equals(2);

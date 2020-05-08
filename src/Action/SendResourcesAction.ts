@@ -4,7 +4,6 @@ import { Resources } from '../Core/Resources';
 import { Coordinates, Village } from '../Core/Village';
 import { grabVillageResources } from '../Page/ResourcesBlock';
 import { grabActiveVillageId, grabVillageList } from '../Page/VillageBlock';
-import { SendResourcesTask } from '../Task/SendResourcesTask';
 import { aroundMinutes, timestamp } from '../utils';
 import { VillageStorage } from '../Storage/VillageStorage';
 import { Args } from '../Queue/Args';
@@ -16,34 +15,18 @@ const TIMEOUT = 15;
 @registerAction
 export class SendResourcesAction extends ActionController {
     async run(args: Args, task: Task): Promise<any> {
-        const resources = Resources.fromObject(args.resources || err('No resources'));
         const coordinates = Coordinates.fromObject(args.coordinates || err('No coordinates'));
-
-        console.log('Send', resources, 'to', coordinates);
 
         const recipientVillage = args.targetVillageId
             ? this.findRecipientVillageById(args.targetVillageId)
             : this.findRecipientVillage(coordinates);
 
-        const readyToTransfer = this.getResourcesForTransfer(recipientVillage.id).min(resources);
+        const readyToTransfer = this.getResourcesForTransfer(recipientVillage.id);
 
-        const remainingResources = resources.sub(readyToTransfer).max(Resources.zero());
-
-        console.log('Total res', resources);
         console.log('To transfer res', readyToTransfer);
-        console.log('Remaining res', remainingResources);
 
-        if (!remainingResources.empty()) {
-            console.log('Schedule next', remainingResources);
-            this.scheduler.scheduleTask(
-                SendResourcesTask.name,
-                {
-                    ...args,
-                    resources: remainingResources,
-                },
-                timestamp() + aroundMinutes(TIMEOUT)
-            );
-        }
+        // Schedule recurrent task
+        this.scheduler.scheduleTask(task.name, task.args, timestamp() + aroundMinutes(TIMEOUT));
 
         fillSendResourcesForm(readyToTransfer, coordinates);
         clickSendButton();

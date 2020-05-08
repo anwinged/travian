@@ -56,7 +56,7 @@ export class BuildingPageController {
         }
 
         if (isMarketSendResourcesPage()) {
-            createSendResourcesButton((res, crd, scale) => this.onSendResources(res, crd, scale));
+            createSendResourcesButton((res, crd) => this.onSendResources(res, crd));
         }
 
         if (isForgePage()) {
@@ -99,7 +99,7 @@ export class BuildingPageController {
         notify(`Training ${count} troopers scheduled`);
     }
 
-    private onSendResources(resources: Resources, coordinates: Coordinates, scale: number) {
+    private onSendResources(resources: Resources, coordinates: Coordinates) {
         const villageId = grabActiveVillageId();
         const targetVillage = grabVillageList().find(v => v.crd.eq(coordinates));
         this.scheduler.scheduleTask(SendResourcesTask.name, {
@@ -108,10 +108,9 @@ export class BuildingPageController {
             buildTypeId: this.attributes.buildTypeId,
             buildId: this.attributes.buildId,
             tabId: this.attributes.tabId,
-            resources: resources.scale(scale),
             coordinates,
         });
-        notify(`Send resources ${JSON.stringify(resources)} from ${villageId} to ${JSON.stringify(coordinates)}`);
+        notify(`Send resources from ${villageId} to ${JSON.stringify(coordinates)}`);
     }
 
     private onResearch(resources: Resources, unitId: number) {
