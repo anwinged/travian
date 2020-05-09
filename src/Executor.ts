@@ -1,5 +1,5 @@
 import { markPage, sleepMicro, timestamp, waitForLoad } from './utils';
-import { AbortTaskError, ActionError, TryLaterError } from './Errors';
+import { AbortTaskError, ActionError, GrabError, TryLaterError } from './Errors';
 import { TaskQueueRenderer } from './TaskQueueRenderer';
 import { createActionHandler } from './Action/ActionController';
 import { ConsoleLogger, Logger } from './Logger';
@@ -137,7 +137,12 @@ export class Executor {
         }
 
         if (err instanceof ActionError) {
-            this.logger.warn('ACTION ABORTED', err.message);
+            this.logger.error('ACTION ABORTED', err.message);
+            return;
+        }
+
+        if (err instanceof GrabError) {
+            this.logger.error('ELEMENT NOT FOUND, ACTION ABORTED', err.message);
             return;
         }
 
