@@ -83,20 +83,18 @@ export class BuildingPageController {
         notify(`Upgrading ${buildId} scheduled`);
     }
 
-    private onScheduleTrainTroopers(troopId: number, resources: Resources, count: number) {
-        for (let chunk of split(count)) {
-            const args = {
-                villageId: grabActiveVillageId(),
-                buildId: this.attributes.buildId,
-                buildTypeId: this.attributes.buildTypeId,
-                sheetId: this.attributes.sheetId,
-                troopId,
-                resources: resources.scale(chunk),
-                trainCount: chunk,
-            };
-            this.scheduler.scheduleTask(TrainTroopTask.name, args);
-        }
-        notify(`Training ${count} troopers scheduled`);
+    private onScheduleTrainTroopers(troopId: number, resources: Resources, trainCount: number) {
+        const args = {
+            villageId: grabActiveVillageId(),
+            buildId: this.attributes.buildId,
+            buildTypeId: this.attributes.buildTypeId,
+            sheetId: this.attributes.sheetId,
+            troopId,
+            trainCount,
+            resources: resources.scale(trainCount),
+        };
+        this.scheduler.scheduleTask(TrainTroopTask.name, args);
+        notify(`Training ${trainCount} troopers scheduled`);
     }
 
     private onSendResources(resources: Resources, coordinates: Coordinates) {

@@ -30,3 +30,37 @@ export function createTrainTroopButtons(
         });
     });
 }
+
+function getTroopBlock(troopId: number): JQuery {
+    const $block = jQuery(`.innerTroopWrapper[data-troopid="${troopId}"]`);
+    if ($block.length !== 1) {
+        throw new GrabError(`Troop block not found`);
+    }
+    return $block;
+}
+
+export function getAvailableCount(troopId: number): number {
+    const $block = getTroopBlock(troopId);
+    const $countLink = $block.find('.cta a');
+    if ($countLink.length !== 1) {
+        throw new GrabError(`Link with max count not found`);
+    }
+    return getNumber($countLink.text());
+}
+
+export function fillTrainCount(troopId: number, trainCount: number): void {
+    const $block = getTroopBlock(troopId);
+    const input = $block.find(`input[name="t${troopId}"]`);
+    if (input.length !== 1) {
+        throw new GrabError(`Input element not found`);
+    }
+    input.val(trainCount);
+}
+
+export function clickTrainButton(): void {
+    const $trainButton = jQuery('.startTraining.green').first();
+    if ($trainButton.length !== 1) {
+        throw new GrabError('Train button not found');
+    }
+    $trainButton.trigger('click');
+}
