@@ -7,12 +7,24 @@ import { ControlPanel } from './ControlPanel';
 import { DataStorageTaskProvider } from './Queue/DataStorageTaskProvider';
 import { Statistics } from './Statistics';
 import { StatisticsStorage } from './Storage/StatisticsStorage';
+import { VillageRepository, VillageRepositoryInterface } from './VillageRepository';
 
 export class Container {
     private readonly version: string;
 
     constructor(version: string) {
         this.version = version;
+    }
+
+    private _villageRepository: VillageRepositoryInterface | undefined;
+
+    get villageRepository(): VillageRepository {
+        this._villageRepository =
+            this._villageRepository ||
+            (() => {
+                return new VillageRepository();
+            })();
+        return this._villageRepository;
     }
 
     private _scheduler: Scheduler | undefined;
@@ -24,7 +36,7 @@ export class Container {
                 const taskProvider = DataStorageTaskProvider.create();
                 const taskQueue = new TaskQueue(taskProvider, new ConsoleLogger(TaskQueue.name));
                 const actionQueue = new ActionQueue();
-                return new Scheduler(taskQueue, actionQueue, new ConsoleLogger(Scheduler.name));
+                return new Scheduler(taskQueue, actionQueue, this.villageRepository, new ConsoleLogger(Scheduler.name));
             })();
         return this._scheduler;
     }

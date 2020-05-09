@@ -20,7 +20,6 @@ import { ExecutionStorage } from './Storage/ExecutionStorage';
 import { createVillageStates, VillageState } from './VillageState';
 import { Task } from './Queue/TaskProvider';
 import { Action } from './Queue/ActionQueue';
-import * as _ from 'underscore';
 
 interface QuickAction {
     label: string;

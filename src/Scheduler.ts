@@ -14,7 +14,7 @@ import { ImmutableTaskList, Task, TaskId } from './Queue/TaskProvider';
 import { ForgeImprovementTask } from './Task/ForgeImprovementTask';
 import { getTaskType, TaskType } from './Task/TaskMap';
 import { MARKET_ID } from './Core/Buildings';
-import { grabVillageList } from './Page/VillageBlock';
+import { VillageRepositoryInterface } from './VillageRepository';
 
 export enum ContractType {
     UpgradeBuilding,
@@ -31,11 +31,18 @@ interface ContractAttributes {
 export class Scheduler {
     private taskQueue: TaskQueue;
     private actionQueue: ActionQueue;
+    private villageRepository: VillageRepositoryInterface;
     private logger: Logger;
 
-    constructor(taskQueue: TaskQueue, actionQueue: ActionQueue, logger: Logger) {
+    constructor(
+        taskQueue: TaskQueue,
+        actionQueue: ActionQueue,
+        villageRepository: VillageRepositoryInterface,
+        logger: Logger
+    ) {
         this.taskQueue = taskQueue;
         this.actionQueue = actionQueue;
+        this.villageRepository = villageRepository;
         this.logger = logger;
 
         // this.taskQueue.push(GrabVillageState.name, {}, timestamp());
@@ -185,7 +192,7 @@ export class Scheduler {
 
     scheduleResourceTransferTasks(fromVillageId: number, toVillageId: number): void {
         this.dropResourceTransferTasks(fromVillageId, toVillageId);
-        const village = grabVillageList().find(v => v.id === toVillageId);
+        const village = this.villageRepository.all().find(v => v.id === toVillageId);
         if (!village) {
             throw new Error('No village');
         }
