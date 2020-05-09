@@ -4,10 +4,10 @@ export function sleep(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-function randomInRange(from: number, to: number): number {
+export function randomInRange(from: number, to: number): number {
     const delta = to - from;
     const variation = Math.random() * delta;
-    return from + variation;
+    return Math.floor(from + variation);
 }
 
 export async function sleepMicro() {

@@ -13,6 +13,7 @@ export interface Args {
     tabId?: number;
     buildTypeId?: number;
     troopId?: number;
+    troopResources?: ResourcesInterface;
     trainCount?: number;
     resources?: ResourcesInterface;
     coordinates?: CoordinatesInterface;

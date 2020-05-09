@@ -91,6 +91,7 @@ export class BuildingPageController {
             sheetId: this.attributes.sheetId,
             troopId,
             trainCount,
+            troopResources: resources,
             resources: resources.scale(trainCount),
         };
         this.scheduler.scheduleTask(TrainTroopTask.name, args);
