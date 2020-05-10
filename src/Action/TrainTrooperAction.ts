@@ -1,4 +1,4 @@
-import { ActionController, err, registerAction } from './ActionController';
+import { ActionController, taskError, registerAction } from './ActionController';
 import { TryLaterError } from '../Errors';
 import { aroundMinutes, randomInRange } from '../utils';
 import { Args } from '../Queue/Args';
@@ -10,9 +10,9 @@ import { Resources } from '../Core/Resources';
 @registerAction
 export class TrainTrooperAction extends ActionController {
     async run(args: Args, task: Task): Promise<any> {
-        const troopId = args.troopId || err('No troop id');
-        const trainCount = args.trainCount || err('No troop train count');
-        const troopResources = args.troopResources || err('No troop resources');
+        const troopId = args.troopId || taskError('No troop id');
+        const trainCount = args.trainCount || taskError('No troop train count');
+        const troopResources = args.troopResources || taskError('No troop resources');
 
         const availableCount = getAvailableCount(troopId);
         const desiredCount = randomInRange(3, 12);

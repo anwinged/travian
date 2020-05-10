@@ -5,6 +5,13 @@ export class GrabError extends Error {
     }
 }
 
+export class VillageNotFound extends Error {
+    constructor(msg: string = '') {
+        super(msg);
+        Object.setPrototypeOf(this, VillageNotFound.prototype);
+    }
+}
+
 export class ActionError extends Error {
     constructor(msg: string = '') {
         super(msg);

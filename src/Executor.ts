@@ -1,5 +1,5 @@
 import { markPage, sleepMicro, timestamp, waitForLoad } from './utils';
-import { AbortTaskError, ActionError, GrabError, TryLaterError } from './Errors';
+import { AbortTaskError, ActionError, GrabError, TryLaterError, VillageNotFound } from './Errors';
 import { TaskQueueRenderer } from './TaskQueueRenderer';
 import { createActionHandler } from './Action/ActionController';
 import { ConsoleLogger, Logger } from './Logger';
@@ -10,6 +10,7 @@ import { ExecutionStorage } from './Storage/ExecutionStorage';
 import { Action } from './Queue/ActionQueue';
 import { Task } from './Queue/TaskProvider';
 import { createTaskHandler } from './Task/TaskMap';
+import { VillageStateRepository } from './VillageState';
 
 export interface ExecutionSettings {
     pauseTs: number;
@@ -18,14 +19,21 @@ export interface ExecutionSettings {
 export class Executor {
     private readonly version: string;
     private readonly scheduler: Scheduler;
+    private readonly villageStateRepository: VillageStateRepository;
     private grabbers: GrabberManager;
     private statistics: Statistics;
     private executionState: ExecutionStorage;
     private logger: Logger;
 
-    constructor(version: string, scheduler: Scheduler, statistics: Statistics) {
+    constructor(
+        version: string,
+        scheduler: Scheduler,
+        villageStateRepository: VillageStateRepository,
+        statistics: Statistics
+    ) {
         this.version = version;
         this.scheduler = scheduler;
+        this.villageStateRepository = villageStateRepository;
         this.grabbers = new GrabberManager(scheduler);
         this.statistics = statistics;
         this.executionState = new ExecutionStorage();
@@ -97,7 +105,7 @@ export class Executor {
     }
 
     private async processActionCommand(cmd: Action, task: Task) {
-        const actionHandler = createActionHandler(cmd.name, this.scheduler);
+        const actionHandler = createActionHandler(cmd.name, this.scheduler, this.villageStateRepository);
         this.logger.info('PROCESS ACTION', cmd.name, actionHandler);
         if (cmd.args.taskId !== task.id) {
             throw new ActionError(`Action task id ${cmd.args.taskId} not equal current task id ${task.id}`);
@@ -125,24 +133,30 @@ export class Executor {
         this.scheduler.clearActions();
 
         if (err instanceof AbortTaskError) {
-            this.logger.warn('ABORT TASK', task.id, 'MSG', err.message);
+            this.logger.warn('Abort task', task.id, 'MSG', err.message);
+            this.scheduler.removeTask(task.id);
+            return;
+        }
+
+        if (err instanceof VillageNotFound) {
+            this.logger.error('Village not found, abort task', task.id, 'msg', err.message);
             this.scheduler.removeTask(task.id);
             return;
         }
 
         if (err instanceof TryLaterError) {
-            this.logger.warn('TRY', task.id, 'AFTER', err.seconds, 'MSG', err.message);
+            this.logger.warn('Try', task.id, 'after', err.seconds, 'msg', err.message);
             this.scheduler.postponeTask(task.id, err.seconds);
             return;
         }
 
-        if (err instanceof ActionError) {
-            this.logger.error('ACTION ABORTED', err.message);
+        if (err instanceof GrabError) {
+            this.logger.error('Layout element not found, abort action', err.message);
             return;
         }
 
-        if (err instanceof GrabError) {
-            this.logger.error('ELEMENT NOT FOUND, ACTION ABORTED', err.message);
+        if (err instanceof ActionError) {
+            this.logger.error('Abort action', err.message);
             return;
         }
 

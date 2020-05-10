@@ -1,4 +1,4 @@
-import { ActionController, err, registerAction } from './ActionController';
+import { ActionController, taskError, registerAction } from './ActionController';
 import { AbortTaskError, TryLaterError } from '../Errors';
 import { Resources } from '../Core/Resources';
 import { Coordinates, Village } from '../Core/Village';
@@ -15,7 +15,7 @@ const TIMEOUT = 15;
 @registerAction
 export class SendResourcesAction extends ActionController {
     async run(args: Args, task: Task): Promise<any> {
-        const coordinates = Coordinates.fromObject(args.coordinates || err('No coordinates'));
+        const coordinates = Coordinates.fromObject(args.coordinates || taskError('No coordinates'));
 
         const recipientVillage = args.targetVillageId
             ? this.findRecipientVillageById(args.targetVillageId)

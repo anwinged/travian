@@ -1,4 +1,4 @@
-import { ActionController, err, registerAction } from './ActionController';
+import { ActionController, taskError, registerAction } from './ActionController';
 import { GrabError, TryLaterError } from '../Errors';
 import { clickBuildButton } from '../Page/BuildingPage/BuildingPage';
 import { aroundMinutes } from '../utils';
@@ -11,7 +11,7 @@ export class BuildBuildingAction extends ActionController {
         try {
             this.ensureSameVillage(args, task);
             this.ensureBuildingQueueIsEmpty();
-            const buildTypeId = args.buildTypeId || err('Undefined build type id');
+            const buildTypeId = args.buildTypeId || taskError('Undefined build type id');
             clickBuildButton(buildTypeId);
         } catch (e) {
             if (e instanceof GrabError) {

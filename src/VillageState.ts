@@ -3,6 +3,8 @@ import { Scheduler } from './Scheduler';
 import { Resources } from './Core/Resources';
 import { VillageStorage } from './Storage/VillageStorage';
 import { calcGatheringTimings, GatheringTime } from './Core/GatheringTimings';
+import { VillageRepositoryInterface } from './VillageRepository';
+import { VillageNotFound } from './Errors';
 
 interface StorageBalance {
     resources: Resources;
@@ -127,7 +129,30 @@ function createVillageState(
     return { ...state, commitments, shipment: villageIds };
 }
 
-export function createVillageStates(villages: Array<Village>, scheduler: Scheduler): Array<VillageState> {
+function getVillageStates(villages: Array<Village>, scheduler: Scheduler): Array<VillageState> {
     const ownStates = createVillageOwnStates(villages, scheduler);
     return villages.map(village => createVillageState(ownStates[village.id], ownStates, scheduler));
+}
+
+export class VillageStateRepository {
+    private villageRepository: VillageRepositoryInterface;
+    private scheduler: Scheduler;
+
+    constructor(villageRepository: VillageRepositoryInterface, scheduler: Scheduler) {
+        this.villageRepository = villageRepository;
+        this.scheduler = scheduler;
+    }
+
+    getAllVillageStates(): Array<VillageState> {
+        return getVillageStates(this.villageRepository.all(), this.scheduler);
+    }
+
+    getVillageState(villageId: number): VillageState {
+        const states = getVillageStates(this.villageRepository.all(), this.scheduler);
+        const needle = states.find(s => s.id === villageId);
+        if (!needle) {
+            throw new VillageNotFound(`Village ${villageId} not found`);
+        }
+        return needle;
+    }
 }

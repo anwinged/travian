@@ -1,4 +1,4 @@
-import { ActionController, err, registerAction } from './ActionController';
+import { ActionController, taskError, registerAction } from './ActionController';
 import { GrabError, TryLaterError } from '../Errors';
 import { aroundMinutes } from '../utils';
 import { Args } from '../Queue/Args';
@@ -10,7 +10,7 @@ export class ForgeImprovementAction extends ActionController {
     async run(args: Args, task: Task): Promise<any> {
         try {
             this.ensureSameVillage(args, task);
-            const unitId = args.unitId || err('No unitId in args');
+            const unitId = args.unitId || taskError('No unitId in args');
             clickResearchButton(unitId);
         } catch (e) {
             if (e instanceof GrabError) {

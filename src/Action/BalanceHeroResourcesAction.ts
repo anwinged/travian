@@ -1,15 +1,11 @@
 import { ActionController, registerAction } from './ActionController';
-import { grabVillageResources, grabVillageResourceStorage } from '../Page/ResourcesBlock';
 import { changeHeroResource, grabCurrentHeroResource } from '../Page/HeroPage';
-import { grabActiveVillageId, grabVillageList } from '../Page/VillageBlock';
+import { grabActiveVillageId } from '../Page/VillageBlock';
 import { HeroStorage } from '../Storage/HeroStorage';
 import { calcHeroResource } from '../Core/HeroBalance';
 import { HeroAllResources } from '../Core/Hero';
 import { Args } from '../Queue/Args';
 import { Task } from '../Queue/TaskProvider';
-import { Resources } from '../Core/Resources';
-import { createVillageStates } from '../VillageState';
-import { ActionError } from '../Errors';
 
 @registerAction
 export class BalanceHeroResourcesAction extends ActionController {
@@ -22,13 +18,7 @@ export class BalanceHeroResourcesAction extends ActionController {
             return;
         }
 
-        const villages = grabVillageList();
-        const villageStates = createVillageStates(villages, this.scheduler);
-        const thisVillageState = villageStates.find(s => s.id === thisVillageId);
-
-        if (!thisVillageState) {
-            throw new ActionError(`State for village ${thisVillageId} not found`);
-        }
+        const thisVillageState = this.villageStateRepository.getVillageState(thisVillageId);
 
         const requirements = [
             thisVillageState.required.balance,

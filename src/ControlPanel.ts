@@ -2,7 +2,7 @@ import { notify, parseLocation, timestamp, uniqId, waitForLoad } from './utils';
 import { Scheduler } from './Scheduler';
 import { BuildingPageController } from './Page/BuildingPageController';
 import { UpgradeBuildingTask } from './Task/UpgradeBuildingTask';
-import { grabActiveVillageId, grabVillageList } from './Page/VillageBlock';
+import { grabActiveVillageId } from './Page/VillageBlock';
 import {
     grabResourceDeposits,
     onBuildingSlotCtrlClick,
@@ -17,7 +17,7 @@ import { ConsoleLogger, Logger } from './Logger';
 import { DataStorage } from './DataStorage';
 import { getBuildingPageAttributes, isBuildingPage } from './Page/PageDetectors';
 import { ExecutionStorage } from './Storage/ExecutionStorage';
-import { createVillageStates, VillageState } from './VillageState';
+import { VillageState, VillageStateRepository } from './VillageState';
 import { Task } from './Queue/TaskProvider';
 import { Action } from './Queue/ActionQueue';
 
@@ -47,11 +47,13 @@ interface GameState {
 export class ControlPanel {
     private readonly version: string;
     private readonly scheduler: Scheduler;
+    private readonly villageStateRepository: VillageStateRepository;
     private readonly logger: Logger;
 
-    constructor(version: string, scheduler: Scheduler) {
+    constructor(version: string, scheduler: Scheduler, villageStateRepository: VillageStateRepository) {
         this.version = version;
         this.scheduler = scheduler;
+        this.villageStateRepository = villageStateRepository;
         this.logger = new ConsoleLogger(this.constructor.name);
     }
 
@@ -64,6 +66,7 @@ export class ControlPanel {
         const villageId = grabActiveVillageId();
 
         const scheduler = this.scheduler;
+        const villageStateRepository = this.villageStateRepository;
 
         const executionState = new ExecutionStorage();
 
@@ -91,7 +94,7 @@ export class ControlPanel {
             },
 
             refreshVillages() {
-                this.villageStates = createVillageStates(grabVillageList(), scheduler);
+                this.villageStates = villageStateRepository.getAllVillageStates();
                 for (let state of this.villageStates) {
                     if (state.village.active) {
                         this.activeVillageState = state;
