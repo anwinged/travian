@@ -12,7 +12,7 @@
         </tr>
       </thead>
       <tbody>
-        <template v-for="villageState in villageStates">
+        <template v-for="villageState in shared.villageStates">
           <tr class="normal-line top-line">
             <td :class="{ active: villageState.village.active }" :title="villageState.id">
               {{ villageState.village.name }}
@@ -167,7 +167,7 @@
             <td></td>
             <td class="right" colspan="5">
               <a
-                v-for="s in villageStates"
+                v-for="s in shared.villageStates"
                 v-if="s.id !== villageState.id"
                 class="village-quick-link"
                 :class="{ active: villageState.shipment.includes(s.id) }"
@@ -218,8 +218,6 @@ export default {
   data() {
     return {
       shared: this.$root.$data,
-      villageStates: this.$root.$data.villageStates,
-      activeVillageState: this.$root.$data.activeVillageState,
     };
   },
   methods: {
