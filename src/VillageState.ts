@@ -6,9 +6,9 @@ import { calcGatheringTimings, GatheringTime } from './Core/GatheringTimings';
 import { VillageRepositoryInterface } from './VillageRepository';
 import { VillageNotFound } from './Errors';
 
-interface StorageBalance {
+interface VillageStorageState {
     resources: Resources;
-    storage: Resources;
+    capacity: Resources;
     balance: Resources;
     performance: Resources;
     timeToZero: GatheringTime;
@@ -21,7 +21,7 @@ interface RequiredResources {
      */
     resources: Resources;
     /**
-     * Balance resources (current - required), may be negative
+     * Balance resources (current - required, may be negative)
      */
     balance: Resources;
     /**
@@ -44,9 +44,14 @@ interface VillageOwnState {
      */
     resources: Resources;
     performance: Resources;
-    storage: Resources;
-    storageBalance: StorageBalance;
+    storage: VillageStorageState;
+    /**
+     * Required resources for nearest task
+     */
     required: RequiredResources;
+    /**
+     * Required resources for all tasks
+     */
     totalRequired: RequiredResources;
     incomingResources: Resources;
     buildRemainingSeconds: number;
@@ -58,7 +63,7 @@ interface VillageOwnStateDictionary {
 
 export interface VillageState extends VillageOwnState {
     /**
-     * Resource commitments of this village to other
+     * Resource commitments of this village to other (may be negative)
      */
     commitments: Resources;
     /**
@@ -75,10 +80,10 @@ function calcResourceBalance(resources: Resources, current: Resources, performan
     };
 }
 
-function calcStorageBalance(resources: Resources, storage: Resources, performance: Resources): StorageBalance {
+function calcStorageBalance(resources: Resources, storage: Resources, performance: Resources): VillageStorageState {
     return {
         resources,
-        storage,
+        capacity: storage,
         performance,
         balance: storage.sub(resources),
         timeToZero: timeToFastestResource(resources, Resources.zero(), performance),
@@ -114,8 +119,7 @@ function createVillageOwnState(village: Village, scheduler: Scheduler): VillageO
         village,
         resources,
         performance,
-        storage: Resources.fromStorage(resourceStorage),
-        storageBalance: calcStorageBalance(resources, Resources.fromStorage(resourceStorage), performance),
+        storage: calcStorageBalance(resources, Resources.fromStorage(resourceStorage), performance),
         required: calcResourceBalance(requiredResources, resources, performance),
         totalRequired: calcResourceBalance(totalRequiredResources, resources, performance),
         buildRemainingSeconds: buildQueueInfo.seconds,

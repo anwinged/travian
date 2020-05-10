@@ -12,7 +12,7 @@
         </tr>
       </thead>
       <tbody>
-        <template v-for="villageState in shared.villageStates">
+        <template v-for="villageState in villageStates">
           <tr class="normal-line top-line">
             <td :class="{ active: villageState.village.active }" :title="villageState.id">
               {{ villageState.village.name }}
@@ -20,28 +20,28 @@
             <td class="right">
               <filling
                 :value="villageState.resources.lumber"
-                :max="villageState.storage.lumber"
+                :max="villageState.storage.capacity.lumber"
                 :speed="villageState.performance.lumber"
               ></filling>
             </td>
             <td class="right">
               <filling
                 :value="villageState.resources.clay"
-                :max="villageState.storage.clay"
+                :max="villageState.storage.capacity.clay"
                 :speed="villageState.performance.clay"
               ></filling>
             </td>
             <td class="right">
               <filling
                 :value="villageState.resources.iron"
-                :max="villageState.storage.iron"
+                :max="villageState.storage.capacity.iron"
                 :speed="villageState.performance.iron"
               ></filling>
             </td>
             <td class="right">
               <filling
                 :value="villageState.resources.crop"
-                :max="villageState.storage.crop"
+                :max="villageState.storage.capacity.crop"
                 :speed="villageState.performance.crop"
               ></filling>
             </td>
@@ -167,7 +167,7 @@
             <td></td>
             <td class="right" colspan="5">
               <a
-                v-for="s in shared.villageStates"
+                v-for="s in villageStates"
                 v-if="s.id !== villageState.id"
                 class="village-quick-link"
                 :class="{ active: villageState.shipment.includes(s.id) }"
@@ -218,6 +218,7 @@ export default {
   data() {
     return {
       shared: this.$root.$data,
+      villageStates: this.$root.$data.villageStates,
       activeVillageState: this.$root.$data.activeVillageState,
     };
   },
@@ -226,8 +227,8 @@ export default {
       return path(name, args);
     },
     storageTime(villageState) {
-      const toZero = villageState.storageBalance.timeToZero;
-      const toFull = villageState.storageBalance.timeToFull;
+      const toZero = villageState.storage.timeToZero;
+      const toFull = villageState.storage.timeToFull;
       return this.renderGatheringTime(toFull.never ? toZero : toFull);
     },
     marketPath(fromVillage, toVillage) {

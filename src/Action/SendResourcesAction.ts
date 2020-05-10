@@ -60,7 +60,7 @@ export class SendResourcesAction extends ActionController {
     }
 
     private getRecipientRequirements(recipientState: VillageState): Resources {
-        const maxPossibleToStore = recipientState.storage.sub(recipientState.performance);
+        const maxPossibleToStore = recipientState.storage.capacity.sub(recipientState.performance);
         const currentResources = recipientState.resources;
         const incomingResources = recipientState.incomingResources;
         const requirementResources = recipientState.required.resources;
