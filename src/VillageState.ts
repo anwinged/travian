@@ -16,14 +16,32 @@ interface StorageBalance {
 }
 
 interface RequiredResources {
+    /**
+     * Required resources (always positive)
+     */
     resources: Resources;
+    /**
+     * Balance resources (current - required), may be negative
+     */
     balance: Resources;
+    /**
+     * Time to gather all type of resources (slowest time)
+     */
     time: GatheringTime;
 }
 
 interface VillageOwnState {
+    /**
+     * Village id
+     */
     id: number;
+    /**
+     * Village object
+     */
     village: Village;
+    /**
+     * Current village resources
+     */
     resources: Resources;
     performance: Resources;
     storage: Resources;
