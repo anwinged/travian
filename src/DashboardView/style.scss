@@ -1,8 +1,8 @@
 $component-padding-x: 4px;
 $component-padding-y: 2px;
 
-$success-color: #1fb840;
-$error-color: #dc3545;
+$success-color: green;
+$error-color: red;
 $waring-color: #d49e00;
 
 @mixin with-padding {
