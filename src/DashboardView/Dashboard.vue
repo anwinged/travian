@@ -1,5 +1,5 @@
 <template>
-  <main id="dashboard">
+  <main id="dashboard" v-on:keyup.76="toggleLogs">
     <section id="dashboard-primary">
       <hdr></hdr>
       <village-state-list />
@@ -21,6 +21,7 @@ import QuickActions from './QuickActions';
 import VillageStateList from './VillageStateList';
 import LogList from './LogList';
 import { mapState } from 'vuex';
+import { Mutations } from './Store';
 export default {
   components: {
     'hdr': Header,
@@ -37,6 +38,11 @@ export default {
   computed: mapState({
     isLogsVisible: state => state.views.logs,
   }),
+  methods: {
+    toggleLogs() {
+      this.$store.commit(Mutations.toggleLogs);
+    },
+  },
 };
 </script>
 

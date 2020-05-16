@@ -1,0 +1,22 @@
+$component-padding-x: 4px;
+$component-padding-y: 2px;
+
+$success-color: #1fb840;
+$error-color: #dc3545;
+$waring-color: #d49e00;
+
+@mixin with-padding {
+  padding: $component-padding-y $component-padding-x;
+}
+
+%table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 6px auto 0;
+
+  td {
+    border-top: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+    @include with-padding
+  }
+}

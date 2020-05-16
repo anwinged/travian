@@ -3,14 +3,19 @@
     <h1 class="title">
       [{{ shared.name }}] {{ villageName }}
       <span class="version">- {{ shared.version }}</span>
-      <a href="#" v-on:click.prevent="pause()">
+    </h1>
+    <p>
+      <a href="#" v-on:click.prevent="pause">
         pause <span v-if="shared.pauseSeconds" v-text="shared.pauseSeconds"></span>
       </a>
-    </h1>
+      <a href="#" v-on:click.prevent="toggleLogs">logs</a>
+    </p>
   </section>
 </template>
 
 <script>
+import { Mutations } from './Store';
+
 export default {
   data() {
     return {
@@ -26,6 +31,9 @@ export default {
   methods: {
     pause() {
       this.shared.pause();
+    },
+    toggleLogs() {
+      this.$store.commit(Mutations.toggleLogs);
     },
   },
 };

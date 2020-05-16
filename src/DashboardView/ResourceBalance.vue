@@ -49,11 +49,12 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@import 'style';
 .good {
-  color: green;
+  color: $success-color;
 }
 .bad {
-  color: red;
+  color: $error-color;
 }
 </style>

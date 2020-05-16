@@ -41,11 +41,12 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@import 'style';
 .warning {
-  color: orange;
+  color: $waring-color;
 }
 .bad {
-  color: red;
+  color: $error-color;
 }
 </style>

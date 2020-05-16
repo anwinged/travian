@@ -59,7 +59,8 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@import 'style';
 .task-list {
   margin-top: 8px;
   margin-bottom: 8px;
@@ -72,14 +73,7 @@ export default {
   overflow-x: hidden;
 }
 .task-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 6px auto 0;
-}
-.task-item > td {
-  border-top: 1px solid #ddd;
-  border-left: 1px solid #ddd;
-  padding: 2px 4px;
+  @extend %table;
 }
 .this-village {
   color: blue;

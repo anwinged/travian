@@ -5,6 +5,7 @@ import { LogStorage } from '../Storage/LogStorage';
 export enum Mutations {
     showLogs = 'showLogs',
     hideLogs = 'hideLogs',
+    toggleLogs = 'toggleLogs',
     updateLogs = 'updateLogs',
 }
 
@@ -22,6 +23,9 @@ export function createStore() {
             },
             [Mutations.hideLogs](state) {
                 state.views.logs = false;
+            },
+            [Mutations.toggleLogs](state) {
+                state.views.logs = !state.views.logs;
             },
             [Mutations.updateLogs](state, { logs }) {
                 state.logs = logs;

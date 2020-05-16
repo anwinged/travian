@@ -1,8 +1,8 @@
 <template>
   <section class="log-list">
-    <p><strong>Logs</strong>, <a href="#" v-on:click.prevent="close">close</a></p>
+    <p class="summary"><strong>Logs</strong>, <a href="#" v-on:click.prevent="close">close</a></p>
     <table class="log-table">
-      <tr v-for="record in logs" class="log-record">
+      <tr v-for="record in logs" :class="rowClasses(record)">
         <td v-text="record.level"></td>
         <td v-text="formatDate(record.ts)"></td>
         <td v-text="record.message"></td>
@@ -23,6 +23,12 @@ export default {
     }),
   },
   methods: {
+    rowClasses(record) {
+      return {
+        error: record.level === 'error' || undefined,
+        warning: record.level === 'warn' || undefined,
+      };
+    },
     formatDate(ts) {
       const d = new Date(ts * 1000);
       return dateFormat(d, 'HH:MM:ss');
@@ -34,18 +40,23 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@import 'style';
+.summary {
+  @include with-padding;
+}
 .log-list {
   background-color: white;
 }
 .log-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 6px auto 0;
-}
-.log-record > td {
-  border-top: 1px solid #ddd;
-  border-left: 1px solid #ddd;
-  padding: 2px 4px;
+  @extend %table;
+
+  .error {
+    color: $error-color;
+  }
+
+  .warning {
+    color: $waring-color;
+  }
 }
 </style>

@@ -23,8 +23,8 @@ module.exports = (env = {}) => ({
                 },
             },
             {
-                test: /\.css$/,
-                use: ['style-loader', 'css-loader'],
+                test: /\.(c|sc|sa)ss$/i,
+                use: ['style-loader', 'css-loader', 'sass-loader'],
             },
             {
                 test: /\.vue$/,
