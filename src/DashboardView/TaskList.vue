@@ -69,9 +69,7 @@ export default {
   margin-bottom: 0;
 }
 .container {
-  overflow-y: scroll;
   overflow-x: hidden;
-  max-height: 300px;
 }
 .task-table {
   width: 100%;

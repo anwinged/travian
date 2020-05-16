@@ -11,6 +11,7 @@ import {
     showResourceSlotIds,
 } from './Page/SlotBlock';
 import Vue from 'vue';
+import Vuex from 'vuex';
 import DashboardApp from './DashboardView/Dashboard.vue';
 import { ResourcesToLevel } from './Task/ResourcesToLevel';
 import { ConsoleLogger, Logger } from './Logger';
@@ -20,6 +21,9 @@ import { ExecutionStorage } from './Storage/ExecutionStorage';
 import { VillageState, VillageStateRepository } from './VillageState';
 import { Task } from './Queue/TaskProvider';
 import { Action } from './Queue/ActionQueue';
+import { createStore } from './DashboardView/Store';
+
+Vue.use(Vuex);
 
 interface QuickAction {
     label: string;
@@ -160,6 +164,7 @@ export class ControlPanel {
         new Vue({
             el: `#${appId}`,
             data: gameState,
+            store: createStore(),
             render: h => h(DashboardApp),
         });
     }
