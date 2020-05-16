@@ -1,14 +1,15 @@
 import { Scheduler } from './Scheduler';
 import { TaskQueue } from './Queue/TaskQueue';
-import { ConsoleLogger } from './Logger';
+import { AggregateLogger, ConsoleLogger, LogLevel, StorageLogger } from './Logger';
 import { ActionQueue } from './Queue/ActionQueue';
 import { Executor } from './Executor';
 import { ControlPanel } from './ControlPanel';
 import { DataStorageTaskProvider } from './Queue/DataStorageTaskProvider';
 import { Statistics } from './Statistics';
 import { StatisticsStorage } from './Storage/StatisticsStorage';
-import { VillageRepository, VillageRepositoryInterface } from './VillageRepository';
+import { VillageRepository } from './VillageRepository';
 import { VillageStateRepository } from './VillageState';
+import { LogStorage } from './Storage/LogStorage';
 
 export class Container {
     private readonly version: string;
@@ -70,7 +71,11 @@ export class Container {
         this._executor =
             this._executor ||
             (() => {
-                return new Executor(this.version, this.scheduler, this.villageStateRepository, this.statistics);
+                const logger = new AggregateLogger([
+                    new ConsoleLogger(Executor.name),
+                    new StorageLogger(new LogStorage(), LogLevel.warning),
+                ]);
+                return new Executor(this.version, this.scheduler, this.villageStateRepository, this.statistics, logger);
             })();
         return this._executor;
     }

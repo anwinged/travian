@@ -2,7 +2,7 @@ import { markPage, sleepMicro, timestamp, waitForLoad } from './utils';
 import { AbortTaskError, ActionError, GrabError, TryLaterError, VillageNotFound } from './Errors';
 import { TaskQueueRenderer } from './TaskQueueRenderer';
 import { createActionHandler } from './Action/ActionController';
-import { ConsoleLogger, Logger } from './Logger';
+import { Logger } from './Logger';
 import { GrabberManager } from './Grabber/GrabberManager';
 import { Scheduler } from './Scheduler';
 import { Statistics } from './Statistics';
@@ -29,7 +29,8 @@ export class Executor {
         version: string,
         scheduler: Scheduler,
         villageStateRepository: VillageStateRepository,
-        statistics: Statistics
+        statistics: Statistics,
+        logger: Logger
     ) {
         this.version = version;
         this.scheduler = scheduler;
@@ -37,7 +38,7 @@ export class Executor {
         this.grabbers = new GrabberManager(scheduler);
         this.statistics = statistics;
         this.executionState = new ExecutionStorage();
-        this.logger = new ConsoleLogger(this.constructor.name);
+        this.logger = logger;
     }
 
     async run() {
