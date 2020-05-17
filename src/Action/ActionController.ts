@@ -1,5 +1,5 @@
 import { Scheduler } from '../Scheduler';
-import { AbortTaskError, TryLaterError } from '../Errors';
+import { taskError, TryLaterError } from '../Errors';
 import { grabActiveVillageId } from '../Page/VillageBlock';
 import { aroundMinutes } from '../utils';
 import { Args } from '../Queue/Args';
@@ -24,10 +24,6 @@ export function createActionHandler(
     }
     const constructor = (storedFunction as unknown) as typeof ActionController;
     return new constructor(scheduler, villageStateRepository);
-}
-
-export function taskError(msg: string): never {
-    throw new AbortTaskError(msg);
 }
 
 export class ActionController {

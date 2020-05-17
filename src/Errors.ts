@@ -35,3 +35,7 @@ export class TryLaterError extends Error {
         Object.setPrototypeOf(this, TryLaterError.prototype);
     }
 }
+
+export function taskError(msg: string): never {
+    throw new AbortTaskError(msg);
+}

@@ -1,5 +1,5 @@
-import { ActionController, taskError, registerAction } from './ActionController';
-import { TryLaterError } from '../Errors';
+import { ActionController, registerAction } from './ActionController';
+import { taskError, TryLaterError } from '../Errors';
 import { aroundMinutes, randomInRange } from '../utils';
 import { Args } from '../Queue/Args';
 import { Task } from '../Queue/TaskProvider';

@@ -1,35 +1,24 @@
 import { TaskController, ActionDefinition } from './TaskController';
-import { GoToPageAction } from '../Action/GoToPageAction';
-import { CompleteTaskAction } from '../Action/CompleteTaskAction';
 import { SendResourcesAction } from '../Action/SendResourcesAction';
 import { ClickButtonAction } from '../Action/ClickButtonAction';
-import { scanAllVillagesBundle } from './ActionBundles';
-import { Args } from '../Queue/Args';
+import { goToMarketSendResourcesPage, goToResourceViewPage } from './ActionBundles';
 import { Task } from '../Queue/TaskProvider';
-import { path } from '../Helpers/Path';
 import { registerTask } from './TaskMap';
+import { taskError } from '../Errors';
 
 @registerTask()
 export class SendResourcesTask extends TaskController {
     defineActions(task: Task): Array<ActionDefinition> {
-        return [...scanAllVillagesBundle(), ...this.sendResourcesActions(task.args)];
-    }
-
-    sendResourcesActions(args: Args): Array<ActionDefinition> {
-        const pathArgs = {
-            newdid: args.villageId,
-            gid: args.buildTypeId || undefined,
-            id: args.buildId || undefined,
-            t: args.tabId,
-        };
-
-        const pagePath = path('/build.php', pathArgs);
+        const targetVillageId = task.args.targetVillageId || taskError('Empty target village id');
+        const villageId = task.args.villageId || taskError('Empty village id');
 
         return [
-            [GoToPageAction.name, { path: pagePath }],
+            goToResourceViewPage(targetVillageId),
+            goToMarketSendResourcesPage(targetVillageId),
+            goToResourceViewPage(villageId),
+            goToMarketSendResourcesPage(villageId),
             [SendResourcesAction.name],
             [ClickButtonAction.name, { selector: '#enabledButton.green.sendRessources' }],
-            [CompleteTaskAction.name],
         ];
     }
 }

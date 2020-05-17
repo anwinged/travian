@@ -36,3 +36,8 @@ export class Village {
 }
 
 export type VillageList = Array<Village>;
+
+// export interface VillageSettings {
+//     id: number;
+//
+// }
