@@ -231,14 +231,13 @@ export default {
     villageHint(villageState) {
       const id = villageState.id;
       const name = villageState.village.name;
-      const timeout = villageState.settings.sendResourcesTimeout;
-      const threshold = villageState.settings.sendResourcesThreshold;
-      return `${name}, ${id}, отправка ${timeout} мин, порог ${threshold}`;
+      return `${name}, ${id}`;
     },
     villageStatus(villageState) {
       const timeout = villageState.settings.sendResourcesTimeout;
       const threshold = villageState.settings.sendResourcesThreshold;
-      return `отправка ${timeout} мин, порог ${threshold}`;
+      const multiplier = villageState.settings.sendResourcesMultiplier;
+      return `отправка ${timeout} мин, порог ${threshold}, множ. ${multiplier}`;
     },
     path(name, args) {
       return path(name, args);

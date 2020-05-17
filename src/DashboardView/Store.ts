@@ -14,6 +14,7 @@ export enum Mutations {
     SetVillageSettings = 'set_village_settings',
     UpdateVillageSendResourceThreshold = 'UpdateVillageSendResourceThreshold',
     UpdateVillageSendResourceTimeout = 'UpdateVillageSendResourceTimeout',
+    UpdateVillageSendResourcesMultiplier = 'UpdateVillageSendResourcesMultiplier',
 }
 
 export enum Actions {
@@ -34,6 +35,7 @@ export function createStore(villageStateRepository: VillageStateRepository) {
                 villageName: '',
                 sendResourcesThreshold: 0,
                 sendResourcesTimeout: 0,
+                sendResourcesMultiplier: 0,
             },
         },
         getters: {
@@ -66,6 +68,9 @@ export function createStore(villageStateRepository: VillageStateRepository) {
             [Mutations.UpdateVillageSendResourceTimeout](state, value) {
                 state.villageSettings.sendResourcesTimeout = getNumber(value);
             },
+            [Mutations.UpdateVillageSendResourcesMultiplier](state, value) {
+                state.villageSettings.sendResourcesMultiplier = getNumber(value);
+            },
         },
         actions: {
             [Actions.OpenVillageEditor]({ commit }, { villageId }) {
@@ -76,6 +81,7 @@ export function createStore(villageStateRepository: VillageStateRepository) {
                     villageName: state.village.name,
                     sendResourcesThreshold: settings.sendResourcesThreshold,
                     sendResourcesTimeout: settings.sendResourcesTimeout,
+                    sendResourcesMultiplier: settings.sendResourcesMultiplier,
                 });
                 commit(Mutations.ToggleVillageEditor, true);
             },
@@ -87,6 +93,9 @@ export function createStore(villageStateRepository: VillageStateRepository) {
                         state.villageSettings.sendResourcesThreshold || VillageSettingsDefaults.sendResourcesThreshold,
                     sendResourcesTimeout:
                         state.villageSettings.sendResourcesTimeout || VillageSettingsDefaults.sendResourcesTimeout,
+                    sendResourcesMultiplier:
+                        state.villageSettings.sendResourcesMultiplier ||
+                        VillageSettingsDefaults.sendResourcesMultiplier,
                 };
                 const storage = new VillageStorage(villageId);
                 storage.storeSettings(newSettings);

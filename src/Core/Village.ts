@@ -40,9 +40,11 @@ export type VillageList = Array<Village>;
 export interface VillageSettings {
     sendResourcesThreshold: number;
     sendResourcesTimeout: number;
+    sendResourcesMultiplier: number;
 }
 
 export const VillageSettingsDefaults: VillageSettings = {
     sendResourcesTimeout: 15,
     sendResourcesThreshold: 100,
+    sendResourcesMultiplier: 10,
 } as const;

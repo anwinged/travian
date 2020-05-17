@@ -118,4 +118,33 @@ export class Resources implements ResourcesInterface {
     empty(): boolean {
         return this.eq(Resources.zero());
     }
+
+    upTo(multiplier: number): Resources {
+        const upper = (v: number) => {
+            if (v === 0) {
+                return v;
+            }
+            if (v % multiplier === 0) {
+                return v;
+            }
+            return (Math.floor(v / multiplier) + 1) * multiplier;
+        };
+
+        return new Resources(upper(this.lumber), upper(this.clay), upper(this.iron), upper(this.crop));
+    }
+
+    downTo(multiplier: number): Resources {
+        const lower = (v: number) => {
+            if (v === 0) {
+                return v;
+            }
+            if (v % multiplier === 0) {
+                return v;
+            }
+            const part = Math.floor(v / multiplier);
+            return part * multiplier;
+        };
+
+        return new Resources(lower(this.lumber), lower(this.clay), lower(this.iron), lower(this.crop));
+    }
 }

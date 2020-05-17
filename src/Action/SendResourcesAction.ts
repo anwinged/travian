@@ -92,23 +92,28 @@ export class SendResourcesAction extends ActionController {
     }
 
     private getResourcesForTransfer(senderState: VillageState, recipientState: VillageState): Resources {
+        const multiplier = senderState.settings.sendResourcesMultiplier;
         const timeout = senderState.settings.sendResourcesTimeout;
-        const senderReadySendResources = this.getSenderAvailableResources(senderState);
-        const recipientNeedsResources = this.getRecipientRequirements(recipientState, timeout);
-        const contractResources = senderReadySendResources.min(recipientNeedsResources);
+        const senderReadyResources = this.getSenderAvailableResources(senderState).downTo(multiplier);
+        const recipientNeedResources = this.getRecipientRequirements(recipientState, timeout).upTo(multiplier);
+        const contractResources = senderReadyResources.min(recipientNeedResources);
         const merchantsCapacity = this.getMerchantsCapacity(timeout);
 
         let readyToTransfer = contractResources;
         if (contractResources.amount() > merchantsCapacity) {
             const merchantScale = merchantsCapacity / contractResources.amount();
-            readyToTransfer = contractResources.scale(merchantScale);
+            readyToTransfer = contractResources.scale(merchantScale).downTo(multiplier);
+        }
+
+        if (readyToTransfer.empty()) {
+            throw new TryLaterError(aroundMinutes(timeout), 'Not enough resources to transfer');
         }
 
         console.log('Merchants capacity', merchantsCapacity);
 
         console.table([
-            { name: 'Sender', ...senderReadySendResources },
-            { name: 'Recipient', ...recipientNeedsResources },
+            { name: 'Sender', ...senderReadyResources },
+            { name: 'Recipient', ...recipientNeedResources },
             { name: 'Prepared', ...contractResources },
             { name: 'Ready to transfer', ...readyToTransfer },
         ]);
