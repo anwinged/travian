@@ -8,8 +8,9 @@
       <hr class="separator" />
       <task-list />
     </section>
-    <section id="dashboard-secondary">
+    <section id="dashboard-secondary" v-if="isSecondaryDashboardVisible">
       <log-list v-if="isLogsVisible" />
+      <village-editor v-if="isVillageEditorVisible" />
     </section>
   </main>
 </template>
@@ -22,8 +23,10 @@ import VillageStateList from './VillageStateList';
 import LogList from './LogList';
 import { mapState } from 'vuex';
 import { Mutations } from './Store';
+import VillageEditor from './VillageEditor';
 export default {
   components: {
+    'village-editor': VillageEditor,
     'hdr': Header,
     'task-list': TaskList,
     'quick-actions': QuickActions,
@@ -35,9 +38,15 @@ export default {
       shared: this.$root.$data,
     };
   },
-  computed: mapState({
-    isLogsVisible: state => state.views.logs,
-  }),
+  computed: {
+    ...mapState({
+      isLogsVisible: state => state.views.logs,
+      isVillageEditorVisible: state => state.views.villageEditor,
+    }),
+    isSecondaryDashboardVisible() {
+      return this.isLogsVisible || this.isVillageEditorVisible;
+    },
+  },
   methods: {
     toggleLogs() {
       this.$store.commit(Mutations.toggleLogs);

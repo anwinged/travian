@@ -8,9 +8,6 @@ import { Task } from '../Queue/TaskProvider';
 import { clickSendButton, fillSendResourcesForm, grabMerchantsInfo } from '../Page/BuildingPage/MarketPage';
 import { VillageState } from '../VillageState';
 
-const TIMEOUT = 15;
-const AMOUNT_THRESHOLD = 100;
-
 @registerAction
 export class SendResourcesAction extends ActionController {
     async run(args: Args, task: Task): Promise<any> {
@@ -29,17 +26,18 @@ export class SendResourcesAction extends ActionController {
         console.log('To transfer res', readyToTransfer);
 
         // Schedule recurrent task
-        this.scheduler.scheduleTask(task.name, task.args, timestamp() + aroundMinutes(TIMEOUT));
+        const timeout = senderVillage.settings.sendResourcesTimeout;
+        this.scheduler.scheduleTask(task.name, task.args, timestamp() + aroundMinutes(timeout));
 
         fillSendResourcesForm(readyToTransfer, coordinates);
         clickSendButton();
     }
 
-    private getMerchantsCapacity(): number {
+    private getMerchantsCapacity(timeout: number): number {
         const merchants = grabMerchantsInfo();
         const capacity = merchants.available * merchants.carry;
         if (!capacity) {
-            throw new TryLaterError(aroundMinutes(TIMEOUT), 'No merchants');
+            throw new TryLaterError(aroundMinutes(timeout), 'No merchants');
         }
         return capacity;
     }
@@ -53,13 +51,21 @@ export class SendResourcesAction extends ActionController {
             { name: 'Sender free', ...free },
         ]);
 
-        if (free.amount() < AMOUNT_THRESHOLD) {
-            throw new TryLaterError(aroundMinutes(TIMEOUT), 'Little free resources');
+        const amount = free.amount();
+        const threshold = senderState.settings.sendResourcesThreshold;
+        const timeout = senderState.settings.sendResourcesTimeout;
+
+        if (amount < threshold) {
+            throw new TryLaterError(
+                aroundMinutes(timeout),
+                `No free resources (amount ${amount} < threshold ${threshold})`
+            );
         }
+
         return free;
     }
 
-    private getRecipientRequirements(recipientState: VillageState): Resources {
+    private getRecipientRequirements(recipientState: VillageState, timeout: number): Resources {
         const maxPossibleToStore = recipientState.storage.capacity.sub(recipientState.performance);
         const currentResources = recipientState.resources;
         const incomingResources = recipientState.incomingResources;
@@ -79,17 +85,18 @@ export class SendResourcesAction extends ActionController {
         ]);
 
         if (missingResources.empty()) {
-            throw new TryLaterError(aroundMinutes(TIMEOUT), 'No missing resources');
+            throw new TryLaterError(aroundMinutes(timeout), 'No missing resources');
         }
 
         return missingResources;
     }
 
     private getResourcesForTransfer(senderState: VillageState, recipientState: VillageState): Resources {
+        const timeout = senderState.settings.sendResourcesTimeout;
         const senderReadySendResources = this.getSenderAvailableResources(senderState);
-        const recipientNeedsResources = this.getRecipientRequirements(recipientState);
+        const recipientNeedsResources = this.getRecipientRequirements(recipientState, timeout);
         const contractResources = senderReadySendResources.min(recipientNeedsResources);
-        const merchantsCapacity = this.getMerchantsCapacity();
+        const merchantsCapacity = this.getMerchantsCapacity(timeout);
 
         let readyToTransfer = contractResources;
         if (contractResources.amount() > merchantsCapacity) {

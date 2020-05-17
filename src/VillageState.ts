@@ -1,4 +1,4 @@
-import { Village } from './Core/Village';
+import { Village, VillageSettings } from './Core/Village';
 import { Scheduler } from './Scheduler';
 import { Resources } from './Core/Resources';
 import { VillageStorage } from './Storage/VillageStorage';
@@ -55,6 +55,7 @@ interface VillageOwnState {
     totalRequired: RequiredResources;
     incomingResources: Resources;
     buildRemainingSeconds: number;
+    settings: VillageSettings;
 }
 
 interface VillageOwnStateDictionary {
@@ -124,6 +125,7 @@ function createVillageOwnState(village: Village, scheduler: Scheduler): VillageO
         totalRequired: calcResourceBalance(totalRequiredResources, resources, performance),
         buildRemainingSeconds: buildQueueInfo.seconds,
         incomingResources: calcIncomingResources(storage),
+        settings: storage.getSettings(),
     };
 }
 

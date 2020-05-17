@@ -155,16 +155,16 @@ export class ControlPanel {
             buildPage.run();
         }
 
-        this.createControlPanel(state);
+        this.createControlPanel(state, villageStateRepository);
     }
 
-    private createControlPanel(gameState: GameState) {
+    private createControlPanel(gameState: GameState, villageStateRepository: VillageStateRepository) {
         const appId = `app-${uniqId()}`;
         jQuery('body').prepend(`<div id="${appId}"></div>`);
         new Vue({
             el: `#${appId}`,
             data: gameState,
-            store: createStore(),
+            store: createStore(villageStateRepository),
             render: h => h(DashboardApp),
         });
     }

@@ -37,7 +37,12 @@ export class Village {
 
 export type VillageList = Array<Village>;
 
-// export interface VillageSettings {
-//     id: number;
-//
-// }
+export interface VillageSettings {
+    sendResourcesThreshold: number;
+    sendResourcesTimeout: number;
+}
+
+export const VillageSettingsDefaults: VillageSettings = {
+    sendResourcesTimeout: 15,
+    sendResourcesThreshold: 100,
+} as const;

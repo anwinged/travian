@@ -14,8 +14,9 @@
       <tbody>
         <template v-for="villageState in shared.villageStates">
           <tr class="normal-line top-line">
-            <td :class="{ active: villageState.village.active }" :title="villageState.id">
+            <td :class="{ active: villageState.village.active }" :title="villageHint(villageState)">
               {{ villageState.village.name }}
+              (<a href="#" v-on:click.prevent="openEditor(villageState.id)">ред</a>)
             </td>
             <td class="right">
               <filling
@@ -199,6 +200,7 @@ import ResourceBalance from './ResourceBalance';
 import VillageResource from './VillageResource';
 import { COLLECTION_POINT_ID, HORSE_STABLE_ID, MARKET_ID, QUARTERS_ID } from '../Core/Buildings';
 import { path } from '../Helpers/Path';
+import { Actions } from './Store';
 
 function secondsToTime(value) {
   if (value === 0) {
@@ -221,6 +223,13 @@ export default {
     };
   },
   methods: {
+    villageHint(villageState) {
+      const id = villageState.id;
+      const name = villageState.village.name;
+      const timeout = villageState.settings.sendResourcesTimeout;
+      const threshold = villageState.settings.sendResourcesThreshold;
+      return `${name}, ${id}, отправка ${timeout} мин, порог ${threshold}`;
+    },
     path(name, args) {
       return path(name, args);
     },
@@ -273,6 +282,9 @@ export default {
     },
     dropResourceTransferTasks(fromVillageId, toVillageId) {
       this.shared.dropResourceTransferTasks(fromVillageId, toVillageId);
+    },
+    openEditor(villageId) {
+      this.$store.dispatch(Actions.OpenVillageEditor, { villageId });
     },
   },
 };

@@ -3,12 +3,14 @@ import { BuildingQueueInfo } from '../Game';
 import { Resources, ResourcesInterface } from '../Core/Resources';
 import { ResourceStorage } from '../Core/ResourceStorage';
 import { IncomingMerchant } from '../Core/Market';
+import { VillageSettings, VillageSettingsDefaults } from '../Core/Village';
 
 const RESOURCES_KEY = 'res';
 const CAPACITY_KEY = 'cap';
 const PERFORMANCE_KEY = 'perf';
 const BUILDING_QUEUE_KEY = 'bq';
 const INCOMING_MERCHANTS_KEY = 'im';
+const SETTINGS_KEY = 'settings';
 
 const ResourceOptions = {
     factory: () => new Resources(0, 0, 0, 0),
@@ -73,5 +75,15 @@ export class VillageStorage {
             const norm = plain as ResourcesInterface & { ts: number };
             return new IncomingMerchant(Resources.fromObject(norm), Number(norm.ts || 0));
         });
+    }
+
+    getSettings(): VillageSettings {
+        return this.storage.getTyped<VillageSettings>(SETTINGS_KEY, {
+            factory: () => Object.assign({}, VillageSettingsDefaults),
+        });
+    }
+
+    storeSettings(settings: VillageSettings) {
+        this.storage.set(SETTINGS_KEY, settings);
     }
 }
