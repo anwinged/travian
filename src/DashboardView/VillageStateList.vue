@@ -189,6 +189,11 @@
               <a class="village-quick-link" :href="collectionPointPath(villageState.village)">Войска</a>
             </td>
           </tr>
+
+          <tr class="normal-line">
+            <td></td>
+            <td class="right" colspan="5" v-text="villageStatus(villageState)"></td>
+          </tr>
         </template>
       </tbody>
     </table>
@@ -229,6 +234,11 @@ export default {
       const timeout = villageState.settings.sendResourcesTimeout;
       const threshold = villageState.settings.sendResourcesThreshold;
       return `${name}, ${id}, отправка ${timeout} мин, порог ${threshold}`;
+    },
+    villageStatus(villageState) {
+      const timeout = villageState.settings.sendResourcesTimeout;
+      const threshold = villageState.settings.sendResourcesThreshold;
+      return `отправка ${timeout} мин, порог ${threshold}`;
     },
     path(name, args) {
       return path(name, args);
