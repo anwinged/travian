@@ -4,18 +4,17 @@ import { GoToPageAction } from '../Action/GoToPageAction';
 import { Task } from '../Queue/TaskProvider';
 import { path } from '../Helpers/Path';
 import { registerTask, TaskType } from './TaskMap';
+import { goToResourceViewPage } from './ActionBundles';
+import { taskError } from '../Errors';
 
 @registerTask({ type: TaskType.Building })
 export class UpgradeBuildingTask extends TaskController {
     defineActions(task: Task): Array<ActionDefinition> {
         const args = task.args;
+        const villageId = args.villageId || taskError('No village id');
+
         return [
-            [
-                GoToPageAction.name,
-                {
-                    path: path('/dorf1.php', { newdid: args.villageId }),
-                },
-            ],
+            goToResourceViewPage(villageId),
             [
                 GoToPageAction.name,
                 {
