@@ -1,5 +1,5 @@
 import { ActionController, registerAction } from './ActionController';
-import { AbortTaskError, ActionError, TryLaterError } from '../Errors';
+import { AbortTaskError, ActionError, taskError, TryLaterError } from '../Errors';
 import { grabResourceDeposits } from '../Page/SlotBlock';
 import { UpgradeBuildingTask } from '../Task/UpgradeBuildingTask';
 import { ResourceDeposit } from '../Game';
@@ -15,10 +15,7 @@ export class UpgradeResourceToLevel extends ActionController {
             throw new ActionError('No deposits');
         }
 
-        const villageId = args.villageId;
-        if (villageId === undefined) {
-            throw new AbortTaskError('No village id');
-        }
+        const villageId = args.villageId || taskError('No village id');
 
         const requiredLevel = getNumber(args.level);
 

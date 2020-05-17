@@ -1,5 +1,5 @@
 import { markPage, sleepMicro, timestamp, waitForLoad } from './utils';
-import { AbortTaskError, ActionError, GrabError, TryLaterError, VillageNotFound } from './Errors';
+import { AbortTaskError, ActionError, FailTaskError, GrabError, TryLaterError, VillageNotFound } from './Errors';
 import { TaskQueueRenderer } from './TaskQueueRenderer';
 import { createActionHandler } from './Action/ActionController';
 import { Logger } from './Logger';
@@ -134,7 +134,7 @@ export class Executor {
         this.scheduler.clearActions();
 
         if (err instanceof AbortTaskError) {
-            this.logger.warn('Abort task', task.id, 'MSG', err.message);
+            this.logger.warn('Abort task', task.id, 'msg', err.message);
             this.scheduler.removeTask(task.id);
             return;
         }
@@ -151,13 +151,19 @@ export class Executor {
             return;
         }
 
+        if (err instanceof FailTaskError) {
+            this.logger.error('Fail task', task.id, 'msg', err.message);
+            this.scheduler.removeTask(task.id);
+            return;
+        }
+
         if (err instanceof GrabError) {
             this.logger.error('Layout element not found, abort action', err.message);
             return;
         }
 
         if (err instanceof ActionError) {
-            this.logger.error('Abort action', err.message);
+            this.logger.error('Action error', err.message);
             return;
         }
 

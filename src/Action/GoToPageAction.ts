@@ -1,14 +1,12 @@
 import { ActionController, registerAction } from './ActionController';
-import { AbortTaskError } from '../Errors';
+import { taskError } from '../Errors';
 import { Args } from '../Queue/Args';
 import { Task } from '../Queue/TaskProvider';
 
 @registerAction
 export class GoToPageAction extends ActionController {
     async run(args: Args, task: Task): Promise<any> {
-        if (!args.path) {
-            throw new AbortTaskError('No path');
-        }
-        window.location.assign(args.path);
+        const path = args.path || taskError('Empty path');
+        window.location.assign(path);
     }
 }
