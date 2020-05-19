@@ -63,6 +63,10 @@ interface VillageOwnState {
      */
     required: ResourceLineState;
     /**
+     * Required resources for first tasks in production queues
+     */
+    frontierRequired: ResourceLineState;
+    /**
      * Required resources for all tasks
      */
     totalRequired: ResourceLineState;
@@ -154,15 +158,15 @@ function createAllProductionQueueStates(villageId: number, storage: VillageStora
     return result;
 }
 
-// function firstTaskRequirements(villageId: number, scheduler: Scheduler): Resources {
-//     let result = Resources.zero();
-//     for (let queue of Object.keys(ProductionQueue)) {
-//         const tasks = scheduler.getProductionQueueTasks(villageId, queue as ProductionQueue);
-//         const firstTaskResources = tasks.filter(() => true).reduce(taskResourceReducer, Resources.zero());
-//         result = result.add(firstTaskResources);
-//     }
-//     return result;
-// }
+function calcFrontierResources(villageId: number, scheduler: Scheduler): Resources {
+    let result = Resources.zero();
+    for (let queue of ProductionQueueTypes) {
+        const tasks = scheduler.getProductionQueueTasks(villageId, queue);
+        const firstTaskResources = tasks.slice(0, 1).reduce(taskResourceReducer, Resources.zero());
+        result = result.add(firstTaskResources);
+    }
+    return result;
+}
 
 function createVillageOwnState(village: Village, scheduler: Scheduler): VillageOwnState {
     const storage = new VillageStorage(village.id);
@@ -171,6 +175,7 @@ function createVillageOwnState(village: Village, scheduler: Scheduler): VillageO
     const performance = storage.getResourcesPerformance();
     const buildQueueInfo = storage.getBuildingQueueInfo();
     const requiredResources = scheduler.getVillageRequiredResources(village.id);
+    const frontierResources = calcFrontierResources(village.id, scheduler);
     const totalRequiredResources = scheduler.getTotalVillageRequiredResources(village.id);
 
     return {
@@ -180,6 +185,7 @@ function createVillageOwnState(village: Village, scheduler: Scheduler): VillageO
         performance,
         storage: calcStorageBalance(resources, Resources.fromStorage(resourceStorage), performance),
         required: calcResourceBalance(requiredResources, resources, performance),
+        frontierRequired: calcResourceBalance(frontierResources, resources, performance),
         totalRequired: calcResourceBalance(totalRequiredResources, resources, performance),
         buildRemainingSeconds: buildQueueInfo.seconds,
         incomingResources: calcIncomingResources(storage),

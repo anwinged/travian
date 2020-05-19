@@ -120,23 +120,6 @@
             <td class="right" v-text="renderGatheringTime(villageState.required.time)"></td>
           </tr>
 
-          <tr class="required-line">
-            <td class="right">Баланс очереди:</td>
-            <td class="right">
-              <resource :value="villageState.totalRequired.balance.lumber"></resource>
-            </td>
-            <td class="right">
-              <resource :value="villageState.totalRequired.balance.clay"></resource>
-            </td>
-            <td class="right">
-              <resource :value="villageState.totalRequired.balance.iron"></resource>
-            </td>
-            <td class="right">
-              <resource :value="villageState.totalRequired.balance.crop"></resource>
-            </td>
-            <td class="right" v-text="renderGatheringTime(villageState.totalRequired.time)"></td>
-          </tr>
-
           <tr v-for="queueState of villageState.queues" v-if="queueState.active" class="required-line">
             <td class="right">{{ queueTitle(queueState.queue) }}:</td>
             <td class="right">
@@ -152,6 +135,40 @@
               <resource :value="queueState.firstTask.balance.crop"></resource>
             </td>
             <td class="right" v-text="renderGatheringTime(queueState.firstTask.time)"></td>
+          </tr>
+
+          <tr class="required-line">
+            <td class="right">Баланс фронтира:</td>
+            <td class="right">
+              <resource :value="villageState.frontierRequired.balance.lumber"></resource>
+            </td>
+            <td class="right">
+              <resource :value="villageState.frontierRequired.balance.clay"></resource>
+            </td>
+            <td class="right">
+              <resource :value="villageState.frontierRequired.balance.iron"></resource>
+            </td>
+            <td class="right">
+              <resource :value="villageState.frontierRequired.balance.crop"></resource>
+            </td>
+            <td class="right" v-text="renderGatheringTime(villageState.frontierRequired.time)"></td>
+          </tr>
+
+          <tr class="required-line">
+            <td class="right">Баланс очереди:</td>
+            <td class="right">
+              <resource :value="villageState.totalRequired.balance.lumber"></resource>
+            </td>
+            <td class="right">
+              <resource :value="villageState.totalRequired.balance.clay"></resource>
+            </td>
+            <td class="right">
+              <resource :value="villageState.totalRequired.balance.iron"></resource>
+            </td>
+            <td class="right">
+              <resource :value="villageState.totalRequired.balance.crop"></resource>
+            </td>
+            <td class="right" v-text="renderGatheringTime(villageState.totalRequired.time)"></td>
           </tr>
 
           <tr class="commitments-line" v-if="!villageState.commitments.empty()">
