@@ -1,4 +1,4 @@
-import { elClassId, getNumber, uniqId } from '../../utils';
+import { getNumber, uniqId } from '../../utils';
 import { Resources } from '../../Core/Resources';
 import { grabResourcesFromList } from './BuildingPage';
 import { GrabError } from '../../Errors';
@@ -46,4 +46,9 @@ function createCelebrationButton($blockEl: JQuery, idx: number, onClickHandler: 
 function grabResources($blockEl: JQuery) {
     const $resEls = $blockEl.find('.resourceWrapper .resource');
     return grabResourcesFromList($resEls);
+}
+
+export function grabRemainingSeconds(): number {
+    const $el = jQuery('.under_progress .timer');
+    return getNumber($el.attr('value'));
 }

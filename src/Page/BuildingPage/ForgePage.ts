@@ -78,3 +78,8 @@ export function grabImprovementContracts(): Array<ImprovementContract> {
     });
     return result;
 }
+
+export function grabRemainingSeconds(): number {
+    const $el = jQuery('.under_progress .timer');
+    return getNumber($el.attr('value'));
+}

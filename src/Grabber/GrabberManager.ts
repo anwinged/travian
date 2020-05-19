@@ -5,7 +5,8 @@ import { HeroPageGrabber } from './HeroPageGrabber';
 import { MarketPageGrabber } from './MarketPageGrabber';
 import { Scheduler } from '../Scheduler';
 import { BuildingContractGrabber } from './BuildingContractGrabber';
-import { ForgeContractGrabber } from './ForgeContractGrabber';
+import { ForgePageGrabber } from './ForgePageGrabber';
+import { GuildHallPageGrabber } from './GuildHallPageGrabber';
 
 export class GrabberManager {
     private readonly grabbers: Array<Grabber> = [];
@@ -17,7 +18,8 @@ export class GrabberManager {
         this.grabbers.push(new HeroPageGrabber(scheduler));
         this.grabbers.push(new MarketPageGrabber(scheduler));
         this.grabbers.push(new BuildingContractGrabber(scheduler));
-        this.grabbers.push(new ForgeContractGrabber(scheduler));
+        this.grabbers.push(new ForgePageGrabber(scheduler));
+        this.grabbers.push(new GuildHallPageGrabber(scheduler));
     }
 
     grab() {
