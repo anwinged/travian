@@ -8,15 +8,16 @@
           <th class="right">Глина</th>
           <th class="right">Железо</th>
           <th class="right">Зерно</th>
-          <th class="right">Время</th>
+          <th class="right" title="Время до окончания добычи необходимых ресурсов">Рес.</th>
+          <th class="right" title="Время до окончания выполнения текущей задачи">Очередь</th>
         </tr>
       </thead>
       <tbody>
         <template v-for="villageState in shared.villageStates">
           <tr class="normal-line top-line">
-            <td :class="{ active: villageState.village.active }" :title="villageHint(villageState)">
+            <td class="right" :class="{ active: villageState.village.active }" :title="villageHint(villageState)">
               {{ villageState.village.name }}
-              (<a href="#" v-on:click.prevent="openEditor(villageState.id)">ред</a>)
+              [<a href="#" v-on:click.prevent="openEditor(villageState.id)">ред</a>]:
             </td>
             <td class="right">
               <filling
@@ -47,6 +48,7 @@
               ></filling>
             </td>
             <td class="right" v-text="storageTime(villageState)"></td>
+            <td></td>
           </tr>
 
           <tr class="performance-line">
@@ -63,6 +65,7 @@
             <td class="right">
               <resource :value="villageState.performance.crop"></resource>
             </td>
+            <td></td>
             <td></td>
           </tr>
 
@@ -100,112 +103,57 @@
                 :sign="false"
               ></resource>
             </td>
-            <td class="right" v-text="renderTimeInSeconds(villageState.buildRemainingSeconds)"></td>
-          </tr>
-
-          <tr class="required-line">
-            <td class="right">Баланс задачи:</td>
-            <td class="right">
-              <resource :value="villageState.required.balance.lumber"></resource>
-            </td>
-            <td class="right">
-              <resource :value="villageState.required.balance.clay"></resource>
-            </td>
-            <td class="right">
-              <resource :value="villageState.required.balance.iron"></resource>
-            </td>
-            <td class="right">
-              <resource :value="villageState.required.balance.crop"></resource>
-            </td>
-            <td class="right" v-text="renderGatheringTime(villageState.required.time)"></td>
-          </tr>
-
-          <tr v-for="queueState of villageState.queues" v-if="queueState.active" class="required-line">
-            <td class="right">{{ queueTitle(queueState.queue) }}:</td>
-            <td class="right">
-              <resource :value="queueState.firstTask.balance.lumber"></resource>
-            </td>
-            <td class="right">
-              <resource :value="queueState.firstTask.balance.clay"></resource>
-            </td>
-            <td class="right">
-              <resource :value="queueState.firstTask.balance.iron"></resource>
-            </td>
-            <td class="right">
-              <resource :value="queueState.firstTask.balance.crop"></resource>
-            </td>
-            <td class="right" v-text="renderGatheringTime(queueState.firstTask.time)"></td>
-          </tr>
-
-          <tr class="required-line">
-            <td class="right">Баланс фронтира:</td>
-            <td class="right">
-              <resource :value="villageState.frontierRequired.balance.lumber"></resource>
-            </td>
-            <td class="right">
-              <resource :value="villageState.frontierRequired.balance.clay"></resource>
-            </td>
-            <td class="right">
-              <resource :value="villageState.frontierRequired.balance.iron"></resource>
-            </td>
-            <td class="right">
-              <resource :value="villageState.frontierRequired.balance.crop"></resource>
-            </td>
-            <td class="right" v-text="renderGatheringTime(villageState.frontierRequired.time)"></td>
-          </tr>
-
-          <tr class="required-line">
-            <td class="right">Баланс очереди:</td>
-            <td class="right">
-              <resource :value="villageState.totalRequired.balance.lumber"></resource>
-            </td>
-            <td class="right">
-              <resource :value="villageState.totalRequired.balance.clay"></resource>
-            </td>
-            <td class="right">
-              <resource :value="villageState.totalRequired.balance.iron"></resource>
-            </td>
-            <td class="right">
-              <resource :value="villageState.totalRequired.balance.crop"></resource>
-            </td>
-            <td class="right" v-text="renderGatheringTime(villageState.totalRequired.time)"></td>
-          </tr>
-
-          <tr class="commitments-line" v-if="!villageState.commitments.empty()">
-            <td class="right">Обязательства:</td>
-            <td class="right">
-              <resource :value="villageState.commitments.lumber" :hide-zero="true"></resource>
-            </td>
-            <td class="right">
-              <resource :value="villageState.commitments.clay" :hide-zero="true"></resource>
-            </td>
-            <td class="right">
-              <resource :value="villageState.commitments.iron" :hide-zero="true"></resource>
-            </td>
-            <td class="right">
-              <resource :value="villageState.commitments.crop" :hide-zero="true"></resource>
-            </td>
+            <td></td>
             <td></td>
           </tr>
-          <tr class="incoming-line" v-if="!villageState.incomingResources.empty()">
-            <td class="right">Торговцы:</td>
-            <td class="right">
-              <resource :value="villageState.incomingResources.lumber" :hide-zero="true"></resource>
-            </td>
-            <td class="right">
-              <resource :value="villageState.incomingResources.clay" :hide-zero="true"></resource>
-            </td>
-            <td class="right">
-              <resource :value="villageState.incomingResources.iron" :hide-zero="true"></resource>
-            </td>
-            <td class="right">
-              <resource :value="villageState.incomingResources.crop" :hide-zero="true"></resource>
-            </td>
-            <td></td>
-          </tr>
+
+          <resource-line
+            :title="'Баланс задачи:'"
+            :resources="villageState.required.balance"
+            :time1="renderGatheringTime(villageState.required.time)"
+          />
+
+          <resource-line
+            v-for="queueState of villageState.queues"
+            v-bind:key="villageState.id + queueState.queue"
+            v-if="queueState.isActive"
+            :title="queueTitle(queueState.queue) + ' (' + queueState.taskCount + '):'"
+            :hint="'Задач в очереди: ' + queueState.taskCount"
+            :resources="queueState.firstTask.balance"
+            :time1="renderGatheringTime(queueState.firstTask.time)"
+            :time2="renderTimeInSeconds(queueState.currentTaskFinishSeconds)"
+          />
+
+          <resource-line
+            :title="'Баланс фронтира:'"
+            :hint="'Баланс первых задач во всех производственных очередях'"
+            :resources="villageState.frontierRequired.balance"
+            :time1="renderGatheringTime(villageState.frontierRequired.time)"
+          />
+
+          <resource-line
+            :title="'Баланс очереди:'"
+            :hint="'Баланс всех задач деревни в очереди'"
+            :resources="villageState.totalRequired.balance"
+            :time1="renderGatheringTime(villageState.totalRequired.time)"
+          />
+
+          <resource-line
+            :title="'Обязательства:'"
+            :resources="villageState.commitments"
+            :hide-zero="true"
+            v-if="!villageState.commitments.empty()"
+          />
+
+          <resource-line
+            :title="'Торговцы:'"
+            :resources="villageState.incomingResources"
+            :hide-zero="true"
+            v-if="!villageState.incomingResources.empty()"
+          />
+
           <tr class="normal-line">
-            <td></td>
-            <td class="right" colspan="5">
+            <td class="right" colspan="7">
               <a
                 v-for="s in shared.villageStates"
                 v-if="s.id !== villageState.id"
@@ -230,8 +178,7 @@
           </tr>
 
           <tr class="normal-line">
-            <td></td>
-            <td class="right" colspan="5" v-text="villageStatus(villageState)"></td>
+            <td class="right" colspan="7" v-text="villageStatus(villageState)"></td>
           </tr>
         </template>
       </tbody>
@@ -246,6 +193,7 @@ import { COLLECTION_POINT_ID, HORSE_STABLE_ID, MARKET_ID, QUARTERS_ID } from '..
 import { path } from '../Helpers/Path';
 import { Actions } from './Store';
 import { translateProductionQueue } from '../Core/ProductionQueue';
+import VillageStateResourceLine from './VillageStateResourceLine';
 
 function secondsToTime(value) {
   if (value === 0) {
@@ -259,8 +207,9 @@ function secondsToTime(value) {
 
 export default {
   components: {
-    resource: ResourceBalance,
-    filling: VillageResource,
+    'resource': ResourceBalance,
+    'filling': VillageResource,
+    'resource-line': VillageStateResourceLine,
   },
   data() {
     return {

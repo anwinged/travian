@@ -7,6 +7,7 @@ import { VillageRepositoryInterface } from './VillageRepository';
 import { VillageNotFound } from './Errors';
 import { ProductionQueue, ProductionQueueTypes } from './Core/ProductionQueue';
 import { Task } from './Queue/TaskProvider';
+import { timestamp } from './utils';
 
 interface VillageStorageState {
     resources: Resources;
@@ -37,10 +38,12 @@ interface ResourceLineState {
 
 interface VillageProductionQueueState {
     queue: ProductionQueue;
-    active: boolean;
-    ts: number;
+    isActive: boolean;
+    currentTaskFinishTimestamp: number;
+    currentTaskFinishSeconds: number;
     firstTask: ResourceLineState;
     allTasks: ResourceLineState;
+    taskCount: number;
 }
 
 interface VillageOwnState {
@@ -140,13 +143,16 @@ function createProductionQueueState(
 
     const firstTaskResources = tasks.slice(0, 1).reduce(taskResourceReducer, Resources.zero());
     const allTaskResources = tasks.reduce(taskResourceReducer, Resources.zero());
+    const taskEndingTimestamp = storage.getQueueTaskEnding(queue);
 
     return {
         queue,
-        active: tasks.length !== 0,
-        ts: storage.getQueueTaskEnding(queue),
+        isActive: tasks.length !== 0 || taskEndingTimestamp !== 0,
+        currentTaskFinishTimestamp: taskEndingTimestamp,
+        currentTaskFinishSeconds: taskEndingTimestamp ? taskEndingTimestamp - timestamp() : 0,
         firstTask: calcResourceBalance(firstTaskResources, resources, performance),
         allTasks: calcResourceBalance(allTaskResources, resources, performance),
+        taskCount: tasks.length,
     };
 }
 
