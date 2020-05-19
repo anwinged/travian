@@ -3,11 +3,12 @@ import { GoToPageAction } from '../Action/GoToPageAction';
 import { ActionDefinition, TaskController } from './TaskController';
 import { Task } from '../Queue/TaskProvider';
 import { path } from '../Helpers/Path';
-import { registerTask, TaskType } from './TaskMap';
+import { registerTask } from './TaskMap';
 import { taskError } from '../Errors';
 import { goToResourceViewPage } from './ActionBundles';
+import { ProductionQueue } from '../Core/ProductionQueue';
 
-@registerTask({ type: TaskType.Building })
+@registerTask({ queue: ProductionQueue.Building })
 export class BuildBuildingTask extends TaskController {
     defineActions(task: Task): Array<ActionDefinition> {
         const args = task.args;

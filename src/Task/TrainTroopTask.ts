@@ -4,9 +4,10 @@ import { CompleteTaskAction } from '../Action/CompleteTaskAction';
 import { TrainTrooperAction } from '../Action/TrainTrooperAction';
 import { Task } from '../Queue/TaskProvider';
 import { path } from '../Helpers/Path';
-import { registerTask, TaskType } from './TaskMap';
+import { registerTask } from './TaskMap';
+import { ProductionQueue } from '../Core/ProductionQueue';
 
-@registerTask({ type: TaskType.TrainUnit })
+@registerTask({ queue: ProductionQueue.TrainUnit })
 export class TrainTroopTask extends TaskController {
     defineActions(task: Task): Array<ActionDefinition> {
         const args = task.args;

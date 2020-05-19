@@ -5,6 +5,8 @@ import { VillageStorage } from './Storage/VillageStorage';
 import { calcGatheringTimings, GatheringTime } from './Core/GatheringTimings';
 import { VillageRepositoryInterface } from './VillageRepository';
 import { VillageNotFound } from './Errors';
+import { ProductionQueue, ProductionQueueTypes } from './Core/ProductionQueue';
+import { Task } from './Queue/TaskProvider';
 
 interface VillageStorageState {
     resources: Resources;
@@ -15,7 +17,10 @@ interface VillageStorageState {
     timeToFull: GatheringTime;
 }
 
-interface RequiredResources {
+/**
+ * State of one or more tasks, which required some resources.
+ */
+interface ResourceLineState {
     /**
      * Required resources (always positive)
      */
@@ -28,6 +33,14 @@ interface RequiredResources {
      * Time to gather all type of resources (slowest time)
      */
     time: GatheringTime;
+}
+
+interface VillageProductionQueueState {
+    queue: ProductionQueue;
+    active: boolean;
+    ts: number;
+    firstTask: ResourceLineState;
+    allTasks: ResourceLineState;
 }
 
 interface VillageOwnState {
@@ -48,14 +61,15 @@ interface VillageOwnState {
     /**
      * Required resources for nearest task
      */
-    required: RequiredResources;
+    required: ResourceLineState;
     /**
      * Required resources for all tasks
      */
-    totalRequired: RequiredResources;
+    totalRequired: ResourceLineState;
     incomingResources: Resources;
     buildRemainingSeconds: number;
     settings: VillageSettings;
+    queues: { [queue: string]: VillageProductionQueueState | undefined };
 }
 
 interface VillageOwnStateDictionary {
@@ -73,7 +87,7 @@ export interface VillageState extends VillageOwnState {
     shipment: Array<number>;
 }
 
-function calcResourceBalance(resources: Resources, current: Resources, performance: Resources): RequiredResources {
+function calcResourceBalance(resources: Resources, current: Resources, performance: Resources): ResourceLineState {
     return {
         resources,
         balance: current.sub(resources),
@@ -106,6 +120,50 @@ function calcIncomingResources(storage: VillageStorage): Resources {
     return storage.getIncomingMerchants().reduce((m, i) => m.add(i.resources), Resources.zero());
 }
 
+function taskResourceReducer(resources: Resources, task: Task) {
+    return task.args.resources ? resources.add(Resources.fromObject(task.args.resources)) : resources;
+}
+
+function createProductionQueueState(
+    villageId: number,
+    queue: ProductionQueue,
+    storage: VillageStorage,
+    scheduler: Scheduler
+): VillageProductionQueueState {
+    const resources = storage.getResources();
+    const performance = storage.getResourcesPerformance();
+    const tasks = scheduler.getProductionQueueTasks(villageId, queue);
+
+    const firstTaskResources = tasks.slice(0, 1).reduce(taskResourceReducer, Resources.zero());
+    const allTaskResources = tasks.reduce(taskResourceReducer, Resources.zero());
+
+    return {
+        queue,
+        active: tasks.length !== 0,
+        ts: storage.getQueueTaskEnding(queue),
+        firstTask: calcResourceBalance(firstTaskResources, resources, performance),
+        allTasks: calcResourceBalance(allTaskResources, resources, performance),
+    };
+}
+
+function createAllProductionQueueStates(villageId: number, storage: VillageStorage, scheduler: Scheduler) {
+    let result: { [queue: string]: VillageProductionQueueState } = {};
+    for (let queue of ProductionQueueTypes) {
+        result[queue] = createProductionQueueState(villageId, queue, storage, scheduler);
+    }
+    return result;
+}
+
+// function firstTaskRequirements(villageId: number, scheduler: Scheduler): Resources {
+//     let result = Resources.zero();
+//     for (let queue of Object.keys(ProductionQueue)) {
+//         const tasks = scheduler.getProductionQueueTasks(villageId, queue as ProductionQueue);
+//         const firstTaskResources = tasks.filter(() => true).reduce(taskResourceReducer, Resources.zero());
+//         result = result.add(firstTaskResources);
+//     }
+//     return result;
+// }
+
 function createVillageOwnState(village: Village, scheduler: Scheduler): VillageOwnState {
     const storage = new VillageStorage(village.id);
     const resources = storage.getResources();
@@ -126,6 +184,7 @@ function createVillageOwnState(village: Village, scheduler: Scheduler): VillageO
         buildRemainingSeconds: buildQueueInfo.seconds,
         incomingResources: calcIncomingResources(storage),
         settings: storage.getSettings(),
+        queues: createAllProductionQueueStates(village.id, storage, scheduler),
     };
 }
 

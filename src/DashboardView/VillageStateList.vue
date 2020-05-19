@@ -48,6 +48,7 @@
             </td>
             <td class="right" v-text="storageTime(villageState)"></td>
           </tr>
+
           <tr class="performance-line">
             <td class="right">Прирост:</td>
             <td class="right">
@@ -64,6 +65,7 @@
             </td>
             <td></td>
           </tr>
+
           <tr class="required-line">
             <td class="right">След. задача:</td>
             <td class="right">
@@ -100,6 +102,7 @@
             </td>
             <td class="right" v-text="renderTimeInSeconds(villageState.buildRemainingSeconds)"></td>
           </tr>
+
           <tr class="required-line">
             <td class="right">Баланс задачи:</td>
             <td class="right">
@@ -116,6 +119,7 @@
             </td>
             <td class="right" v-text="renderGatheringTime(villageState.required.time)"></td>
           </tr>
+
           <tr class="required-line">
             <td class="right">Баланс очереди:</td>
             <td class="right">
@@ -132,6 +136,24 @@
             </td>
             <td class="right" v-text="renderGatheringTime(villageState.totalRequired.time)"></td>
           </tr>
+
+          <tr v-for="queueState of villageState.queues" v-if="queueState.active" class="required-line">
+            <td class="right">{{ queueTitle(queueState.queue) }}:</td>
+            <td class="right">
+              <resource :value="queueState.firstTask.balance.lumber"></resource>
+            </td>
+            <td class="right">
+              <resource :value="queueState.firstTask.balance.clay"></resource>
+            </td>
+            <td class="right">
+              <resource :value="queueState.firstTask.balance.iron"></resource>
+            </td>
+            <td class="right">
+              <resource :value="queueState.firstTask.balance.crop"></resource>
+            </td>
+            <td class="right" v-text="renderGatheringTime(queueState.firstTask.time)"></td>
+          </tr>
+
           <tr class="commitments-line" v-if="!villageState.commitments.empty()">
             <td class="right">Обязательства:</td>
             <td class="right">
@@ -206,6 +228,7 @@ import VillageResource from './VillageResource';
 import { COLLECTION_POINT_ID, HORSE_STABLE_ID, MARKET_ID, QUARTERS_ID } from '../Core/Buildings';
 import { path } from '../Helpers/Path';
 import { Actions } from './Store';
+import { translateProductionQueue } from '../Core/ProductionQueue';
 
 function secondsToTime(value) {
   if (value === 0) {
@@ -294,6 +317,9 @@ export default {
     },
     openEditor(villageId) {
       this.$store.dispatch(Actions.OpenVillageEditor, { villageId });
+    },
+    queueTitle(queue) {
+      return translateProductionQueue(queue);
     },
   },
 };

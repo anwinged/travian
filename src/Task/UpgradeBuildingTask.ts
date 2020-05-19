@@ -3,11 +3,12 @@ import { TaskController, ActionDefinition } from './TaskController';
 import { GoToPageAction } from '../Action/GoToPageAction';
 import { Task } from '../Queue/TaskProvider';
 import { path } from '../Helpers/Path';
-import { registerTask, TaskType } from './TaskMap';
+import { registerTask } from './TaskMap';
 import { goToResourceViewPage } from './ActionBundles';
 import { taskError } from '../Errors';
+import { ProductionQueue } from '../Core/ProductionQueue';
 
-@registerTask({ type: TaskType.Building })
+@registerTask({ queue: ProductionQueue.Building })
 export class UpgradeBuildingTask extends TaskController {
     defineActions(task: Task): Array<ActionDefinition> {
         const args = task.args;

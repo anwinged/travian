@@ -3,9 +3,10 @@ import { GoToPageAction } from '../Action/GoToPageAction';
 import { Task } from '../Queue/TaskProvider';
 import { ForgeImprovementAction } from '../Action/ForgeImprovementAction';
 import { path } from '../Helpers/Path';
-import { registerTask, TaskType } from './TaskMap';
+import { registerTask } from './TaskMap';
+import { ProductionQueue } from '../Core/ProductionQueue';
 
-@registerTask({ type: TaskType.UpgradeUnit })
+@registerTask({ queue: ProductionQueue.UpgradeUnit })
 export class ForgeImprovementTask extends TaskController {
     defineActions(task: Task): Array<ActionDefinition> {
         const args = task.args;

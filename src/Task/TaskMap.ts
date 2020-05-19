@@ -1,21 +1,14 @@
 import { Scheduler } from '../Scheduler';
 import { TaskController } from './TaskController';
-
-export enum TaskType {
-    Other = 1,
-    Building,
-    TrainUnit,
-    UpgradeUnit,
-    Celebration,
-}
+import { ProductionQueue } from '../Core/ProductionQueue';
 
 interface TaskOptions {
-    type?: TaskType;
+    queue?: ProductionQueue;
 }
 
 interface TaskDescription {
     ctor: Function;
-    type: TaskType;
+    queue?: ProductionQueue;
 }
 
 interface TaskMap {
@@ -28,17 +21,17 @@ export function registerTask(options: TaskOptions = {}) {
     return function(ctor: Function) {
         taskMap[ctor.name] = {
             ctor,
-            type: options.type || TaskType.Other,
+            queue: options.queue,
         };
     };
 }
 
-export function getTaskType(name: string): TaskType | undefined {
+export function getProductionQueue(name: string): ProductionQueue | undefined {
     const taskDescription = taskMap[name];
     if (taskDescription === undefined) {
         return undefined;
     }
-    return taskDescription.type;
+    return taskDescription.queue;
 }
 
 export function createTaskHandler(name: string, scheduler: Scheduler): TaskController | undefined {

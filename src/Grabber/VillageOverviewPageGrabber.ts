@@ -1,9 +1,10 @@
 import { Grabber } from './Grabber';
 import { grabActiveVillageId, grabBuildingQueueInfo, grabResourcesPerformance } from '../Page/VillageBlock';
 import { VillageStorage } from '../Storage/VillageStorage';
-import { parseLocation } from '../utils';
+import { parseLocation, timestamp } from '../utils';
 import { GrabError } from '../Errors';
 import { BuildingQueueInfo } from '../Game';
+import { ProductionQueue } from '../Core/ProductionQueue';
 
 export class VillageOverviewPageGrabber extends Grabber {
     grab(): void {
@@ -13,9 +14,13 @@ export class VillageOverviewPageGrabber extends Grabber {
         }
 
         const villageId = grabActiveVillageId();
-        const state = new VillageStorage(villageId);
-        state.storeResourcesPerformance(grabResourcesPerformance());
-        state.storeBuildingQueueInfo(this.grabBuildingQueueInfoOrDefault());
+        const storage = new VillageStorage(villageId);
+        storage.storeResourcesPerformance(grabResourcesPerformance());
+        storage.storeBuildingQueueInfo(this.grabBuildingQueueInfoOrDefault());
+
+        const buildingQueueInfo = this.grabBuildingQueueInfoOrDefault();
+        const buildingEndTime = buildingQueueInfo.seconds ? buildingQueueInfo.seconds + timestamp() : 0;
+        storage.storeQueueTaskEnding(ProductionQueue.Building, buildingEndTime);
     }
 
     private grabBuildingQueueInfoOrDefault() {

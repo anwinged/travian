@@ -12,9 +12,10 @@ import { SendResourcesTask } from './Task/SendResourcesTask';
 import { Args } from './Queue/Args';
 import { ImmutableTaskList, Task, TaskId } from './Queue/TaskProvider';
 import { ForgeImprovementTask } from './Task/ForgeImprovementTask';
-import { getTaskType, TaskType } from './Task/TaskMap';
+import { getProductionQueue } from './Task/TaskMap';
 import { MARKET_ID } from './Core/Buildings';
 import { VillageRepositoryInterface } from './VillageRepository';
+import { ProductionQueue, ProductionQueueTypes } from './Core/ProductionQueue';
 
 export enum ContractType {
     UpgradeBuilding,
@@ -205,6 +206,12 @@ export class Scheduler {
         });
     }
 
+    getProductionQueueTasks(villageId: number, queue: ProductionQueue): ReadonlyArray<Task> {
+        return this.taskQueue
+            .seeItems()
+            .filter(t => t.args.villageId === villageId && getProductionQueue(t.name) === queue);
+    }
+
     private reorderVillageTasks(villageId: number) {
         const tasks = this.taskQueue.seeItems();
 
@@ -229,16 +236,11 @@ interface TaskNamePredicate {
 }
 
 /**
- * List on non intersected task type predicates.
- *
- * Placed in order of execution priority. Order is important!
+ * List on non intersected task queue predicates.
  */
-const TASK_TYPE_PREDICATES: Array<TaskNamePredicate> = [
-    (taskName: string) => getTaskType(taskName) === TaskType.TrainUnit,
-    (taskName: string) => getTaskType(taskName) === TaskType.UpgradeUnit,
-    (taskName: string) => getTaskType(taskName) === TaskType.Building,
-    (taskName: string) => getTaskType(taskName) === TaskType.Celebration,
-];
+const TASK_TYPE_PREDICATES: Array<TaskNamePredicate> = ProductionQueueTypes.map(queue => {
+    return (taskName: string) => getProductionQueue(taskName) === queue;
+});
 
 function sameVillage(villageId: number | undefined, args: Args) {
     return villageId !== undefined && args.villageId === villageId;
@@ -273,7 +275,7 @@ function findLastIndex(tasks: ImmutableTaskList, predicate: (t: Task) => boolean
 }
 
 /**
- * Calculates insert time for new task based on task type.
+ * Calculates insert time for new task based on task queue.
  */
 function calculateInsertTime(tasks: ImmutableTaskList, name: string, args: Args, ts: number | undefined): number {
     const villageId = args.villageId;

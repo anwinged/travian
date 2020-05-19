@@ -3,9 +3,10 @@ import { GoToPageAction } from '../Action/GoToPageAction';
 import { Task } from '../Queue/TaskProvider';
 import { path } from '../Helpers/Path';
 import { CelebrationAction } from '../Action/CelebrationAction';
-import { registerTask, TaskType } from './TaskMap';
+import { registerTask } from './TaskMap';
+import { ProductionQueue } from '../Core/ProductionQueue';
 
-@registerTask({ type: TaskType.Celebration })
+@registerTask({ queue: ProductionQueue.Celebration })
 export class CelebrationTask extends TaskController {
     defineActions(task: Task): Array<ActionDefinition> {
         const args = task.args;

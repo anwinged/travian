@@ -4,6 +4,8 @@ import { Resources, ResourcesInterface } from '../Core/Resources';
 import { ResourceStorage } from '../Core/ResourceStorage';
 import { IncomingMerchant } from '../Core/Market';
 import { VillageSettings, VillageSettingsDefaults } from '../Core/Village';
+import { ProductionQueue } from '../Core/ProductionQueue';
+import { getNumber } from '../utils';
 
 const RESOURCES_KEY = 'res';
 const CAPACITY_KEY = 'cap';
@@ -11,6 +13,7 @@ const PERFORMANCE_KEY = 'perf';
 const BUILDING_QUEUE_KEY = 'bq';
 const INCOMING_MERCHANTS_KEY = 'im';
 const SETTINGS_KEY = 'settings';
+const QUEUE_ENDING_TIME_KEY = 'qet';
 
 const ResourceOptions = {
     factory: () => new Resources(0, 0, 0, 0),
@@ -85,5 +88,19 @@ export class VillageStorage {
 
     storeSettings(settings: VillageSettings) {
         this.storage.set(SETTINGS_KEY, settings);
+    }
+
+    private queueKey(queue: ProductionQueue): string {
+        return QUEUE_ENDING_TIME_KEY + '.' + queue;
+    }
+
+    getQueueTaskEnding(queue: ProductionQueue): number {
+        const key = this.queueKey(queue);
+        return getNumber(this.storage.get(key)) || 0;
+    }
+
+    storeQueueTaskEnding(queue: ProductionQueue, ts: number): void {
+        const key = this.queueKey(queue);
+        this.storage.set(key, ts);
     }
 }
