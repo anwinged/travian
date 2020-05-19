@@ -9,7 +9,7 @@
           <th class="right">Железо</th>
           <th class="right">Зерно</th>
           <th class="right" title="Время до окончания добычи необходимых ресурсов">Рес.</th>
-          <th class="right" title="Время до окончания выполнения текущей задачи">Очередь</th>
+          <th class="right" title="Время до окончания выполнения текущей задачи">Оч.</th>
         </tr>
       </thead>
       <tbody>
@@ -106,12 +106,6 @@
             <td></td>
             <td></td>
           </tr>
-
-          <resource-line
-            :title="'Баланс задачи:'"
-            :resources="villageState.required.balance"
-            :time1="renderGatheringTime(villageState.required.time)"
-          />
 
           <resource-line
             v-for="queueState of villageState.queues"

@@ -10,13 +10,13 @@
     <div class="container">
       <table class="task-table">
         <tr v-for="task in shared.taskList" class="task-item" :class="{ 'this-village': isThisVillageTask(task) }">
-          <td class="time-column" :title="formatDate(task.ts)">{{ formatDate(task.ts) }}</td>
-          <td class="id-column" :title="task.id">{{ task.id }}</td>
+          <td class="time-column" :title="formatDate(task.ts) + ', ' + task.id" v-text="formatDate(task.ts)"></td>
           <td class="actions-column">
             <a href="#" title="Remove task" class="remove-action" v-on:click.prevent="onRemove(task.id)">&times;</a>
           </td>
-          <td class="name-column" :title="task.name">{{ task.name }}</td>
-          <td class="args-column" :title="JSON.stringify(task.args)">{{ JSON.stringify(task.args) }}</td>
+          <td class="village-column" v-text="task.args.villageId || ''"></td>
+          <td class="name-column" :title="task.name" v-text="task.name"></td>
+          <td class="args-column" :title="JSON.stringify(task.args)" v-text="JSON.stringify(task.args)"></td>
         </tr>
       </table>
     </div>

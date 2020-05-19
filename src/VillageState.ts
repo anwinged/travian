@@ -147,7 +147,7 @@ function createProductionQueueState(
 
     return {
         queue,
-        isActive: tasks.length !== 0 || taskEndingTimestamp !== 0,
+        isActive: tasks.length !== 0 || taskEndingTimestamp > timestamp(),
         currentTaskFinishTimestamp: taskEndingTimestamp,
         currentTaskFinishSeconds: Math.max(taskEndingTimestamp ? taskEndingTimestamp - timestamp() : 0, 0),
         firstTask: calcResourceBalance(firstTaskResources, resources, performance),
