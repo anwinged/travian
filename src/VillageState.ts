@@ -1,5 +1,4 @@
 import { Village, VillageSettings } from './Core/Village';
-import { Scheduler } from './Scheduler';
 import { Resources } from './Core/Resources';
 import { VillageStorage } from './Storage/VillageStorage';
 import { calcGatheringTimings, GatheringTime } from './Core/GatheringTimings';
@@ -8,6 +7,8 @@ import { VillageNotFound } from './Errors';
 import { ProductionQueue, ProductionQueueTypes } from './Core/ProductionQueue';
 import { Task } from './Queue/TaskProvider';
 import { timestamp } from './utils';
+import { VillageControllerFactory } from './VillageControllerFactory';
+import { VillageController } from './VillageController';
 
 interface VillageStorageState {
     resources: Resources;
@@ -132,14 +133,13 @@ function taskResourceReducer(resources: Resources, task: Task) {
 }
 
 function createProductionQueueState(
-    villageId: number,
     queue: ProductionQueue,
-    storage: VillageStorage,
-    scheduler: Scheduler
+    controller: VillageController
 ): VillageProductionQueueState {
+    const storage = controller.getStorage();
     const resources = storage.getResources();
     const performance = storage.getResourcesPerformance();
-    const tasks = scheduler.getProductionQueueTasks(villageId, queue);
+    const tasks = controller.getTasksInProductionQueue(queue);
 
     const firstTaskResources = tasks.slice(0, 1).reduce(taskResourceReducer, Resources.zero());
     const allTaskResources = tasks.reduce(taskResourceReducer, Resources.zero());
@@ -156,33 +156,33 @@ function createProductionQueueState(
     };
 }
 
-function createAllProductionQueueStates(villageId: number, storage: VillageStorage, scheduler: Scheduler) {
+function createAllProductionQueueStates(controller: VillageController) {
     let result: { [queue: string]: VillageProductionQueueState } = {};
     for (let queue of ProductionQueueTypes) {
-        result[queue] = createProductionQueueState(villageId, queue, storage, scheduler);
+        result[queue] = createProductionQueueState(queue, controller);
     }
     return result;
 }
 
-function calcFrontierResources(villageId: number, scheduler: Scheduler): Resources {
+function calcFrontierResources(controller: VillageController): Resources {
     let result = Resources.zero();
     for (let queue of ProductionQueueTypes) {
-        const tasks = scheduler.getProductionQueueTasks(villageId, queue);
+        const tasks = controller.getTasksInProductionQueue(queue);
         const firstTaskResources = tasks.slice(0, 1).reduce(taskResourceReducer, Resources.zero());
         result = result.add(firstTaskResources);
     }
     return result;
 }
 
-function createVillageOwnState(village: Village, scheduler: Scheduler): VillageOwnState {
-    const storage = new VillageStorage(village.id);
+function createVillageOwnState(village: Village, controller: VillageController): VillageOwnState {
+    const storage = controller.getStorage();
     const resources = storage.getResources();
     const resourceStorage = storage.getResourceStorage();
     const performance = storage.getResourcesPerformance();
     const buildQueueInfo = storage.getBuildingQueueInfo();
-    const requiredResources = scheduler.getVillageRequiredResources(village.id);
-    const frontierResources = calcFrontierResources(village.id, scheduler);
-    const totalRequiredResources = scheduler.getTotalVillageRequiredResources(village.id);
+    const requiredResources = controller.getVillageRequiredResources();
+    const frontierResources = calcFrontierResources(controller);
+    const totalRequiredResources = controller.getTotalVillageRequiredResources();
 
     return {
         id: village.id,
@@ -196,24 +196,24 @@ function createVillageOwnState(village: Village, scheduler: Scheduler): VillageO
         buildRemainingSeconds: buildQueueInfo.seconds,
         incomingResources: calcIncomingResources(storage),
         settings: storage.getSettings(),
-        queues: createAllProductionQueueStates(village.id, storage, scheduler),
+        queues: createAllProductionQueueStates(controller),
     };
 }
 
-function createVillageOwnStates(villages: Array<Village>, scheduler: Scheduler): VillageOwnStateDictionary {
+function createVillageOwnStates(
+    villages: Array<Village>,
+    villageControllerFactory: VillageControllerFactory
+): VillageOwnStateDictionary {
     const result: VillageOwnStateDictionary = {};
     for (let village of villages) {
-        result[village.id] = createVillageOwnState(village, scheduler);
+        const villageController = villageControllerFactory.create(village.id);
+        result[village.id] = createVillageOwnState(village, villageController);
     }
     return result;
 }
 
-function createVillageState(
-    state: VillageOwnState,
-    ownStates: VillageOwnStateDictionary,
-    scheduler: Scheduler
-): VillageState {
-    const villageIds = scheduler.getResourceShipmentVillageIds(state.id);
+function createVillageState(state: VillageOwnState, ownStates: VillageOwnStateDictionary): VillageState {
+    const villageIds = Object.keys(ownStates).map(k => +k);
     const commitments = villageIds.reduce((memo, shipmentVillageId) => {
         const shipmentVillageState = ownStates[shipmentVillageId];
         const shipmentVillageRequired = shipmentVillageState.required;
@@ -224,26 +224,29 @@ function createVillageState(
     return { ...state, commitments, shipment: villageIds };
 }
 
-function getVillageStates(villages: Array<Village>, scheduler: Scheduler): Array<VillageState> {
-    const ownStates = createVillageOwnStates(villages, scheduler);
-    return villages.map(village => createVillageState(ownStates[village.id], ownStates, scheduler));
+function getVillageStates(
+    villages: Array<Village>,
+    villageControllerFactory: VillageControllerFactory
+): Array<VillageState> {
+    const ownStates = createVillageOwnStates(villages, villageControllerFactory);
+    return villages.map(village => createVillageState(ownStates[village.id], ownStates));
 }
 
 export class VillageStateRepository {
     private villageRepository: VillageRepositoryInterface;
-    private scheduler: Scheduler;
+    private villageControllerFactory: VillageControllerFactory;
 
-    constructor(villageRepository: VillageRepositoryInterface, scheduler: Scheduler) {
+    constructor(villageRepository: VillageRepositoryInterface, villageControllerFactory: VillageControllerFactory) {
         this.villageRepository = villageRepository;
-        this.scheduler = scheduler;
+        this.villageControllerFactory = villageControllerFactory;
     }
 
     getAllVillageStates(): Array<VillageState> {
-        return getVillageStates(this.villageRepository.all(), this.scheduler);
+        return getVillageStates(this.villageRepository.all(), this.villageControllerFactory);
     }
 
     getVillageState(villageId: number): VillageState {
-        const states = getVillageStates(this.villageRepository.all(), this.scheduler);
+        const states = getVillageStates(this.villageRepository.all(), this.villageControllerFactory);
         const needle = states.find(s => s.id === villageId);
         if (!needle) {
             throw new VillageNotFound(`Village ${villageId} not found`);

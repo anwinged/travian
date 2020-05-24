@@ -6,14 +6,16 @@ import { IncomingMerchant } from '../Core/Market';
 import { VillageSettings, VillageSettingsDefaults } from '../Core/Village';
 import { ProductionQueue } from '../Core/ProductionQueue';
 import { getNumber } from '../utils';
+import { Task, TaskList, uniqTaskId } from '../Queue/TaskProvider';
 
-const RESOURCES_KEY = 'res';
-const CAPACITY_KEY = 'cap';
-const PERFORMANCE_KEY = 'perf';
-const BUILDING_QUEUE_KEY = 'bq';
-const INCOMING_MERCHANTS_KEY = 'im';
+const RESOURCES_KEY = 'resources';
+const CAPACITY_KEY = 'capacity';
+const PERFORMANCE_KEY = 'performance';
+const BUILDING_QUEUE_INFO_KEY = 'building_queue_info';
+const INCOMING_MERCHANTS_KEY = 'incoming_merchants';
 const SETTINGS_KEY = 'settings';
-const QUEUE_ENDING_TIME_KEY = 'qet';
+const QUEUE_ENDING_TIME_KEY = 'queue_ending_time';
+const TASK_LIST_KEY = 'tasks';
 
 const ResourceOptions = {
     factory: () => new Resources(0, 0, 0, 0),
@@ -52,11 +54,11 @@ export class VillageStorage {
     }
 
     storeBuildingQueueInfo(info: BuildingQueueInfo): void {
-        this.storage.set(BUILDING_QUEUE_KEY, info);
+        this.storage.set(BUILDING_QUEUE_INFO_KEY, info);
     }
 
     getBuildingQueueInfo(): BuildingQueueInfo {
-        let plain = this.storage.get(BUILDING_QUEUE_KEY);
+        let plain = this.storage.get(BUILDING_QUEUE_INFO_KEY);
         let res = new BuildingQueueInfo(0);
         return Object.assign(res, plain) as BuildingQueueInfo;
     }
@@ -102,5 +104,49 @@ export class VillageStorage {
     storeQueueTaskEnding(queue: ProductionQueue, ts: number): void {
         const key = this.queueKey(queue);
         this.storage.set(key, ts);
+    }
+
+    getTasks(): Array<Task> {
+        return this.storage.getTypedList<Task>(TASK_LIST_KEY, {
+            factory: () => new Task(uniqTaskId(), 0, '', {}),
+        });
+    }
+
+    addTask(task: Task): void {
+        const tasks = this.getTasks();
+        tasks.push(task);
+        this.storeTaskList(tasks);
+    }
+
+    modifyTasks(predicate: (t: Task) => boolean, modifier: (t: Task) => Task): number {
+        const [matched, other] = this.split(predicate);
+        const modified = matched.map(modifier);
+        const modifiedCount = modified.length;
+        this.storeTaskList(modified.concat(other));
+        return modifiedCount;
+    }
+
+    removeTasks(predicate: (t: Task) => boolean): number {
+        const [_, other] = this.split(predicate);
+        const result = other.length;
+        this.storeTaskList(other);
+        return result;
+    }
+
+    private split(predicate: (t: Task) => boolean): [TaskList, TaskList] {
+        const matched: TaskList = [];
+        const other: TaskList = [];
+        this.getTasks().forEach(t => {
+            if (predicate(t)) {
+                matched.push(t);
+            } else {
+                other.push(t);
+            }
+        });
+        return [matched, other];
+    }
+
+    private storeTaskList(tasks: Array<Task>): void {
+        this.storage.set(TASK_LIST_KEY, tasks);
     }
 }

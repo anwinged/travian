@@ -1,10 +1,10 @@
-import { Scheduler } from '../Scheduler';
+import { VillageController } from '../VillageController';
 
 export abstract class Grabber {
-    protected scheduler: Scheduler;
+    protected controller: VillageController;
 
-    constructor(scheduler: Scheduler) {
-        this.scheduler = scheduler;
+    constructor(controller: VillageController) {
+        this.controller = controller;
     }
 
     abstract grab(): void;

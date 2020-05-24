@@ -1,7 +1,6 @@
 import { DataStorage } from '../DataStorage';
 import { Task, TaskList, TaskProvider, uniqTaskId } from './TaskProvider';
 
-const NAMESPACE = 'tasks:v1';
 const QUEUE_NAME = 'queue';
 
 export class DataStorageTaskProvider implements TaskProvider {
@@ -11,8 +10,8 @@ export class DataStorageTaskProvider implements TaskProvider {
         this.storage = storage;
     }
 
-    static create() {
-        return new DataStorageTaskProvider(new DataStorage(NAMESPACE));
+    static create(namespace: string) {
+        return new DataStorageTaskProvider(new DataStorage(namespace));
     }
 
     getTasks(): TaskList {

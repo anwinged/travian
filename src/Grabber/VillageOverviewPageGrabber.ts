@@ -1,6 +1,5 @@
 import { Grabber } from './Grabber';
-import { grabActiveVillageId, grabBuildingQueueInfo, grabResourcesPerformance } from '../Page/VillageBlock';
-import { VillageStorage } from '../Storage/VillageStorage';
+import { grabBuildingQueueInfo, grabResourcesPerformance } from '../Page/VillageBlock';
 import { parseLocation, timestamp } from '../utils';
 import { GrabError } from '../Errors';
 import { BuildingQueueInfo } from '../Game';
@@ -13,8 +12,7 @@ export class VillageOverviewPageGrabber extends Grabber {
             return;
         }
 
-        const villageId = grabActiveVillageId();
-        const storage = new VillageStorage(villageId);
+        const storage = this.controller.getStorage();
         storage.storeResourcesPerformance(grabResourcesPerformance());
         storage.storeBuildingQueueInfo(this.grabBuildingQueueInfoOrDefault());
 

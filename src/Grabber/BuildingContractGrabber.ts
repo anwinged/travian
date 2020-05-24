@@ -1,8 +1,7 @@
 import { Grabber } from './Grabber';
-import { grabActiveVillageId } from '../Page/VillageBlock';
 import { getBuildingPageAttributes, isBuildingPage } from '../Page/PageDetectors';
 import { grabContractResources, hasContractResources } from '../Page/BuildingPage/BuildingPage';
-import { ContractType } from '../Scheduler';
+import { ContractType } from '../Core/Contract';
 
 export class BuildingContractGrabber extends Grabber {
     grab(): void {
@@ -19,12 +18,10 @@ export class BuildingContractGrabber extends Grabber {
             return;
         }
 
-        const villageId = grabActiveVillageId();
         const contract = grabContractResources();
 
-        this.scheduler.updateResources(contract, {
+        this.controller.updateResources(contract, {
             type: ContractType.UpgradeBuilding,
-            villageId,
             buildId: building.buildId,
         });
     }

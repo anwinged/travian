@@ -3,28 +3,35 @@ import { VillageResourceGrabber } from './VillageResourceGrabber';
 import { VillageOverviewPageGrabber } from './VillageOverviewPageGrabber';
 import { HeroPageGrabber } from './HeroPageGrabber';
 import { MarketPageGrabber } from './MarketPageGrabber';
-import { Scheduler } from '../Scheduler';
 import { BuildingContractGrabber } from './BuildingContractGrabber';
 import { ForgePageGrabber } from './ForgePageGrabber';
 import { GuildHallPageGrabber } from './GuildHallPageGrabber';
+import { VillageControllerFactory } from '../VillageControllerFactory';
 
 export class GrabberManager {
-    private readonly grabbers: Array<Grabber> = [];
+    private factory: VillageControllerFactory;
 
-    constructor(scheduler: Scheduler) {
-        this.grabbers = [];
-        this.grabbers.push(new VillageResourceGrabber(scheduler));
-        this.grabbers.push(new VillageOverviewPageGrabber(scheduler));
-        this.grabbers.push(new HeroPageGrabber(scheduler));
-        this.grabbers.push(new MarketPageGrabber(scheduler));
-        this.grabbers.push(new BuildingContractGrabber(scheduler));
-        this.grabbers.push(new ForgePageGrabber(scheduler));
-        this.grabbers.push(new GuildHallPageGrabber(scheduler));
+    constructor(factory: VillageControllerFactory) {
+        this.factory = factory;
     }
 
     grab() {
-        for (let grabber of this.grabbers) {
+        const grabbers = this.createGrabbers();
+        for (let grabber of grabbers) {
             grabber.grab();
         }
+    }
+
+    private createGrabbers(): Array<Grabber> {
+        const controller = this.factory.getActive();
+        const grabbers: Array<Grabber> = [];
+        grabbers.push(new VillageResourceGrabber(controller));
+        grabbers.push(new VillageOverviewPageGrabber(controller));
+        grabbers.push(new HeroPageGrabber(controller));
+        grabbers.push(new MarketPageGrabber(controller));
+        grabbers.push(new BuildingContractGrabber(controller));
+        grabbers.push(new ForgePageGrabber(controller));
+        grabbers.push(new GuildHallPageGrabber(controller));
+        return grabbers;
     }
 }

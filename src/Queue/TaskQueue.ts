@@ -11,14 +11,10 @@ export class TaskQueue {
         this.logger = logger;
     }
 
-    push(name: string, args: Args, ts: number): Task {
-        const id = uniqTaskId();
-        const task = new Task(id, ts, name, args);
-        this.logger.info('PUSH TASK', id, ts, name, args);
+    add(task: Task) {
         let items = this.getItems();
         items.push(task);
         this.flushItems(items);
-        return task;
     }
 
     get(ts: number): Task | undefined {
@@ -27,6 +23,11 @@ export class TaskQueue {
             return undefined;
         }
         return readyItems[0];
+    }
+
+    findById(taskId: TaskId): Task | undefined {
+        const [matched, _] = this.split(t => t.id === taskId);
+        return matched.shift();
     }
 
     has(predicate: (t: Task) => boolean): boolean {
@@ -51,11 +52,6 @@ export class TaskQueue {
 
     seeItems(): ImmutableTaskList {
         return this.getItems();
-    }
-
-    private shiftTask(id: TaskId): [Task | undefined, TaskList] {
-        const [a, b] = this.split(t => t.id === id);
-        return [a.shift(), b];
     }
 
     private split(predicate: (t: Task) => boolean): [TaskList, TaskList] {

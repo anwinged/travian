@@ -1,4 +1,4 @@
-import { notify, split } from '../utils';
+import { notify } from '../utils';
 import { UpgradeBuildingTask } from '../Task/UpgradeBuildingTask';
 import { Scheduler } from '../Scheduler';
 import { TrainTroopTask } from '../Task/TrainTroopTask';
@@ -17,15 +17,18 @@ import { createResearchButtons } from './BuildingPage/ForgePage';
 import { ForgeImprovementTask } from '../Task/ForgeImprovementTask';
 import { createCelebrationButtons } from './BuildingPage/GuildHallPage';
 import { CelebrationTask } from '../Task/CelebrationTask';
+import { VillageController } from '../VillageController';
 
 export class BuildingPageController {
     private scheduler: Scheduler;
     private readonly attributes: BuildingPageAttributes;
+    private villageController: VillageController;
     private readonly logger: Logger;
 
-    constructor(scheduler: Scheduler, attributes: BuildingPageAttributes) {
+    constructor(scheduler: Scheduler, attributes: BuildingPageAttributes, villageController: VillageController) {
         this.scheduler = scheduler;
         this.attributes = attributes;
+        this.villageController = villageController;
         this.logger = new ConsoleLogger(this.constructor.name);
     }
 
@@ -56,7 +59,7 @@ export class BuildingPageController {
         }
 
         if (isMarketSendResourcesPage()) {
-            createSendResourcesButton((res, crd) => this.onSendResources(res, crd));
+            createSendResourcesButton((res, crd) => this.onSendResources(crd));
         }
 
         if (isForgePage()) {
@@ -64,7 +67,7 @@ export class BuildingPageController {
         }
 
         if (isGuildHallPage()) {
-            createCelebrationButtons((res, idx) => this.onCelebration(res, idx));
+            createCelebrationButtons(res => this.onCelebration(res));
         }
     }
 
@@ -72,14 +75,20 @@ export class BuildingPageController {
         const buildId = this.attributes.buildId;
         const categoryId = this.attributes.categoryId;
         const villageId = grabActiveVillageId();
-        this.scheduler.scheduleTask(BuildBuildingTask.name, { villageId, buildId, categoryId, buildTypeId, resources });
+        this.villageController.addTask(BuildBuildingTask.name, {
+            villageId,
+            buildId,
+            categoryId,
+            buildTypeId,
+            resources,
+        });
         notify(`Building ${buildId} scheduled`);
     }
 
     private onScheduleUpgradeBuilding(resources: Resources) {
         const buildId = this.attributes.buildId;
         const villageId = grabActiveVillageId();
-        this.scheduler.scheduleTask(UpgradeBuildingTask.name, { villageId, buildId, resources });
+        this.villageController.addTask(UpgradeBuildingTask.name, { villageId, buildId, resources });
         notify(`Upgrading ${buildId} scheduled`);
     }
 
@@ -94,11 +103,11 @@ export class BuildingPageController {
             troopResources: resources,
             resources: resources.scale(trainCount),
         };
-        this.scheduler.scheduleTask(TrainTroopTask.name, args);
+        this.villageController.addTask(TrainTroopTask.name, args);
         notify(`Training ${trainCount} troopers scheduled`);
     }
 
-    private onSendResources(resources: Resources, coordinates: Coordinates) {
+    private onSendResources(coordinates: Coordinates) {
         const villageId = grabActiveVillageId();
         const targetVillage = grabVillageList().find(v => v.crd.eq(coordinates));
         this.scheduler.scheduleTask(SendResourcesTask.name, {
@@ -114,7 +123,7 @@ export class BuildingPageController {
 
     private onResearch(resources: Resources, unitId: number) {
         const villageId = grabActiveVillageId();
-        this.scheduler.scheduleTask(ForgeImprovementTask.name, {
+        this.villageController.addTask(ForgeImprovementTask.name, {
             villageId,
             buildTypeId: this.attributes.buildTypeId,
             buildId: this.attributes.buildId,
@@ -124,9 +133,9 @@ export class BuildingPageController {
         notify(`Researching ${unitId} scheduled`);
     }
 
-    private onCelebration(resources: Resources, idx: number) {
+    private onCelebration(resources: Resources) {
         const villageId = grabActiveVillageId();
-        this.scheduler.scheduleTask(CelebrationTask.name, {
+        this.villageController.addTask(CelebrationTask.name, {
             villageId,
             buildTypeId: this.attributes.buildTypeId,
             buildId: this.attributes.buildId,

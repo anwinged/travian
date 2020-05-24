@@ -1,9 +1,7 @@
 import { Grabber } from './Grabber';
-import { grabActiveVillageId } from '../Page/VillageBlock';
 import { getBuildingPageAttributes, isForgePage } from '../Page/PageDetectors';
-import { ContractType } from '../Scheduler';
+import { ContractType } from '../Core/Contract';
 import { grabImprovementContracts, grabRemainingSeconds } from '../Page/BuildingPage/ForgePage';
-import { VillageStorage } from '../Storage/VillageStorage';
 import { ProductionQueue } from '../Core/ProductionQueue';
 import { timestamp } from '../utils';
 
@@ -13,29 +11,26 @@ export class ForgePageGrabber extends Grabber {
             return;
         }
 
-        const villageId = grabActiveVillageId();
-
-        this.grabContracts(villageId);
-        this.grabTimer(villageId);
+        this.grabContracts();
+        this.grabTimer();
     }
 
-    private grabContracts(villageId: number): void {
+    private grabContracts(): void {
         const { buildId } = getBuildingPageAttributes();
         const contracts = grabImprovementContracts();
 
         for (let { resources, unitId } of contracts) {
-            this.scheduler.updateResources(resources, {
+            this.controller.updateResources(resources, {
                 type: ContractType.ImproveTrooper,
-                villageId,
                 buildId,
                 unitId,
             });
         }
     }
 
-    private grabTimer(villageId: number): void {
-        const state = new VillageStorage(villageId);
+    private grabTimer(): void {
+        const storage = this.controller.getStorage();
         const seconds = grabRemainingSeconds();
-        state.storeQueueTaskEnding(ProductionQueue.UpgradeUnit, seconds ? seconds + timestamp() : 0);
+        storage.storeQueueTaskEnding(ProductionQueue.UpgradeUnit, seconds ? seconds + timestamp() : 0);
     }
 }

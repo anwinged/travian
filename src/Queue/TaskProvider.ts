@@ -1,10 +1,11 @@
 import { Args } from './Args';
 import { uniqId } from '../utils';
+import { ResourcesInterface } from '../Core/Resources';
 
 export type TaskId = string;
 
 let idSequence = 1;
-let lastTimestamp: number | null = null;
+let lastTimestamp: number | undefined = undefined;
 
 export function uniqTaskId(): TaskId {
     const ts = Math.floor(Date.now() / 1000);
@@ -37,4 +38,16 @@ export type ImmutableTaskList = ReadonlyArray<Task>;
 export interface TaskProvider {
     getTasks(): TaskList;
     setTasks(tasks: TaskList): void;
+}
+
+export interface TaskTransformer {
+    (task: Task): Task;
+}
+
+export function withTime(ts: number): TaskTransformer {
+    return (task: Task) => new Task(task.id, ts, task.name, task.args);
+}
+
+export function withResources(resources: ResourcesInterface): TaskTransformer {
+    return (task: Task) => new Task(task.id, task.ts, task.name, { ...task.args, resources });
 }

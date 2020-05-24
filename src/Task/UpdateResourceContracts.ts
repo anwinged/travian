@@ -1,4 +1,4 @@
-import { TaskController, ActionDefinition } from './TaskController';
+import { ActionDefinition, TaskController } from './TaskController';
 import { GoToPageAction } from '../Action/GoToPageAction';
 import { UpgradeBuildingTask } from './UpgradeBuildingTask';
 import { ImmutableTaskList, Task } from '../Queue/TaskProvider';
@@ -11,10 +11,9 @@ export class UpdateResourceContracts extends TaskController {
     defineActions(task: Task): Array<ActionDefinition> {
         const tasks = this.scheduler.getTaskItems();
 
-        const paths = [...this.walkUpgradeTasks(tasks), ...this.walkImprovementTask(tasks)];
-        const uniq = uniqPaths(paths);
+        const paths = uniqPaths([...this.walkUpgradeTasks(tasks), ...this.walkImprovementTask(tasks)]);
 
-        return uniq.map(p => [GoToPageAction.name, { path: path(p.name, p.query) }]);
+        return paths.map(p => [GoToPageAction.name, { path: path(p.name, p.query) }]);
     }
 
     private walkUpgradeTasks(tasks: ImmutableTaskList): PathList {

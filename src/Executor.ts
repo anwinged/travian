@@ -11,6 +11,7 @@ import { Action } from './Queue/ActionQueue';
 import { Task } from './Queue/TaskProvider';
 import { createTaskHandler } from './Task/TaskMap';
 import { VillageStateRepository } from './VillageState';
+import { VillageControllerFactory } from './VillageControllerFactory';
 
 export interface ExecutionSettings {
     pauseTs: number;
@@ -20,7 +21,8 @@ export class Executor {
     private readonly version: string;
     private readonly scheduler: Scheduler;
     private readonly villageStateRepository: VillageStateRepository;
-    private grabbers: GrabberManager;
+    private villageControllerFactory: VillageControllerFactory;
+    private grabberManager: GrabberManager;
     private statistics: Statistics;
     private executionState: ExecutionStorage;
     private logger: Logger;
@@ -29,13 +31,16 @@ export class Executor {
         version: string,
         scheduler: Scheduler,
         villageStateRepository: VillageStateRepository,
+        villageControllerFactory: VillageControllerFactory,
+        grabberManager: GrabberManager,
         statistics: Statistics,
         logger: Logger
     ) {
         this.version = version;
         this.scheduler = scheduler;
         this.villageStateRepository = villageStateRepository;
-        this.grabbers = new GrabberManager(scheduler);
+        this.villageControllerFactory = villageControllerFactory;
+        this.grabberManager = grabberManager;
         this.statistics = statistics;
         this.executionState = new ExecutionStorage();
         this.logger = logger;
@@ -49,6 +54,7 @@ export class Executor {
 
         const sleep = createExecutionLoopSleeper();
 
+        // noinspection InfiniteLoopJS
         while (true) {
             await sleep();
             if (!this.isPaused()) {
@@ -76,25 +82,22 @@ export class Executor {
     }
 
     private async doTaskProcessingStep() {
+        this.runGrabbers();
+
         const currentTs = timestamp();
-        const task = this.scheduler.nextTask(currentTs);
+        const { task, action } = this.scheduler.nextTask(currentTs);
 
         // текущего таска нет, очищаем очередь действий по таску
         if (!task) {
             this.logger.info('NO ACTIVE TASK');
-            this.scheduler.clearActions();
             return;
         }
 
-        const actionCommand = this.scheduler.nextAction();
-
-        this.logger.info('CURRENT JOB', 'TASK', task, 'ACTION', actionCommand);
-
-        this.runGrabbers();
+        this.logger.info('CURRENT JOB', 'TASK', task, 'ACTION', action);
 
         try {
-            if (actionCommand) {
-                return await this.processActionCommand(actionCommand, task);
+            if (task && action) {
+                return await this.processActionCommand(action, task);
             }
 
             if (task) {
@@ -105,27 +108,24 @@ export class Executor {
         }
     }
 
-    private async processActionCommand(cmd: Action, task: Task) {
-        const actionHandler = createActionHandler(cmd.name, this.scheduler, this.villageStateRepository);
-        this.logger.info('PROCESS ACTION', cmd.name, actionHandler);
-        if (cmd.args.taskId !== task.id) {
-            throw new ActionError(`Action task id ${cmd.args.taskId} not equal current task id ${task.id}`);
-        }
+    private async processActionCommand(action: Action, task: Task) {
+        const actionHandler = createActionHandler(action.name, this.scheduler, this.villageStateRepository);
+        this.logger.info('Process action', action.name, actionHandler);
         if (actionHandler) {
             this.statistics.incrementAction(timestamp());
-            await actionHandler.run(cmd.args, task);
+            await actionHandler.run(action.args, task);
         } else {
-            this.logger.warn('ACTION NOT FOUND', cmd.name);
+            this.logger.error('Action not found', action.name);
         }
     }
 
     private async processTaskCommand(task: Task) {
         const taskHandler = createTaskHandler(task.name, this.scheduler);
-        this.logger.info('PROCESS TASK', task.name, task, taskHandler);
+        this.logger.info('Process task', task.name, task, taskHandler);
         if (taskHandler) {
             await taskHandler.run(task);
         } else {
-            this.logger.warn('TASK NOT FOUND', task.name);
+            this.logger.error('Task handler not created', task.name);
             this.scheduler.removeTask(task.id);
         }
     }
@@ -174,7 +174,7 @@ export class Executor {
     private runGrabbers() {
         try {
             this.logger.info('Rug grabbers');
-            this.grabbers.grab();
+            this.grabberManager.grab();
         } catch (e) {
             this.logger.warn('Grabbers fails with', e.message);
         }

@@ -22,6 +22,7 @@ import { VillageState, VillageStateRepository } from './VillageState';
 import { Task } from './Queue/TaskProvider';
 import { Action } from './Queue/ActionQueue';
 import { createStore } from './DashboardView/Store';
+import { VillageControllerFactory } from './VillageControllerFactory';
 
 Vue.use(Vuex);
 
@@ -53,11 +54,18 @@ export class ControlPanel {
     private readonly scheduler: Scheduler;
     private readonly villageStateRepository: VillageStateRepository;
     private readonly logger: Logger;
+    private villageControllerFactory: VillageControllerFactory;
 
-    constructor(version: string, scheduler: Scheduler, villageStateRepository: VillageStateRepository) {
+    constructor(
+        version: string,
+        scheduler: Scheduler,
+        villageStateRepository: VillageStateRepository,
+        villageControllerFactory: VillageControllerFactory
+    ) {
         this.version = version;
         this.scheduler = scheduler;
         this.villageStateRepository = villageStateRepository;
+        this.villageControllerFactory = villageControllerFactory;
         this.logger = new ConsoleLogger(this.constructor.name);
     }
 
@@ -128,9 +136,10 @@ export class ControlPanel {
         DataStorage.onChange(() => state.refresh());
 
         const getBuildingsInQueue = () =>
-            this.scheduler
-                .getTaskItems()
-                .filter(t => t.name === UpgradeBuildingTask.name && t.args.villageId === villageId)
+            this.villageControllerFactory
+                .create(villageId)
+                .getTasks()
+                .filter(t => t.name === UpgradeBuildingTask.name)
                 .map(t => t.args.buildId || 0);
 
         if (p.pathname === '/dorf1.php') {
@@ -151,7 +160,11 @@ export class ControlPanel {
         }
 
         if (isBuildingPage()) {
-            const buildPage = new BuildingPageController(this.scheduler, getBuildingPageAttributes());
+            const buildPage = new BuildingPageController(
+                this.scheduler,
+                getBuildingPageAttributes(),
+                this.villageControllerFactory.create(villageId)
+            );
             buildPage.run();
         }
 
