@@ -1,10 +1,13 @@
-import { VillageController } from '../VillageController';
+import { VillageTaskCollection } from '../VillageTaskCollection';
+import { VillageStorage } from '../Storage/VillageStorage';
 
 export abstract class Grabber {
-    protected controller: VillageController;
+    protected taskCollection: VillageTaskCollection;
+    protected storage: VillageStorage;
 
-    constructor(controller: VillageController) {
-        this.controller = controller;
+    constructor(taskCollection: VillageTaskCollection, storage: VillageStorage) {
+        this.taskCollection = taskCollection;
+        this.storage = storage;
     }
 
     abstract grab(): void;

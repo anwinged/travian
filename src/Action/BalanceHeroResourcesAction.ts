@@ -18,7 +18,7 @@ export class BalanceHeroResourcesAction extends ActionController {
             return;
         }
 
-        const thisVillageState = this.villageStateRepository.getVillageState(thisVillageId);
+        const thisVillageState = this.villageFactory.createState(thisVillageId);
 
         const requirements = [
             thisVillageState.required.balance,

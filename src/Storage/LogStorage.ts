@@ -1,5 +1,4 @@
 import { DataStorage } from '../DataStorage';
-import { ActionStatistics, StatisticsStorageInterface } from '../Statistics';
 import { LogStorageInterface, StorageLogRecord } from '../Logger';
 
 const NAMESPACE = 'logs.v1';

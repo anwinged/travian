@@ -18,11 +18,11 @@ import { ConsoleLogger, Logger } from './Logger';
 import { DataStorage } from './DataStorage';
 import { getBuildingPageAttributes, isBuildingPage } from './Page/PageDetectors';
 import { ExecutionStorage } from './Storage/ExecutionStorage';
-import { VillageState, VillageStateRepository } from './VillageState';
+import { VillageState } from './VillageState';
 import { Task } from './Queue/TaskProvider';
 import { Action } from './Queue/ActionQueue';
 import { createStore } from './DashboardView/Store';
-import { VillageControllerFactory } from './VillageControllerFactory';
+import { VillageFactory } from './VillageFactory';
 
 Vue.use(Vuex);
 
@@ -52,20 +52,13 @@ interface GameState {
 export class ControlPanel {
     private readonly version: string;
     private readonly scheduler: Scheduler;
-    private readonly villageStateRepository: VillageStateRepository;
     private readonly logger: Logger;
-    private villageControllerFactory: VillageControllerFactory;
+    private readonly villageFactory: VillageFactory;
 
-    constructor(
-        version: string,
-        scheduler: Scheduler,
-        villageStateRepository: VillageStateRepository,
-        villageControllerFactory: VillageControllerFactory
-    ) {
+    constructor(version: string, scheduler: Scheduler, villageFactory: VillageFactory) {
         this.version = version;
         this.scheduler = scheduler;
-        this.villageStateRepository = villageStateRepository;
-        this.villageControllerFactory = villageControllerFactory;
+        this.villageFactory = villageFactory;
         this.logger = new ConsoleLogger(this.constructor.name);
     }
 
@@ -78,7 +71,7 @@ export class ControlPanel {
         const villageId = grabActiveVillageId();
 
         const scheduler = this.scheduler;
-        const villageStateRepository = this.villageStateRepository;
+        const villageFactory = this.villageFactory;
 
         const executionState = new ExecutionStorage();
 
@@ -106,7 +99,7 @@ export class ControlPanel {
             },
 
             refreshVillages() {
-                this.villageStates = villageStateRepository.getAllVillageStates();
+                this.villageStates = villageFactory.getAllVillageStates();
                 for (let state of this.villageStates) {
                     if (state.village.active) {
                         this.activeVillageState = state;
@@ -136,8 +129,8 @@ export class ControlPanel {
         DataStorage.onChange(() => state.refresh());
 
         const getBuildingsInQueue = () =>
-            this.villageControllerFactory
-                .create(villageId)
+            this.villageFactory
+                .createTaskCollection(villageId)
                 .getTasks()
                 .filter(t => t.name === UpgradeBuildingTask.name)
                 .map(t => t.args.buildId || 0);
@@ -163,21 +156,21 @@ export class ControlPanel {
             const buildPage = new BuildingPageController(
                 this.scheduler,
                 getBuildingPageAttributes(),
-                this.villageControllerFactory.create(villageId)
+                this.villageFactory.createController(villageId)
             );
             buildPage.run();
         }
 
-        this.createControlPanel(state, villageStateRepository);
+        this.createControlPanel(state, villageFactory);
     }
 
-    private createControlPanel(gameState: GameState, villageStateRepository: VillageStateRepository) {
+    private createControlPanel(gameState: GameState, villageFactory: VillageFactory) {
         const appId = `app-${uniqId()}`;
         jQuery('body').prepend(`<div id="${appId}"></div>`);
         new Vue({
             el: `#${appId}`,
             data: gameState,
-            store: createStore(villageStateRepository),
+            store: createStore(villageFactory),
             render: h => h(DashboardApp),
         });
     }

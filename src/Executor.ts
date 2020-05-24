@@ -10,8 +10,8 @@ import { ExecutionStorage } from './Storage/ExecutionStorage';
 import { Action } from './Queue/ActionQueue';
 import { Task } from './Queue/TaskProvider';
 import { createTaskHandler } from './Task/TaskMap';
-import { VillageStateRepository } from './VillageState';
-import { VillageControllerFactory } from './VillageControllerFactory';
+import { VillageStateFactory } from './VillageState';
+import { VillageFactory } from './VillageFactory';
 
 export interface ExecutionSettings {
     pauseTs: number;
@@ -20,8 +20,7 @@ export interface ExecutionSettings {
 export class Executor {
     private readonly version: string;
     private readonly scheduler: Scheduler;
-    private readonly villageStateRepository: VillageStateRepository;
-    private villageControllerFactory: VillageControllerFactory;
+    private villageFactory: VillageFactory;
     private grabberManager: GrabberManager;
     private statistics: Statistics;
     private executionState: ExecutionStorage;
@@ -30,16 +29,14 @@ export class Executor {
     constructor(
         version: string,
         scheduler: Scheduler,
-        villageStateRepository: VillageStateRepository,
-        villageControllerFactory: VillageControllerFactory,
+        villageFactory: VillageFactory,
         grabberManager: GrabberManager,
         statistics: Statistics,
         logger: Logger
     ) {
         this.version = version;
         this.scheduler = scheduler;
-        this.villageStateRepository = villageStateRepository;
-        this.villageControllerFactory = villageControllerFactory;
+        this.villageFactory = villageFactory;
         this.grabberManager = grabberManager;
         this.statistics = statistics;
         this.executionState = new ExecutionStorage();
@@ -109,7 +106,7 @@ export class Executor {
     }
 
     private async processActionCommand(action: Action, task: Task) {
-        const actionHandler = createActionHandler(action.name, this.scheduler, this.villageStateRepository);
+        const actionHandler = createActionHandler(action.name, this.scheduler, this.villageFactory);
         this.logger.info('Process action', action.name, actionHandler);
         if (actionHandler) {
             this.statistics.incrementAction(timestamp());

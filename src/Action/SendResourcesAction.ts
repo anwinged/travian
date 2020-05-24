@@ -18,8 +18,8 @@ export class SendResourcesAction extends ActionController {
 
         const coordinates = Coordinates.fromObject(args.coordinates || taskError('No coordinates'));
 
-        const senderVillage = this.villageStateRepository.getVillageState(senderVillageId);
-        const recipientVillage = this.villageStateRepository.getVillageState(targetVillageId);
+        const senderVillage = this.villageFactory.createState(senderVillageId);
+        const recipientVillage = this.villageFactory.createState(targetVillageId);
 
         const readyToTransfer = this.getResourcesForTransfer(senderVillage, recipientVillage);
 

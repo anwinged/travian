@@ -5,7 +5,7 @@ import { aroundMinutes } from '../utils';
 import { Args } from '../Queue/Args';
 import { Task } from '../Queue/TaskProvider';
 import { VillageStorage } from '../Storage/VillageStorage';
-import { VillageStateRepository } from '../VillageState';
+import { VillageFactory } from '../VillageFactory';
 
 const actionMap: { [name: string]: Function | undefined } = {};
 
@@ -16,22 +16,22 @@ export function registerAction(constructor: Function) {
 export function createActionHandler(
     name: string,
     scheduler: Scheduler,
-    villageStateRepository: VillageStateRepository
+    villageFactory: VillageFactory
 ): ActionController | undefined {
     const storedFunction = actionMap[name];
     if (storedFunction === undefined) {
         return undefined;
     }
     const constructor = (storedFunction as unknown) as typeof ActionController;
-    return new constructor(scheduler, villageStateRepository);
+    return new constructor(scheduler, villageFactory);
 }
 
 export class ActionController {
-    protected scheduler: Scheduler;
-    protected villageStateRepository: VillageStateRepository;
-    constructor(scheduler: Scheduler, villageStateRepository: VillageStateRepository) {
+    protected readonly scheduler: Scheduler;
+    protected readonly villageFactory: VillageFactory;
+    constructor(scheduler: Scheduler, villageFactory: VillageFactory) {
         this.scheduler = scheduler;
-        this.villageStateRepository = villageStateRepository;
+        this.villageFactory = villageFactory;
     }
 
     async run(args: Args, task: Task) {}

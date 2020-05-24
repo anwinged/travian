@@ -8,7 +8,6 @@ export class MarketPageGrabber extends Grabber {
             return;
         }
 
-        const storage = this.controller.getStorage();
-        storage.storeIncomingMerchants(grabIncomingMerchants());
+        this.storage.storeIncomingMerchants(grabIncomingMerchants());
     }
 }

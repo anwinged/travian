@@ -1,5 +1,5 @@
 import { ActionController, registerAction } from './ActionController';
-import { AbortTaskError, taskError } from '../Errors';
+import { taskError } from '../Errors';
 import { Args } from '../Queue/Args';
 import { Task } from '../Queue/TaskProvider';
 

@@ -112,41 +112,7 @@ export class VillageStorage {
         });
     }
 
-    addTask(task: Task): void {
-        const tasks = this.getTasks();
-        tasks.push(task);
-        this.storeTaskList(tasks);
-    }
-
-    modifyTasks(predicate: (t: Task) => boolean, modifier: (t: Task) => Task): number {
-        const [matched, other] = this.split(predicate);
-        const modified = matched.map(modifier);
-        const modifiedCount = modified.length;
-        this.storeTaskList(modified.concat(other));
-        return modifiedCount;
-    }
-
-    removeTasks(predicate: (t: Task) => boolean): number {
-        const [_, other] = this.split(predicate);
-        const result = other.length;
-        this.storeTaskList(other);
-        return result;
-    }
-
-    private split(predicate: (t: Task) => boolean): [TaskList, TaskList] {
-        const matched: TaskList = [];
-        const other: TaskList = [];
-        this.getTasks().forEach(t => {
-            if (predicate(t)) {
-                matched.push(t);
-            } else {
-                other.push(t);
-            }
-        });
-        return [matched, other];
-    }
-
-    private storeTaskList(tasks: Array<Task>): void {
+    storeTaskList(tasks: Array<Task>): void {
         this.storage.set(TASK_LIST_KEY, tasks);
     }
 }

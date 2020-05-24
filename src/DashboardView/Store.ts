@@ -1,9 +1,9 @@
 import Vuex from 'vuex';
 import { LogStorage } from '../Storage/LogStorage';
-import { VillageStateRepository } from '../VillageState';
 import { VillageSettings, VillageSettingsDefaults } from '../Core/Village';
 import { getNumber, notify } from '../utils';
 import { VillageStorage } from '../Storage/VillageStorage';
+import { VillageFactory } from '../VillageFactory';
 
 export enum Mutations {
     showLogs = 'showLogs',
@@ -22,7 +22,7 @@ export enum Actions {
     SaveVillageSettings = 'save_village_settings',
 }
 
-export function createStore(villageStateRepository: VillageStateRepository) {
+export function createStore(villageFactory: VillageFactory) {
     const store = new Vuex.Store({
         state: {
             views: {
@@ -74,7 +74,7 @@ export function createStore(villageStateRepository: VillageStateRepository) {
         },
         actions: {
             [Actions.OpenVillageEditor]({ commit }, { villageId }) {
-                const state = villageStateRepository.getVillageState(villageId);
+                const state = villageFactory.createState(villageId);
                 const settings = state.settings;
                 commit(Mutations.SetVillageSettings, {
                     villageId: state.id,

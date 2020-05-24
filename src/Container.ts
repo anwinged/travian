@@ -8,9 +8,8 @@ import { DataStorageTaskProvider } from './Queue/DataStorageTaskProvider';
 import { Statistics } from './Statistics';
 import { StatisticsStorage } from './Storage/StatisticsStorage';
 import { VillageRepository } from './VillageRepository';
-import { VillageStateRepository } from './VillageState';
 import { LogStorage } from './Storage/LogStorage';
-import { VillageControllerFactory } from './VillageControllerFactory';
+import { VillageFactory } from './VillageFactory';
 import { GrabberManager } from './Grabber/GrabberManager';
 
 export class Container {
@@ -42,15 +41,15 @@ export class Container {
         return this._statistics;
     }
 
-    private _villageControllerFactory: VillageControllerFactory | undefined;
+    private _villageFactory: VillageFactory | undefined;
 
-    get villageControllerFactory(): VillageControllerFactory {
-        this._villageControllerFactory =
-            this._villageControllerFactory ||
+    get villageFactory(): VillageFactory {
+        this._villageFactory =
+            this._villageFactory ||
             (() => {
-                return new VillageControllerFactory(this.villageRepository);
+                return new VillageFactory(this.villageRepository);
             })();
-        return this._villageControllerFactory;
+        return this._villageFactory;
     }
 
     private _scheduler: Scheduler | undefined;
@@ -68,22 +67,11 @@ export class Container {
                     taskQueue,
                     actionQueue,
                     this.villageRepository,
-                    this.villageControllerFactory,
+                    this.villageFactory,
                     new ConsoleLogger(Scheduler.name)
                 );
             })();
         return this._scheduler;
-    }
-
-    private _villageStateRepository: VillageStateRepository | undefined;
-
-    get villageStateRepository(): VillageStateRepository {
-        this._villageStateRepository =
-            this._villageStateRepository ||
-            (() => {
-                return new VillageStateRepository(this.villageRepository, this.villageControllerFactory);
-            })();
-        return this._villageStateRepository;
     }
 
     private _grabberManager: GrabberManager | undefined;
@@ -92,7 +80,7 @@ export class Container {
         this._grabberManager =
             this._grabberManager ||
             (() => {
-                return new GrabberManager(this.villageControllerFactory);
+                return new GrabberManager(this.villageFactory);
             })();
         return this._grabberManager;
     }
@@ -110,8 +98,7 @@ export class Container {
                 return new Executor(
                     this.version,
                     this.scheduler,
-                    this.villageStateRepository,
-                    this.villageControllerFactory,
+                    this.villageFactory,
                     this.grabberManager,
                     this.statistics,
                     logger
@@ -126,12 +113,7 @@ export class Container {
         this._controlPanel =
             this._controlPanel ||
             (() => {
-                return new ControlPanel(
-                    this.version,
-                    this.scheduler,
-                    this.villageStateRepository,
-                    this.villageControllerFactory
-                );
+                return new ControlPanel(this.version, this.scheduler, this.villageFactory);
             })();
         return this._controlPanel;
     }

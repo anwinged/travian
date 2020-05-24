@@ -12,8 +12,9 @@ import { ImmutableTaskList, Task, TaskId, uniqTaskId, withTime } from './Queue/T
 import { MARKET_ID } from './Core/Buildings';
 import { VillageRepositoryInterface } from './VillageRepository';
 import { isProductionTask } from './Core/ProductionQueue';
-import { VillageControllerFactory } from './VillageControllerFactory';
+import { VillageFactory } from './VillageFactory';
 import { RunVillageProductionTask } from './Task/RunVillageProductionTask';
+import { VillageNotFound } from './Errors';
 
 export interface NextExecution {
     task?: Task;
@@ -24,14 +25,14 @@ export class Scheduler {
     private taskQueue: TaskQueue;
     private actionQueue: ActionQueue;
     private villageRepository: VillageRepositoryInterface;
-    private villageControllerFactory: VillageControllerFactory;
+    private villageControllerFactory: VillageFactory;
     private logger: Logger;
 
     constructor(
         taskQueue: TaskQueue,
         actionQueue: ActionQueue,
         villageRepository: VillageRepositoryInterface,
-        villageControllerFactory: VillageControllerFactory,
+        villageControllerFactory: VillageFactory,
         logger: Logger
     ) {
         this.taskQueue = taskQueue;
@@ -96,13 +97,13 @@ export class Scheduler {
     private replaceTask(task: Task): Task | undefined {
         if (task.name === RunVillageProductionTask.name && task.args.villageId) {
             const villageId = task.args.villageId;
-            const controller = this.villageControllerFactory.create(villageId);
+            const controller = this.villageControllerFactory.createController(villageId);
             const villageTask = controller.getReadyProductionTask();
             if (villageTask) {
                 this.removeTask(task.id);
                 const newTask = new Task(villageTask.id, 0, villageTask.name, {
                     ...villageTask.args,
-                    villageId: controller.villageId,
+                    villageId: controller.getVillageId(),
                 });
                 this.taskQueue.add(newTask);
                 return newTask;
@@ -113,7 +114,7 @@ export class Scheduler {
 
     scheduleTask(name: string, args: Args, ts?: number | undefined): void {
         if (isProductionTask(name) && args.villageId) {
-            const controller = this.villageControllerFactory.create(args.villageId);
+            const controller = this.villageControllerFactory.createController(args.villageId);
             controller.addTask(name, args);
         } else {
             this.logger.info('Schedule task', name, args, ts);
@@ -143,7 +144,7 @@ export class Scheduler {
         const task = this.taskQueue.findById(taskId);
         const villageId = task ? task.args.villageId : undefined;
         if (villageId) {
-            const controller = this.villageControllerFactory.create(villageId);
+            const controller = this.villageControllerFactory.createController(villageId);
             controller.removeTask(taskId);
         }
         this.removeTask(taskId);
@@ -156,7 +157,7 @@ export class Scheduler {
         }
 
         if (isProductionTask(task.name) && task.args.villageId) {
-            const controller = this.villageControllerFactory.create(task.args.villageId);
+            const controller = this.villageControllerFactory.createController(task.args.villageId);
             controller.postponeTask(taskId, seconds);
             this.removeTask(taskId);
         } else {
@@ -186,7 +187,7 @@ export class Scheduler {
         this.dropResourceTransferTasks(fromVillageId, toVillageId);
         const village = this.villageRepository.all().find(v => v.id === toVillageId);
         if (!village) {
-            throw new Error('No village');
+            throw new VillageNotFound(`Village ${toVillageId} not found`);
         }
         this.scheduleTask(SendResourcesTask.name, {
             villageId: fromVillageId,

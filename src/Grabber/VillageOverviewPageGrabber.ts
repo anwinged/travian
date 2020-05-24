@@ -12,13 +12,12 @@ export class VillageOverviewPageGrabber extends Grabber {
             return;
         }
 
-        const storage = this.controller.getStorage();
-        storage.storeResourcesPerformance(grabResourcesPerformance());
-        storage.storeBuildingQueueInfo(this.grabBuildingQueueInfoOrDefault());
+        this.storage.storeResourcesPerformance(grabResourcesPerformance());
+        this.storage.storeBuildingQueueInfo(this.grabBuildingQueueInfoOrDefault());
 
         const buildingQueueInfo = this.grabBuildingQueueInfoOrDefault();
         const buildingEndTime = buildingQueueInfo.seconds ? buildingQueueInfo.seconds + timestamp() : 0;
-        storage.storeQueueTaskEnding(ProductionQueue.Building, buildingEndTime);
+        this.storage.storeQueueTaskEnding(ProductionQueue.Building, buildingEndTime);
     }
 
     private grabBuildingQueueInfoOrDefault() {

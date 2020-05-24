@@ -20,7 +20,7 @@ export class ForgePageGrabber extends Grabber {
         const contracts = grabImprovementContracts();
 
         for (let { resources, unitId } of contracts) {
-            this.controller.updateResources(resources, {
+            this.taskCollection.updateResources(resources, {
                 type: ContractType.ImproveTrooper,
                 buildId,
                 unitId,
@@ -29,8 +29,7 @@ export class ForgePageGrabber extends Grabber {
     }
 
     private grabTimer(): void {
-        const storage = this.controller.getStorage();
         const seconds = grabRemainingSeconds();
-        storage.storeQueueTaskEnding(ProductionQueue.UpgradeUnit, seconds ? seconds + timestamp() : 0);
+        this.storage.storeQueueTaskEnding(ProductionQueue.UpgradeUnit, seconds ? seconds + timestamp() : 0);
     }
 }

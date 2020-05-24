@@ -6,12 +6,12 @@ import { MarketPageGrabber } from './MarketPageGrabber';
 import { BuildingContractGrabber } from './BuildingContractGrabber';
 import { ForgePageGrabber } from './ForgePageGrabber';
 import { GuildHallPageGrabber } from './GuildHallPageGrabber';
-import { VillageControllerFactory } from '../VillageControllerFactory';
+import { VillageFactory } from '../VillageFactory';
 
 export class GrabberManager {
-    private factory: VillageControllerFactory;
+    private factory: VillageFactory;
 
-    constructor(factory: VillageControllerFactory) {
+    constructor(factory: VillageFactory) {
         this.factory = factory;
     }
 
@@ -23,15 +23,16 @@ export class GrabberManager {
     }
 
     private createGrabbers(): Array<Grabber> {
-        const controller = this.factory.getActive();
+        const storage = this.factory.createStorageForActiveVillage();
+        const taskCollection = this.factory.createTaskCollectionForActiveVillage();
         const grabbers: Array<Grabber> = [];
-        grabbers.push(new VillageResourceGrabber(controller));
-        grabbers.push(new VillageOverviewPageGrabber(controller));
-        grabbers.push(new HeroPageGrabber(controller));
-        grabbers.push(new MarketPageGrabber(controller));
-        grabbers.push(new BuildingContractGrabber(controller));
-        grabbers.push(new ForgePageGrabber(controller));
-        grabbers.push(new GuildHallPageGrabber(controller));
+        grabbers.push(new VillageResourceGrabber(taskCollection, storage));
+        grabbers.push(new VillageOverviewPageGrabber(taskCollection, storage));
+        grabbers.push(new HeroPageGrabber(taskCollection, storage));
+        grabbers.push(new MarketPageGrabber(taskCollection, storage));
+        grabbers.push(new BuildingContractGrabber(taskCollection, storage));
+        grabbers.push(new ForgePageGrabber(taskCollection, storage));
+        grabbers.push(new GuildHallPageGrabber(taskCollection, storage));
         return grabbers;
     }
 }
