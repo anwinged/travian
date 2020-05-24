@@ -1,4 +1,4 @@
-import { timestamp } from './utils';
+import { around, timestamp } from './utils';
 import { TaskQueue } from './Queue/TaskQueue';
 import { SendOnAdventureTask } from './Task/SendOnAdventureTask';
 import { BalanceHeroResourcesTask } from './Task/BalanceHeroResourcesTask';
@@ -22,11 +22,11 @@ export interface NextExecution {
 }
 
 export class Scheduler {
-    private taskQueue: TaskQueue;
-    private actionQueue: ActionQueue;
-    private villageRepository: VillageRepositoryInterface;
-    private villageControllerFactory: VillageFactory;
-    private logger: Logger;
+    private readonly taskQueue: TaskQueue;
+    private readonly actionQueue: ActionQueue;
+    private readonly villageRepository: VillageRepositoryInterface;
+    private readonly villageControllerFactory: VillageFactory;
+    private readonly logger: Logger;
 
     constructor(
         taskQueue: TaskQueue,
@@ -51,14 +51,16 @@ export class Scheduler {
         }
 
         this.createUniqTaskTimer(5 * 60, GrabVillageState.name);
+        this.createUniqTaskTimer(10 * 60, SendResourcesTask.name);
         this.createUniqTaskTimer(10 * 60, BalanceHeroResourcesTask.name);
         this.createUniqTaskTimer(20 * 60, UpdateResourceContracts.name);
-        this.createUniqTaskTimer(60 * 60, SendOnAdventureTask.name);
+        // this.createUniqTaskTimer(60 * 60, SendOnAdventureTask.name);
     }
 
     private createUniqTaskTimer(seconds: number, name: string, args: Args = {}) {
         this.scheduleUniqTask(name, args, timestamp() + seconds - 10);
-        setInterval(() => this.scheduleUniqTask(name, args, timestamp()), seconds * 1000);
+        const intervalTime = around(seconds, 0.2) * 1000;
+        setInterval(() => this.scheduleUniqTask(name, args, timestamp()), intervalTime);
     }
 
     getTaskItems(): ImmutableTaskList {

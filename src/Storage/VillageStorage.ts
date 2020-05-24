@@ -2,7 +2,7 @@ import { DataStorage } from '../DataStorage';
 import { BuildingQueueInfo } from '../Game';
 import { Resources, ResourcesInterface } from '../Core/Resources';
 import { ResourceStorage } from '../Core/ResourceStorage';
-import { IncomingMerchant } from '../Core/Market';
+import { IncomingMerchant, MerchantsInfo } from '../Core/Market';
 import { VillageSettings, VillageSettingsDefaults } from '../Core/Village';
 import { ProductionQueue } from '../Core/ProductionQueue';
 import { getNumber } from '../utils';
@@ -13,6 +13,7 @@ const CAPACITY_KEY = 'capacity';
 const PERFORMANCE_KEY = 'performance';
 const BUILDING_QUEUE_INFO_KEY = 'building_queue_info';
 const INCOMING_MERCHANTS_KEY = 'incoming_merchants';
+const MERCHANTS_INFO_KEY = 'merchants_info';
 const SETTINGS_KEY = 'settings';
 const QUEUE_ENDING_TIME_KEY = 'queue_ending_time';
 const TASK_LIST_KEY = 'tasks';
@@ -61,6 +62,16 @@ export class VillageStorage {
         let plain = this.storage.get(BUILDING_QUEUE_INFO_KEY);
         let res = new BuildingQueueInfo(0);
         return Object.assign(res, plain) as BuildingQueueInfo;
+    }
+
+    storeMerchantsInfo(info: MerchantsInfo): void {
+        this.storage.set(MERCHANTS_INFO_KEY, info);
+    }
+
+    getMerchantsInfo(): MerchantsInfo {
+        return this.storage.getTyped<MerchantsInfo>(MERCHANTS_INFO_KEY, {
+            factory: () => ({ available: 0, carry: 0 }),
+        });
     }
 
     storeIncomingMerchants(merchants: ReadonlyArray<IncomingMerchant>): void {

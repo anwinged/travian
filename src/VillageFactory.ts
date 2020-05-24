@@ -3,12 +3,21 @@ import { VillageStorage } from './Storage/VillageStorage';
 import { VillageRepository } from './VillageRepository';
 import { VillageTaskCollection } from './VillageTaskCollection';
 import { VillageState, VillageStateFactory } from './VillageState';
+import { Village } from './Core/Village';
 
 export class VillageFactory {
     private readonly villageRepository: VillageRepository;
 
     constructor(villageRepository: VillageRepository) {
         this.villageRepository = villageRepository;
+    }
+
+    getAllVillages(): Array<Village> {
+        return this.villageRepository.all();
+    }
+
+    getVillage(villageId: number): Village {
+        return this.villageRepository.get(villageId);
     }
 
     createStorage(villageId: number): VillageStorage {

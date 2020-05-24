@@ -13,20 +13,20 @@ export interface StatisticsStorageInterface {
 }
 
 export class Statistics {
-    private state: StatisticsStorageInterface;
+    private readonly storage: StatisticsStorageInterface;
 
     static readonly keepRecords = KEEP_RECORD_COUNT;
 
     constructor(storage: StatisticsStorageInterface) {
-        this.state = storage;
+        this.storage = storage;
     }
 
     incrementAction(ts: number): void {
-        const stat = this.state.getActionStatistics();
+        const stat = this.storage.getActionStatistics();
         const key = dateFormat(ts * 1000, KEY_FORMAT);
         stat[key] = (stat[key] || 0) + 1;
         this.trimStatistics(stat);
-        this.state.setActionStatistics(stat);
+        this.storage.setActionStatistics(stat);
     }
 
     private trimStatistics(stat: ActionStatistics) {
@@ -49,6 +49,6 @@ export class Statistics {
     }
 
     getActionStatistics(): ActionStatistics {
-        return this.state.getActionStatistics();
+        return this.storage.getActionStatistics();
     }
 }

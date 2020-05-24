@@ -1,7 +1,7 @@
 import { getNumber, uniqId } from '../../utils';
-import { Resources } from '../../Core/Resources';
+import { Resources, ResourcesInterface } from '../../Core/Resources';
 import { Coordinates } from '../../Core/Village';
-import { IncomingMerchant } from '../../Core/Market';
+import { IncomingMerchant, MerchantsInfo } from '../../Core/Market';
 import { grabResourcesFromList } from './BuildingPage';
 
 interface SendResourcesClickHandler {
@@ -31,13 +31,13 @@ export function createSendResourcesButton(onClickHandler: SendResourcesClickHand
     jQuery(`#${id}`).on('click', createHandler());
 }
 
-export function grabMerchantsInfo() {
+export function grabMerchantsInfo(): MerchantsInfo {
     const available = getNumber(jQuery('.merchantsAvailable').text());
     const carry = getNumber(jQuery('.carry b').text());
     return { available, carry };
 }
 
-export function fillSendResourcesForm(resources: Resources, crd: Coordinates) {
+export function fillSendResourcesForm(resources: ResourcesInterface, crd: Coordinates) {
     const sendSelect = jQuery('#send_select');
     sendSelect.find('#r1').val(resources.lumber);
     sendSelect.find('#r2').val(resources.clay);

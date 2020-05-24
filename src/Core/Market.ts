@@ -8,3 +8,8 @@ export class IncomingMerchant {
         this.ts = ts;
     }
 }
+
+export interface MerchantsInfo {
+    available: number;
+    carry: number;
+}

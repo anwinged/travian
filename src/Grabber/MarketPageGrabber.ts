@@ -1,6 +1,6 @@
 import { Grabber } from './Grabber';
 import { isMarketSendResourcesPage } from '../Page/PageDetectors';
-import { grabIncomingMerchants } from '../Page/BuildingPage/MarketPage';
+import { grabIncomingMerchants, grabMerchantsInfo } from '../Page/BuildingPage/MarketPage';
 
 export class MarketPageGrabber extends Grabber {
     grab(): void {
@@ -9,5 +9,6 @@ export class MarketPageGrabber extends Grabber {
         }
 
         this.storage.storeIncomingMerchants(grabIncomingMerchants());
+        this.storage.storeMerchantsInfo(grabMerchantsInfo());
     }
 }

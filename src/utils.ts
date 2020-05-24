@@ -10,6 +10,11 @@ export function randomInRange(from: number, to: number): number {
     return Math.floor(from + variation);
 }
 
+export function around(value: number, koeff: number): number {
+    const delta = Math.floor(value * koeff);
+    return randomInRange(value - delta, value + delta);
+}
+
 export async function sleepMicro() {
     const timeInMs = randomInRange(1500, 2500);
     return await sleep(timeInMs);
@@ -17,8 +22,7 @@ export async function sleepMicro() {
 
 export function aroundMinutes(minutes: number) {
     const seconds = minutes * 60;
-    const delta = Math.floor(seconds * 0.1);
-    return randomInRange(seconds - delta, seconds + delta);
+    return around(seconds, 0.1);
 }
 
 export async function waitForLoad() {

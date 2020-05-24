@@ -3,14 +3,17 @@ import { CompleteTaskAction } from '../Action/CompleteTaskAction';
 import { Action } from '../Queue/ActionQueue';
 import { Args } from '../Queue/Args';
 import { Task } from '../Queue/TaskProvider';
+import { VillageFactory } from '../VillageFactory';
 
 export type ActionDefinition = [string] | [string, Args];
 
 export class TaskController {
-    protected scheduler: Scheduler;
+    protected readonly scheduler: Scheduler;
+    protected readonly factory: VillageFactory;
 
-    constructor(scheduler: Scheduler) {
+    constructor(scheduler: Scheduler, factory: VillageFactory) {
         this.scheduler = scheduler;
+        this.factory = factory;
     }
 
     async run(task: Task) {

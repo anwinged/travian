@@ -10,7 +10,6 @@ import { ExecutionStorage } from './Storage/ExecutionStorage';
 import { Action } from './Queue/ActionQueue';
 import { Task } from './Queue/TaskProvider';
 import { createTaskHandler } from './Task/TaskMap';
-import { VillageStateFactory } from './VillageState';
 import { VillageFactory } from './VillageFactory';
 
 export interface ExecutionSettings {
@@ -79,8 +78,6 @@ export class Executor {
     }
 
     private async doTaskProcessingStep() {
-        this.runGrabbers();
-
         const currentTs = timestamp();
         const { task, action } = this.scheduler.nextTask(currentTs);
 
@@ -91,6 +88,8 @@ export class Executor {
         }
 
         this.logger.info('CURRENT JOB', 'TASK', task, 'ACTION', action);
+
+        this.runGrabbers();
 
         try {
             if (task && action) {
@@ -117,7 +116,7 @@ export class Executor {
     }
 
     private async processTaskCommand(task: Task) {
-        const taskHandler = createTaskHandler(task.name, this.scheduler);
+        const taskHandler = createTaskHandler(task.name, this.scheduler, this.villageFactory);
         this.logger.info('Process task', task.name, task, taskHandler);
         if (taskHandler) {
             await taskHandler.run(task);
