@@ -6,6 +6,7 @@ import { registerTask } from './TaskMap';
 @registerTask()
 export class GrabVillageState extends TaskController {
     defineActions(task: Task): Array<ActionDefinition> {
-        return scanAllVillagesBundle();
+        const villages = this.factory.getAllVillages();
+        return scanAllVillagesBundle(villages);
     }
 }

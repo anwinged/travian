@@ -1,8 +1,8 @@
 import { ActionDefinition } from './TaskController';
-import { grabVillageList } from '../Page/VillageBlock';
 import { GoToPageAction } from '../Action/GoToPageAction';
 import { FORGE_ID, GUILD_HALL_ID, MARKET_ID } from '../Core/Buildings';
 import { path } from '../Helpers/Path';
+import { Village } from '../Core/Village';
 
 export function goToResourceViewPage(villageId: number): ActionDefinition {
     return [
@@ -40,9 +40,8 @@ export function goToGuildHallPage(villageId: number): ActionDefinition {
     ];
 }
 
-export function scanAllVillagesBundle(): Array<ActionDefinition> {
+export function scanAllVillagesBundle(villages: Array<Village>): Array<ActionDefinition> {
     const actions: Array<ActionDefinition> = [];
-    const villages = grabVillageList();
     for (let village of villages) {
         actions.push(goToResourceViewPage(village.id));
         actions.push(goToMarketSendResourcesPage(village.id));

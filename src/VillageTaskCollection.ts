@@ -1,5 +1,5 @@
 import { VillageStorage } from './Storage/VillageStorage';
-import { Task, TaskId, TaskList, uniqTaskId, withResources, withTime } from './Queue/TaskProvider';
+import { Task, TaskId, uniqTaskId, withResources, withTime } from './Queue/TaskProvider';
 import { Args } from './Queue/Args';
 import { isProductionTask, ProductionQueue, ProductionQueueTypes } from './Core/ProductionQueue';
 import { getProductionQueue } from './Task/TaskMap';
@@ -22,32 +22,16 @@ export class VillageTaskCollection {
         return this.storage.getTasks();
     }
 
-    private modifyTasks(predicate: (t: Task) => boolean, modifier: (t: Task) => Task): number {
-        const [matched, other] = this.split(predicate);
-        const modified = matched.map(modifier);
-        const modifiedCount = modified.length;
-        this.storage.storeTaskList(modified.concat(other));
-        return modifiedCount;
+    private modifyTasks(predicate: (t: Task) => boolean, modifier: (t: Task) => Task): void {
+        const tasks = this.getTasks();
+        const modified = tasks.map(t => (predicate(t) ? modifier(t) : t));
+        this.storage.storeTaskList(modified);
     }
 
-    private removeTasks(predicate: (t: Task) => boolean): number {
-        const [_, other] = this.split(predicate);
-        const result = other.length;
-        this.storage.storeTaskList(other);
-        return result;
-    }
-
-    private split(predicate: (t: Task) => boolean): [TaskList, TaskList] {
-        const matched: TaskList = [];
-        const other: TaskList = [];
-        this.getTasks().forEach(t => {
-            if (predicate(t)) {
-                matched.push(t);
-            } else {
-                other.push(t);
-            }
-        });
-        return [matched, other];
+    private removeTasks(predicate: (t: Task) => boolean): void {
+        const tasks = this.getTasks();
+        const remaining = tasks.filter(t => !predicate(t));
+        this.storage.storeTaskList(remaining);
     }
 
     addTask(name: string, args: Args) {

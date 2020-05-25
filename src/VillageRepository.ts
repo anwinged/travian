@@ -1,4 +1,4 @@
-import { Village } from './Core/Village';
+import { Coordinates, Village } from './Core/Village';
 import { grabVillageList } from './Page/VillageBlock';
 import { VillageNotFound } from './Errors';
 
@@ -16,6 +16,14 @@ export class VillageRepository implements VillageRepositoryInterface {
         const village = this.all().find(vlg => vlg.id === villageId);
         if (!village) {
             throw new VillageNotFound('Active village not found');
+        }
+        return village;
+    }
+
+    getByCrd(crd: Coordinates): Village {
+        const village = this.all().find(vlg => vlg.crd.eq(crd));
+        if (!village) {
+            throw new VillageNotFound('Village not found');
         }
         return village;
     }

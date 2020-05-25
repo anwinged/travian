@@ -9,7 +9,11 @@ import { registerTask } from './TaskMap';
 @registerTask()
 export class UpdateResourceContracts extends TaskController {
     defineActions(task: Task): Array<ActionDefinition> {
-        const tasks = this.scheduler.getTaskItems();
+        const villages = this.factory.getAllVillages();
+
+        const tasks = villages
+            .map(v => this.factory.createTaskCollection(v.id).getTasks())
+            .reduce((acc, tasks) => acc.concat(tasks), []);
 
         const paths = uniqPaths([...this.walkUpgradeTasks(tasks), ...this.walkImprovementTask(tasks)]);
 
