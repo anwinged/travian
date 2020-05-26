@@ -30,6 +30,9 @@ export class ForgePageGrabber extends Grabber {
 
     private grabTimer(): void {
         const seconds = grabRemainingSeconds();
-        this.storage.storeQueueTaskEnding(ProductionQueue.UpgradeUnit, seconds ? seconds + timestamp() : 0);
+        this.storage.storeQueueTaskEnding(
+            ProductionQueue.UpgradeUnit,
+            seconds ? seconds + timestamp() : 0
+        );
     }
 }

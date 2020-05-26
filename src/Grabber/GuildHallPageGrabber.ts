@@ -11,6 +11,9 @@ export class GuildHallPageGrabber extends Grabber {
         }
 
         const seconds = grabRemainingSeconds();
-        this.storage.storeQueueTaskEnding(ProductionQueue.Celebration, seconds ? seconds + timestamp() : 0);
+        this.storage.storeQueueTaskEnding(
+            ProductionQueue.Celebration,
+            seconds ? seconds + timestamp() : 0
+        );
     }
 }

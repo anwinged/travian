@@ -1,6 +1,5 @@
 import { around, timestamp } from './utils';
 import { TaskQueue } from './Queue/TaskQueue';
-import { SendOnAdventureTask } from './Task/SendOnAdventureTask';
 import { BalanceHeroResourcesTask } from './Task/BalanceHeroResourcesTask';
 import { Logger } from './Logger';
 import { GrabVillageState } from './Task/GrabVillageState';
@@ -9,12 +8,10 @@ import { UpdateResourceContracts } from './Task/UpdateResourceContracts';
 import { SendResourcesTask } from './Task/SendResourcesTask';
 import { Args } from './Queue/Args';
 import { ImmutableTaskList, Task, TaskId, uniqTaskId, withTime } from './Queue/TaskProvider';
-import { MARKET_ID } from './Core/Buildings';
 import { VillageRepositoryInterface } from './VillageRepository';
 import { isProductionTask } from './Core/ProductionQueue';
 import { VillageFactory } from './VillageFactory';
 import { RunVillageProductionTask } from './Task/RunVillageProductionTask';
-import { VillageNotFound } from './Errors';
 
 export interface NextExecution {
     task?: Task;
@@ -47,7 +44,9 @@ export class Scheduler {
 
         const villages = this.villageRepository.all();
         for (let village of villages) {
-            this.createUniqTaskTimer(5 * 60, RunVillageProductionTask.name, { villageId: village.id });
+            this.createUniqTaskTimer(5 * 60, RunVillageProductionTask.name, {
+                villageId: village.id,
+            });
         }
 
         this.createUniqTaskTimer(5 * 60, GrabVillageState.name);
@@ -127,7 +126,9 @@ export class Scheduler {
     scheduleUniqTask(name: string, args: Args, ts?: number | undefined): void {
         let alreadyHasTask;
         if (args.villageId) {
-            alreadyHasTask = this.taskQueue.has(t => t.name === name && t.args.villageId === args.villageId);
+            alreadyHasTask = this.taskQueue.has(
+                t => t.name === name && t.args.villageId === args.villageId
+            );
         } else {
             alreadyHasTask = this.taskQueue.has(t => t.name === name);
         }

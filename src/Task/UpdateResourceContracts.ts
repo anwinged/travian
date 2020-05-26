@@ -15,7 +15,10 @@ export class UpdateResourceContracts extends TaskController {
             .map(v => this.factory.createTaskCollection(v.id).getTasks())
             .reduce((acc, tasks) => acc.concat(tasks), []);
 
-        const paths = uniqPaths([...this.walkUpgradeTasks(tasks), ...this.walkImprovementTask(tasks)]);
+        const paths = uniqPaths([
+            ...this.walkUpgradeTasks(tasks),
+            ...this.walkImprovementTask(tasks),
+        ]);
 
         return paths.map(p => [GoToPageAction.name, { path: path(p.name, p.query) }]);
     }

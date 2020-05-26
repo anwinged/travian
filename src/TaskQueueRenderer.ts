@@ -23,7 +23,9 @@ export class TaskQueueRenderer {
                 'padding': '8px 6px',
             });
         tasks.forEach(task => {
-            ul.append(jQuery('<li></li>').text(formatDate(task.ts) + ' ' + task.name + ' ' + task.id));
+            ul.append(
+                jQuery('<li></li>').text(formatDate(task.ts) + ' ' + task.name + ' ' + task.id)
+            );
         });
 
         const el = jQuery(`#${ID}`);

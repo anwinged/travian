@@ -22,7 +22,9 @@ export class ResourceTransferCalculator {
         const recipientController = this.factory.createController(toVillageId);
 
         const multiplier = senderState.settings.sendResourcesMultiplier;
-        const senderReadyResources = senderController.getAvailableForSendResources().downTo(multiplier);
+        const senderReadyResources = senderController
+            .getAvailableForSendResources()
+            .downTo(multiplier);
         const recipientNeedResources = recipientController.getRequiredResources().upTo(multiplier);
         const contractResources = senderReadyResources.min(recipientNeedResources);
 
@@ -44,6 +46,11 @@ export class ResourceTransferCalculator {
             { name: 'Ready to transfer', ...readyToTransfer },
         ]);
 
-        return { fromVillageId, toVillageId, resources: readyToTransfer, score: readyToTransfer.amount() };
+        return {
+            fromVillageId,
+            toVillageId,
+            resources: readyToTransfer,
+            score: readyToTransfer.amount(),
+        };
     }
 }

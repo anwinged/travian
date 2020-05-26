@@ -90,7 +90,11 @@ export interface VillageState extends VillageOwnState {
     commitments: Resources;
 }
 
-function calcResourceBalance(resources: Resources, current: Resources, performance: Resources): ResourceLineState {
+function calcResourceBalance(
+    resources: Resources,
+    current: Resources,
+    performance: Resources
+): ResourceLineState {
     return {
         resources,
         balance: current.sub(resources),
@@ -98,7 +102,11 @@ function calcResourceBalance(resources: Resources, current: Resources, performan
     };
 }
 
-function calcStorageBalance(resources: Resources, storage: Resources, performance: Resources): VillageStorageState {
+function calcStorageBalance(
+    resources: Resources,
+    storage: Resources,
+    performance: Resources
+): VillageStorageState {
     return {
         resources,
         capacity: storage,
@@ -109,12 +117,20 @@ function calcStorageBalance(resources: Resources, storage: Resources, performanc
     };
 }
 
-function timeToAllResources(current: Resources, desired: Resources, performance: Resources): GatheringTime {
+function timeToAllResources(
+    current: Resources,
+    desired: Resources,
+    performance: Resources
+): GatheringTime {
     const timings = calcGatheringTimings(current, desired, performance);
     return timings.slowest;
 }
 
-function timeToFastestResource(current: Resources, desired: Resources, performance: Resources): GatheringTime {
+function timeToFastestResource(
+    current: Resources,
+    desired: Resources,
+    performance: Resources
+): GatheringTime {
     const timings = calcGatheringTimings(current, desired, performance);
     return timings.fastest;
 }
@@ -124,7 +140,9 @@ function calcIncomingResources(storage: VillageStorage): Resources {
 }
 
 function taskResourceReducer(resources: Resources, task: Task) {
-    return task.args.resources ? resources.add(Resources.fromObject(task.args.resources)) : resources;
+    return task.args.resources
+        ? resources.add(Resources.fromObject(task.args.resources))
+        : resources;
 }
 
 function createProductionQueueState(
@@ -144,14 +162,20 @@ function createProductionQueueState(
         queue,
         isActive: tasks.length !== 0 || taskEndingTimestamp > timestamp(),
         currentTaskFinishTimestamp: taskEndingTimestamp,
-        currentTaskFinishSeconds: Math.max(taskEndingTimestamp ? taskEndingTimestamp - timestamp() : 0, 0),
+        currentTaskFinishSeconds: Math.max(
+            taskEndingTimestamp ? taskEndingTimestamp - timestamp() : 0,
+            0
+        ),
         firstTask: calcResourceBalance(firstTaskResources, resources, performance),
         allTasks: calcResourceBalance(allTaskResources, resources, performance),
         taskCount: tasks.length,
     };
 }
 
-function createAllProductionQueueStates(storage: VillageStorage, taskCollection: VillageTaskCollection) {
+function createAllProductionQueueStates(
+    storage: VillageStorage,
+    taskCollection: VillageTaskCollection
+) {
     let result: { [queue: string]: VillageProductionQueueState } = {};
     for (let queue of OrderedProductionQueues) {
         result[queue] = createProductionQueueState(queue, storage, taskCollection);
@@ -204,13 +228,18 @@ function createVillageOwnStates(
     return result;
 }
 
-function createVillageState(state: VillageOwnState, ownStates: VillageOwnStateDictionary): VillageState {
+function createVillageState(
+    state: VillageOwnState,
+    ownStates: VillageOwnStateDictionary
+): VillageState {
     const villageIds = Object.keys(ownStates).map(k => +k);
     const commitments = villageIds.reduce((memo, shipmentVillageId) => {
         const shipmentVillageState = ownStates[shipmentVillageId];
         const shipmentVillageRequired = shipmentVillageState.required;
         const shipmentVillageIncoming = shipmentVillageState.incomingResources;
-        const targetVillageMissing = shipmentVillageRequired.balance.add(shipmentVillageIncoming).min(Resources.zero());
+        const targetVillageMissing = shipmentVillageRequired.balance
+            .add(shipmentVillageIncoming)
+            .min(Resources.zero());
         return memo.add(targetVillageMissing);
     }, Resources.zero());
     return { ...state, commitments };
@@ -249,11 +278,19 @@ export class VillageStateFactory {
     }
 
     getAllVillageStates(): Array<VillageState> {
-        return getVillageStates(this.villageRepository.all(), this.storageFactory, this.taskCollectionFactory);
+        return getVillageStates(
+            this.villageRepository.all(),
+            this.storageFactory,
+            this.taskCollectionFactory
+        );
     }
 
     getVillageState(villageId: number): VillageState {
-        const states = getVillageStates(this.villageRepository.all(), this.storageFactory, this.taskCollectionFactory);
+        const states = getVillageStates(
+            this.villageRepository.all(),
+            this.storageFactory,
+            this.taskCollectionFactory
+        );
         const needle = states.find(s => s.id === villageId);
         if (!needle) {
             throw new VillageNotFound(`Village ${villageId} not found`);

@@ -19,7 +19,9 @@ export class UpgradeResourceToLevel extends ActionController {
 
         const requiredLevel = getNumber(args.level);
 
-        const notUpgraded = deposits.filter(dep => !dep.underConstruction && requiredLevel > dep.level);
+        const notUpgraded = deposits.filter(
+            dep => !dep.underConstruction && requiredLevel > dep.level
+        );
 
         if (notUpgraded.length === 0) {
             this.scheduler.removeTask(task.id);
@@ -34,11 +36,17 @@ export class UpgradeResourceToLevel extends ActionController {
         const secondNotUpgraded = notUpgraded.shift();
 
         if (firstNotUpgraded && this.isTaskNotInQueue(villageId, firstNotUpgraded)) {
-            this.scheduler.scheduleTask(UpgradeBuildingTask.name, { villageId, buildId: firstNotUpgraded.buildId });
+            this.scheduler.scheduleTask(UpgradeBuildingTask.name, {
+                villageId,
+                buildId: firstNotUpgraded.buildId,
+            });
         }
 
         if (secondNotUpgraded && this.isTaskNotInQueue(villageId, secondNotUpgraded)) {
-            this.scheduler.scheduleTask(UpgradeBuildingTask.name, { villageId, buildId: secondNotUpgraded.buildId });
+            this.scheduler.scheduleTask(UpgradeBuildingTask.name, {
+                villageId,
+                buildId: secondNotUpgraded.buildId,
+            });
         }
 
         throw new TryLaterError(aroundMinutes(10), 'Sleep for next round');

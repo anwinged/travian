@@ -45,7 +45,9 @@ export class VillageTaskCollection {
             throw new Error(`Task "${name}" is not production task`);
         }
         if (args.villageId !== this.villageId) {
-            throw new Error(`Task village id (${args.villageId}) not equal controller village id (${this.villageId}`);
+            throw new Error(
+                `Task village id (${args.villageId}) not equal controller village id (${this.villageId}`
+            );
         }
         const task = new Task(uniqTaskId(), 0, name, { villageId: this.villageId, ...args });
 
@@ -86,7 +88,9 @@ export class VillageTaskCollection {
         const maxCapacity = Resources.fromStorage(this.storage.getResourceStorage());
 
         return firstReadyGroup.tasks.find(
-            t => !t.args.resources || maxCapacity.allGreaterOrEqual(Resources.fromObject(t.args.resources))
+            t =>
+                !t.args.resources ||
+                maxCapacity.allGreaterOrEqual(Resources.fromObject(t.args.resources))
         );
     }
 
@@ -97,7 +101,8 @@ export class VillageTaskCollection {
 
     updateResources(resources: Resources, attr: ContractAttributes): void {
         if (attr.type === ContractType.UpgradeBuilding && attr.buildId) {
-            const predicate = (t: Task) => t.name === UpgradeBuildingTask.name && t.args.buildId === attr.buildId;
+            const predicate = (t: Task) =>
+                t.name === UpgradeBuildingTask.name && t.args.buildId === attr.buildId;
             this.modifyTasks(predicate, withResources(resources));
         }
         if (attr.type === ContractType.ImproveTrooper && attr.buildId && attr.unitId) {

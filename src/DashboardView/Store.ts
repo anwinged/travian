@@ -57,7 +57,8 @@ export function createStore(villageFactory: VillageFactory) {
                 state.logs = logs;
             },
             [Mutations.ToggleVillageEditor](state, visible?: any) {
-                state.views.villageEditor = visible === undefined ? !state.views.villageEditor : !!visible;
+                state.views.villageEditor =
+                    visible === undefined ? !state.views.villageEditor : !!visible;
             },
             [Mutations.SetVillageSettings](state, settings) {
                 state.villageSettings = settings;
@@ -90,9 +91,11 @@ export function createStore(villageFactory: VillageFactory) {
                 const villageName = state.villageSettings.villageName;
                 const newSettings: VillageSettings = {
                     sendResourcesThreshold:
-                        state.villageSettings.sendResourcesThreshold || VillageSettingsDefaults.sendResourcesThreshold,
+                        state.villageSettings.sendResourcesThreshold ||
+                        VillageSettingsDefaults.sendResourcesThreshold,
                     sendResourcesTimeout:
-                        state.villageSettings.sendResourcesTimeout || VillageSettingsDefaults.sendResourcesTimeout,
+                        state.villageSettings.sendResourcesTimeout ||
+                        VillageSettingsDefaults.sendResourcesTimeout,
                     sendResourcesMultiplier:
                         state.villageSettings.sendResourcesMultiplier ||
                         VillageSettingsDefaults.sendResourcesMultiplier,

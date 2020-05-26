@@ -40,7 +40,11 @@ export class FindSendResourcesPath extends ActionController {
         const storage = new ResourceTransferStorage();
         storage.storeReport(bestReport);
 
-        const marketPath = path('/build.php', { newdid: bestReport.fromVillageId, gid: MARKET_ID, t: 5 });
+        const marketPath = path('/build.php', {
+            newdid: bestReport.fromVillageId,
+            gid: MARKET_ID,
+            t: 5,
+        });
         window.location.assign(marketPath);
     }
 }

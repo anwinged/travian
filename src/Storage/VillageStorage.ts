@@ -82,7 +82,9 @@ export class VillageStorage {
     }
 
     getIncomingMerchants(): ReadonlyArray<IncomingMerchant> {
-        const objects = this.storage.getTypedList<object>(INCOMING_MERCHANTS_KEY, { factory: () => ({}) });
+        const objects = this.storage.getTypedList<object>(INCOMING_MERCHANTS_KEY, {
+            factory: () => ({}),
+        });
         return objects.map((plain: object) => {
             const m = new IncomingMerchant(new Resources(0, 0, 0, 0), 0);
             if (typeof plain !== 'object') {

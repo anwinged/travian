@@ -1,5 +1,12 @@
 import { markPage, sleepMicro, timestamp, waitForLoad } from './utils';
-import { AbortTaskError, ActionError, FailTaskError, GrabError, TryLaterError, VillageNotFound } from './Errors';
+import {
+    AbortTaskError,
+    ActionError,
+    FailTaskError,
+    GrabError,
+    TryLaterError,
+    VillageNotFound,
+} from './Errors';
 import { TaskQueueRenderer } from './TaskQueueRenderer';
 import { createActionHandler } from './Action/ActionController';
 import { Logger } from './Logger';

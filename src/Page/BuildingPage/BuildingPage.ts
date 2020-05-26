@@ -14,7 +14,9 @@ export function clickBuildButton(typeId: number) {
     btn.trigger('click');
 }
 
-export function createBuildButton(onClickHandler: (buildTypeId: number, resources: Resources) => void) {
+export function createBuildButton(
+    onClickHandler: (buildTypeId: number, resources: Resources) => void
+) {
     const $els = jQuery('[id^=contract_building]');
     $els.each((idx, el) => {
         const $el = jQuery(el);

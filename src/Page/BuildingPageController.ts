@@ -10,7 +10,12 @@ import { Resources } from '../Core/Resources';
 import { Coordinates } from '../Core/Village';
 import { SendResourcesTask } from '../Task/SendResourcesTask';
 import { EMBASSY_ID, HORSE_STABLE_ID, PALACE_ID, QUARTERS_ID } from '../Core/Buildings';
-import { BuildingPageAttributes, isForgePage, isGuildHallPage, isMarketSendResourcesPage } from './PageDetectors';
+import {
+    BuildingPageAttributes,
+    isForgePage,
+    isGuildHallPage,
+    isMarketSendResourcesPage,
+} from './PageDetectors';
 import { createTrainTroopButtons } from './BuildingPage/TrooperPage';
 import { createSendResourcesButton } from './BuildingPage/MarketPage';
 import { createResearchButtons } from './BuildingPage/ForgePage';
@@ -25,7 +30,11 @@ export class BuildingPageController {
     private villageController: VillageController;
     private readonly logger: Logger;
 
-    constructor(scheduler: Scheduler, attributes: BuildingPageAttributes, villageController: VillageController) {
+    constructor(
+        scheduler: Scheduler,
+        attributes: BuildingPageAttributes,
+        villageController: VillageController
+    ) {
         this.scheduler = scheduler;
         this.attributes = attributes;
         this.villageController = villageController;
@@ -43,19 +52,27 @@ export class BuildingPageController {
         }
 
         if (buildTypeId === QUARTERS_ID) {
-            createTrainTroopButtons((troopId, res, count) => this.onScheduleTrainTroopers(troopId, res, count));
+            createTrainTroopButtons((troopId, res, count) =>
+                this.onScheduleTrainTroopers(troopId, res, count)
+            );
         }
 
         if (buildTypeId === HORSE_STABLE_ID) {
-            createTrainTroopButtons((troopId, res, count) => this.onScheduleTrainTroopers(troopId, res, count));
+            createTrainTroopButtons((troopId, res, count) =>
+                this.onScheduleTrainTroopers(troopId, res, count)
+            );
         }
 
         if (buildTypeId === EMBASSY_ID && sheetId === 1) {
-            createTrainTroopButtons((troopId, res, count) => this.onScheduleTrainTroopers(troopId, res, count));
+            createTrainTroopButtons((troopId, res, count) =>
+                this.onScheduleTrainTroopers(troopId, res, count)
+            );
         }
 
         if (buildTypeId === PALACE_ID && sheetId === 1) {
-            createTrainTroopButtons((troopId, res, count) => this.onScheduleTrainTroopers(troopId, res, count));
+            createTrainTroopButtons((troopId, res, count) =>
+                this.onScheduleTrainTroopers(troopId, res, count)
+            );
         }
 
         if (isMarketSendResourcesPage()) {

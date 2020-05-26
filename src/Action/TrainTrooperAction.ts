@@ -3,7 +3,11 @@ import { taskError, TryLaterError } from '../Errors';
 import { aroundMinutes, randomInRange } from '../utils';
 import { Args } from '../Queue/Args';
 import { Task } from '../Queue/TaskProvider';
-import { clickTrainButton, fillTrainCount, getAvailableCount } from '../Page/BuildingPage/TrooperPage';
+import {
+    clickTrainButton,
+    fillTrainCount,
+    getAvailableCount,
+} from '../Page/BuildingPage/TrooperPage';
 import { TrainTroopTask } from '../Task/TrainTroopTask';
 import { Resources } from '../Core/Resources';
 

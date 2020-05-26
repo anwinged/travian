@@ -53,7 +53,12 @@ export class GatheringTimings {
         return new GatheringTimings(factory(lumber), factory(clay), factory(iron), factory(crop));
     }
 
-    constructor(lumber: GatheringTime, clay: GatheringTime, iron: GatheringTime, crop: GatheringTime) {
+    constructor(
+        lumber: GatheringTime,
+        clay: GatheringTime,
+        iron: GatheringTime,
+        crop: GatheringTime
+    ) {
         this.lumber = lumber;
         this.clay = clay;
         this.iron = iron;
@@ -97,7 +102,11 @@ function calcGatheringTime(val: number, desired: number, speed: number): Gatheri
     return GatheringTime.makeCounting((diff / speed) * 3600);
 }
 
-export function calcGatheringTimings(resources: Resources, desired: Resources, speed: Resources): GatheringTimings {
+export function calcGatheringTimings(
+    resources: Resources,
+    desired: Resources,
+    speed: Resources
+): GatheringTimings {
     return new GatheringTimings(
         calcGatheringTime(resources.lumber, desired.lumber, speed.lumber),
         calcGatheringTime(resources.clay, desired.clay, speed.clay),

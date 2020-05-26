@@ -17,7 +17,9 @@ export function createTrainTroopButtons(
             return;
         }
         const id = uniqId();
-        $el.find('.details').append(`<div style="padding: 8px 0"><a id="${id}" href="#">Обучить</a></div>`);
+        $el.find('.details').append(
+            `<div style="padding: 8px 0"><a id="${id}" href="#">Обучить</a></div>`
+        );
         const resElement = $el.find('.resourceWrapper .resource');
         const resources = grabResourcesFromList(resElement);
         jQuery(`#${id}`).on('click', evt => {

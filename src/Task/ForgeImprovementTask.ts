@@ -17,6 +17,9 @@ export class ForgeImprovementTask extends TaskController {
             id: args.buildId || undefined,
         };
 
-        return [[GoToPageAction.name, { path: path('/build.php', pathArgs) }], [ForgeImprovementAction.name]];
+        return [
+            [GoToPageAction.name, { path: path('/build.php', pathArgs) }],
+            [ForgeImprovementAction.name],
+        ];
     }
 }

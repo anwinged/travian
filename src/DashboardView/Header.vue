@@ -6,7 +6,11 @@
     </h1>
     <p>
       <a href="#" v-on:click.prevent="pause">
-        pause <span v-if="shared.pauseSeconds && shared.pauseSeconds > 0" v-text="shared.pauseSeconds"></span>
+        pause
+        <span
+          v-if="shared.pauseSeconds && shared.pauseSeconds > 0"
+          v-text="shared.pauseSeconds"
+        ></span>
       </a>
       <a href="#" v-on:click.prevent="toggleLogs">logs</a>
     </p>

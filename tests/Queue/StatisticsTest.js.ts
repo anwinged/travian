@@ -30,6 +30,8 @@ describe('Statistics', function() {
         for (let i = 0; i < 120; ++i) {
             statistics.incrementAction(baseTime + 3600 * i);
         }
-        expect(Object.keys(statistics.getActionStatistics())).to.has.lengthOf(Statistics.keepRecords);
+        expect(Object.keys(statistics.getActionStatistics())).to.has.lengthOf(
+            Statistics.keepRecords
+        );
     });
 });

@@ -24,7 +24,10 @@ export function createSendResourcesButton(onClickHandler: SendResourcesClickHand
             getNumber(sendSelect.find('#r3').val()),
             getNumber(sendSelect.find('#r4').val())
         );
-        const crd = new Coordinates(getNumber(jQuery('#xCoordInput').val()), getNumber(jQuery('#yCoordInput').val()));
+        const crd = new Coordinates(
+            getNumber(jQuery('#xCoordInput').val()),
+            getNumber(jQuery('#yCoordInput').val())
+        );
         onClickHandler(resources, crd);
     };
 

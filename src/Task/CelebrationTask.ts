@@ -17,6 +17,9 @@ export class CelebrationTask extends TaskController {
             id: args.buildId || undefined,
         };
 
-        return [[GoToPageAction.name, { path: path('/build.php', pathArgs) }], [CelebrationAction.name]];
+        return [
+            [GoToPageAction.name, { path: path('/build.php', pathArgs) }],
+            [CelebrationAction.name],
+        ];
     }
 }

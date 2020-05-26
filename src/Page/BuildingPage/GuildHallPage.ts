@@ -28,7 +28,11 @@ export function clickCelebrationButton() {
     $btn.trigger('click');
 }
 
-function createCelebrationButton($blockEl: JQuery, idx: number, onClickHandler: CelebrationClickHandler) {
+function createCelebrationButton(
+    $blockEl: JQuery,
+    idx: number,
+    onClickHandler: CelebrationClickHandler
+) {
     const resources = grabResources($blockEl);
 
     const id = uniqId();

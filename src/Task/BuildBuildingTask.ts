@@ -19,7 +19,11 @@ export class BuildBuildingTask extends TaskController {
             [
                 GoToPageAction.name,
                 {
-                    path: path('/build.php', { newdid: args.villageId, id: args.buildId, category: args.categoryId }),
+                    path: path('/build.php', {
+                        newdid: args.villageId,
+                        id: args.buildId,
+                        category: args.categoryId,
+                    }),
                 },
             ],
             [BuildBuildingAction.name],

@@ -15,7 +15,11 @@
       <tbody>
         <template v-for="villageState in shared.villageStates">
           <tr class="normal-line top-line">
-            <td class="right" :class="{ active: villageState.village.active }" :title="villageHint(villageState)">
+            <td
+              class="right"
+              :class="{ active: villageState.village.active }"
+              :title="villageHint(villageState)"
+            >
               {{ villageState.village.name }}
               [<a href="#" v-on:click.prevent="openEditor(villageState.id)">ред</a>]:
             </td>
@@ -146,12 +150,18 @@
                 v-if="s.id !== villageState.id"
                 class="village-quick-link"
                 :href="marketPath(villageState.village, s.village)"
-                :title="'Отправить ресурсы из ' + villageState.village.name + ' в ' + s.village.name"
+                :title="
+                  'Отправить ресурсы из ' + villageState.village.name + ' в ' + s.village.name
+                "
                 >$->{{ s.village.name }}</a
               >
               <a class="village-quick-link" :href="quartersPath(villageState.village)">Казармы</a>
-              <a class="village-quick-link" :href="horseStablePath(villageState.village)">Конюшни</a>
-              <a class="village-quick-link" :href="collectionPointPath(villageState.village)">Войска</a>
+              <a class="village-quick-link" :href="horseStablePath(villageState.village)"
+                >Конюшни</a
+              >
+              <a class="village-quick-link" :href="collectionPointPath(villageState.village)"
+                >Войска</a
+              >
             </td>
           </tr>
 

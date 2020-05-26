@@ -26,7 +26,12 @@ export class Resources implements ResourcesInterface {
     }
 
     static fromStorage(storage: ResourceStorage): Resources {
-        return new Resources(storage.warehouse, storage.warehouse, storage.warehouse, storage.granary);
+        return new Resources(
+            storage.warehouse,
+            storage.warehouse,
+            storage.warehouse,
+            storage.granary
+        );
     }
 
     static zero(): Resources {
@@ -86,16 +91,29 @@ export class Resources implements ResourcesInterface {
     }
 
     anyLower(other: ResourcesInterface): boolean {
-        return this.lumber < other.lumber || this.clay < other.clay || this.iron < other.iron || this.crop < other.crop;
+        return (
+            this.lumber < other.lumber ||
+            this.clay < other.clay ||
+            this.iron < other.iron ||
+            this.crop < other.crop
+        );
     }
 
     allGreater(other: ResourcesInterface): boolean {
-        return this.lumber > other.lumber && this.clay > other.clay && this.iron > other.iron && this.crop > other.crop;
+        return (
+            this.lumber > other.lumber &&
+            this.clay > other.clay &&
+            this.iron > other.iron &&
+            this.crop > other.crop
+        );
     }
 
     allGreaterOrEqual(other: ResourcesInterface): boolean {
         return (
-            this.lumber >= other.lumber && this.clay >= other.clay && this.iron >= other.iron && this.crop >= other.crop
+            this.lumber >= other.lumber &&
+            this.clay >= other.clay &&
+            this.iron >= other.iron &&
+            this.crop >= other.crop
         );
     }
 
@@ -136,7 +154,12 @@ export class Resources implements ResourcesInterface {
             return (Math.floor(v / multiplier) + 1) * multiplier;
         };
 
-        return new Resources(upper(this.lumber), upper(this.clay), upper(this.iron), upper(this.crop));
+        return new Resources(
+            upper(this.lumber),
+            upper(this.clay),
+            upper(this.iron),
+            upper(this.crop)
+        );
     }
 
     downTo(multiplier: number): Resources {
@@ -151,6 +174,11 @@ export class Resources implements ResourcesInterface {
             return part * multiplier;
         };
 
-        return new Resources(lower(this.lumber), lower(this.clay), lower(this.iron), lower(this.crop));
+        return new Resources(
+            lower(this.lumber),
+            lower(this.clay),
+            lower(this.iron),
+            lower(this.crop)
+        );
     }
 }
