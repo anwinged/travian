@@ -45,8 +45,6 @@ interface GameState {
     removeTask(taskId: string): void;
     refreshVillages(): void;
     pause(): void;
-    scheduleResourceTransferTasks(fromVillageId: number, toVillageId: number): void;
-    dropResourceTransferTasks(fromVillageId: number, toVillageId: number): void;
 }
 
 export class ControlPanel {
@@ -109,14 +107,6 @@ export class ControlPanel {
 
             pause() {
                 executionState.setExecutionSettings({ pauseTs: timestamp() + 120 });
-            },
-
-            scheduleResourceTransferTasks(fromVillageId: number, toVillageId: number): void {
-                scheduler.scheduleResourceTransferTasks(fromVillageId, toVillageId);
-            },
-
-            dropResourceTransferTasks(fromVillageId: number, toVillageId: number): void {
-                scheduler.dropResourceTransferTasks(fromVillageId, toVillageId);
             },
         };
 

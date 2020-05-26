@@ -175,28 +175,4 @@ export class Scheduler {
     clearActions() {
         this.actionQueue.clear();
     }
-
-    dropResourceTransferTasks(fromVillageId: number, toVillageId: number): void {
-        this.taskQueue.remove(
-            t =>
-                t.name === SendResourcesTask.name &&
-                t.args.villageId === fromVillageId &&
-                t.args.targetVillageId === toVillageId
-        );
-    }
-
-    scheduleResourceTransferTasks(fromVillageId: number, toVillageId: number): void {
-        this.dropResourceTransferTasks(fromVillageId, toVillageId);
-        const village = this.villageRepository.all().find(v => v.id === toVillageId);
-        if (!village) {
-            throw new VillageNotFound(`Village ${toVillageId} not found`);
-        }
-        this.scheduleTask(SendResourcesTask.name, {
-            villageId: fromVillageId,
-            targetVillageId: toVillageId,
-            coordinates: village.crd,
-            buildTypeId: MARKET_ID,
-            tabId: 5,
-        });
-    }
 }

@@ -88,10 +88,6 @@ export interface VillageState extends VillageOwnState {
      * Resource commitments of this village to other (may be negative)
      */
     commitments: Resources;
-    /**
-     * List of village id, from which resources ship to this village
-     */
-    shipment: Array<number>;
 }
 
 function calcResourceBalance(resources: Resources, current: Resources, performance: Resources): ResourceLineState {
@@ -163,16 +159,6 @@ function createAllProductionQueueStates(storage: VillageStorage, taskCollection:
     return result;
 }
 
-function calcFrontierResources(taskCollection: VillageTaskCollection): Resources {
-    let result = Resources.zero();
-    for (let queue of OrderedProductionQueues) {
-        const tasks = taskCollection.getTasksInProductionQueue(queue);
-        const firstTaskResources = tasks.slice(0, 1).reduce(taskResourceReducer, Resources.zero());
-        result = result.add(firstTaskResources);
-    }
-    return result;
-}
-
 function createVillageOwnState(
     village: Village,
     storage: VillageStorage,
@@ -182,9 +168,9 @@ function createVillageOwnState(
     const resourceStorage = storage.getResourceStorage();
     const performance = storage.getResourcesPerformance();
     const buildQueueInfo = storage.getBuildingQueueInfo();
-    const requiredResources = taskCollection.getVillageRequiredResources();
-    const frontierResources = calcFrontierResources(taskCollection);
-    const totalRequiredResources = taskCollection.getTotalVillageRequiredResources();
+    const requiredResources = taskCollection.getReadyTaskRequiredResources();
+    const frontierResources = taskCollection.getFrontierResources();
+    const totalRequiredResources = taskCollection.getAllTasksRequiredResources();
 
     return {
         id: village.id,
@@ -227,7 +213,7 @@ function createVillageState(state: VillageOwnState, ownStates: VillageOwnStateDi
         const targetVillageMissing = shipmentVillageRequired.balance.add(shipmentVillageIncoming).min(Resources.zero());
         return memo.add(targetVillageMissing);
     }, Resources.zero());
-    return { ...state, commitments, shipment: villageIds };
+    return { ...state, commitments };
 }
 
 function getVillageStates(

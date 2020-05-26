@@ -133,13 +133,6 @@
           />
 
           <resource-line
-            :title="'Обязательства:'"
-            :resources="villageState.commitments"
-            :hide-zero="true"
-            v-if="!villageState.commitments.empty()"
-          />
-
-          <resource-line
             :title="'Торговцы:'"
             :resources="villageState.incomingResources"
             :hide-zero="true"
@@ -152,17 +145,8 @@
                 v-for="s in shared.villageStates"
                 v-if="s.id !== villageState.id"
                 class="village-quick-link"
-                :class="{ active: villageState.shipment.includes(s.id) }"
                 :href="marketPath(villageState.village, s.village)"
-                :title="
-                  'Отправить ресурсы из ' +
-                    villageState.village.name +
-                    ' в ' +
-                    s.village.name +
-                    '(shift+click - настроить отправку)'
-                "
-                v-on:click.prevent.shift.exact="setupResourceTransfer(villageState, s)"
-                v-on:click.prevent.exact="goToMarket(villageState.village, s.village)"
+                :title="'Отправить ресурсы из ' + villageState.village.name + ' в ' + s.village.name"
                 >$->{{ s.village.name }}</a
               >
               <a class="village-quick-link" :href="quartersPath(villageState.village)">Казармы</a>
@@ -260,20 +244,6 @@ export default {
         return 'never';
       }
       return secondsToTime(value.seconds);
-    },
-    goToMarket(fromVillage, toVillage) {
-      window.location.assign(this.marketPath(fromVillage, toVillage));
-    },
-    setupResourceTransfer(villageState, toVillageState) {
-      villageState.shipment.includes(toVillageState.id)
-        ? this.dropResourceTransferTasks(villageState.id, toVillageState.id)
-        : this.scheduleResourceTransferTasks(villageState.id, toVillageState.id);
-    },
-    scheduleResourceTransferTasks(fromVillageId, toVillageId) {
-      this.shared.scheduleResourceTransferTasks(fromVillageId, toVillageId);
-    },
-    dropResourceTransferTasks(fromVillageId, toVillageId) {
-      this.shared.dropResourceTransferTasks(fromVillageId, toVillageId);
     },
     openEditor(villageId) {
       this.$store.dispatch(Actions.OpenVillageEditor, { villageId });

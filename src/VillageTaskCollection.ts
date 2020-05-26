@@ -105,7 +105,7 @@ export class VillageTaskCollection {
         }
     }
 
-    getVillageRequiredResources(): Resources {
+    getReadyTaskRequiredResources(): Resources {
         const first = this.getReadyForProductionTask();
         if (first && first.args.resources) {
             return Resources.fromObject(first.args.resources);
@@ -113,7 +113,19 @@ export class VillageTaskCollection {
         return Resources.zero();
     }
 
-    getTotalVillageRequiredResources(): Resources {
+    getFrontierResources(): Resources {
+        let result = Resources.zero();
+        const groups = this.getQueueGroupedTasks();
+        for (let group of groups) {
+            const firstTask = _.first(group.tasks);
+            if (firstTask && firstTask.args.resources) {
+                result = result.add(Resources.fromObject(firstTask.args.resources));
+            }
+        }
+        return result;
+    }
+
+    getAllTasksRequiredResources(): Resources {
         const tasks = this.storage.getTasks().filter(t => t.args.resources);
         return tasks.reduce((acc, t) => acc.add(t.args.resources!), Resources.zero());
     }
