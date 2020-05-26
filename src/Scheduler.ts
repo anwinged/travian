@@ -57,8 +57,9 @@ export class Scheduler {
     }
 
     private createUniqTaskTimer(seconds: number, name: string, args: Args = {}) {
-        this.scheduleUniqTask(name, args, timestamp() + seconds - 10);
+        const firstDelay = around(seconds - 10, 0.2);
         const intervalTime = around(seconds, 0.2) * 1000;
+        this.scheduleUniqTask(name, args, timestamp() + firstDelay);
         setInterval(() => this.scheduleUniqTask(name, args, timestamp()), intervalTime);
     }
 
