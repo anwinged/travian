@@ -83,7 +83,11 @@ export class VillageTaskCollection {
             return undefined;
         }
 
-        return _.first(firstReadyGroup.tasks);
+        const maxCapacity = Resources.fromStorage(this.storage.getResourceStorage());
+
+        return firstReadyGroup.tasks.find(
+            t => !t.args.resources || maxCapacity.allGreaterOrEqual(Resources.fromObject(t.args.resources))
+        );
     }
 
     postponeTask(taskId: TaskId, seconds: number) {

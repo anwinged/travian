@@ -7,25 +7,25 @@ describe('Resources', function() {
     it('Can compare with lt', function() {
         const x = new Resources(0, 0, 0, 0);
         const y = new Resources(5, 5, 5, 5);
-        expect(x.lt(y)).is.true;
+        expect(x.anyLower(y)).is.true;
     });
 
     it('Can compare with lt (mixed)', function() {
         const x = new Resources(20, 20, 5, 20);
         const y = new Resources(10, 10, 10, 10);
-        expect(x.lt(y)).is.true;
+        expect(x.anyLower(y)).is.true;
     });
 
     it('Can compare with gt', function() {
         const x = new Resources(5, 5, 5, 5);
         const y = new Resources(0, 0, 0, 0);
-        expect(x.gt(y)).is.true;
+        expect(x.allGreater(y)).is.true;
     });
 
     it('Can compare with gt (mixed)', function() {
         const x = new Resources(30, 30, 10, 30);
         const y = new Resources(20, 20, 20, 20);
-        expect(x.gt(y)).is.false;
+        expect(x.allGreater(y)).is.false;
     });
 
     it('Can up to 1', function() {

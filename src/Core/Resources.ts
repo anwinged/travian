@@ -85,12 +85,18 @@ export class Resources implements ResourcesInterface {
         );
     }
 
-    lt(other: ResourcesInterface): boolean {
+    anyLower(other: ResourcesInterface): boolean {
         return this.lumber < other.lumber || this.clay < other.clay || this.iron < other.iron || this.crop < other.crop;
     }
 
-    gt(other: ResourcesInterface): boolean {
+    allGreater(other: ResourcesInterface): boolean {
         return this.lumber > other.lumber && this.clay > other.clay && this.iron > other.iron && this.crop > other.crop;
+    }
+
+    allGreaterOrEqual(other: ResourcesInterface): boolean {
+        return (
+            this.lumber >= other.lumber && this.clay >= other.clay && this.iron >= other.iron && this.crop >= other.crop
+        );
     }
 
     min(other: ResourcesInterface): Resources {

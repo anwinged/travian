@@ -18,7 +18,7 @@ export function calcHeroResource(requirements: ReadonlyArray<Resources>): HeroRe
 
 function getFirstRequirement(requirements: ReadonlyArray<Resources>): Resources {
     for (let required of requirements) {
-        if (required.lt(Resources.zero())) {
+        if (required.anyLower(Resources.zero())) {
             return required;
         }
     }
