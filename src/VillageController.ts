@@ -22,7 +22,7 @@ export class VillageController {
     }
 
     getReadyProductionTask(): Task | undefined {
-        return this.taskCollection.getReadyProductionTask();
+        return this.taskCollection.getReadyForProductionTask();
     }
 
     addTask(name: string, args: Args) {

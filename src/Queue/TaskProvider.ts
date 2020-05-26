@@ -1,6 +1,8 @@
 import { Args } from './Args';
 import { uniqId } from '../utils';
 import { ResourcesInterface } from '../Core/Resources';
+import { ProductionQueue } from '../Core/ProductionQueue';
+import { getProductionQueue } from '../Task/TaskMap';
 
 export type TaskId = string;
 
@@ -40,8 +42,16 @@ export interface TaskProvider {
     setTasks(tasks: TaskList): void;
 }
 
+export interface TaskMatcher {
+    (task: Task): boolean;
+}
+
 export interface TaskTransformer {
     (task: Task): Task;
+}
+
+export function isInQueue(queue: ProductionQueue): TaskMatcher {
+    return (task: Task) => getProductionQueue(task.name) === queue;
 }
 
 export function withTime(ts: number): TaskTransformer {

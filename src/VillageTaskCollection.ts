@@ -1,13 +1,13 @@
 import { VillageStorage } from './Storage/VillageStorage';
-import { Task, TaskId, uniqTaskId, withResources, withTime } from './Queue/TaskProvider';
+import { isInQueue, Task, TaskId, uniqTaskId, withResources, withTime } from './Queue/TaskProvider';
 import { Args } from './Queue/Args';
-import { isProductionTask, ProductionQueue, OrderedProductionQueues } from './Core/ProductionQueue';
-import { getProductionQueue } from './Task/TaskMap';
+import { isProductionTask, OrderedProductionQueues, ProductionQueue } from './Core/ProductionQueue';
 import { timestamp } from './utils';
 import { Resources } from './Core/Resources';
 import { ContractAttributes, ContractType } from './Core/Contract';
 import { UpgradeBuildingTask } from './Task/UpgradeBuildingTask';
 import { ForgeImprovementTask } from './Task/ForgeImprovementTask';
+import * as _ from 'underscore';
 
 interface QueueTasks {
     queue: ProductionQueue;
@@ -62,10 +62,9 @@ export class VillageTaskCollection {
         const tasks = this.storage.getTasks();
         const result: Array<QueueTasks> = [];
         for (let queue of OrderedProductionQueues) {
-            const queueTasks = tasks.filter(task => getProductionQueue(task.name) === queue);
             result.push({
                 queue,
-                tasks: queueTasks,
+                tasks: tasks.filter(isInQueue(queue)),
                 finishTs: this.storage.getQueueTaskEnding(queue),
             });
         }
@@ -73,16 +72,18 @@ export class VillageTaskCollection {
     }
 
     getTasksInProductionQueue(queue: ProductionQueue): Array<Task> {
-        return this.storage.getTasks().filter(task => getProductionQueue(task.name) === queue);
+        return this.storage.getTasks().filter(isInQueue(queue));
     }
 
-    getReadyProductionTask(): Task | undefined {
+    getReadyForProductionTask(): Task | undefined {
         const groups = this.getQueueGroupedTasks();
-        const firstReadyGroup = groups.filter(g => g.finishTs <= timestamp()).shift();
+        const nowTs = timestamp();
+        const firstReadyGroup = groups.find(g => g.finishTs <= nowTs && g.tasks.length !== 0);
         if (!firstReadyGroup) {
             return undefined;
         }
-        return firstReadyGroup.tasks.shift();
+
+        return _.first(firstReadyGroup.tasks);
     }
 
     postponeTask(taskId: TaskId, seconds: number) {
@@ -105,7 +106,7 @@ export class VillageTaskCollection {
     }
 
     getVillageRequiredResources(): Resources {
-        const first = this.getReadyProductionTask();
+        const first = this.getReadyForProductionTask();
         if (first && first.args.resources) {
             return Resources.fromObject(first.args.resources);
         }
