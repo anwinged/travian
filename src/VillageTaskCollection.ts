@@ -1,13 +1,19 @@
 import { VillageStorage } from './Storage/VillageStorage';
 import { Task, TaskId, uniqTaskId, withResources, withTime } from './Queue/TaskProvider';
 import { Args } from './Queue/Args';
-import { isProductionTask, ProductionQueue, ProductionQueueTypes } from './Core/ProductionQueue';
+import { isProductionTask, ProductionQueue, OrderedProductionQueues } from './Core/ProductionQueue';
 import { getProductionQueue } from './Task/TaskMap';
 import { timestamp } from './utils';
 import { Resources } from './Core/Resources';
 import { ContractAttributes, ContractType } from './Core/Contract';
 import { UpgradeBuildingTask } from './Task/UpgradeBuildingTask';
 import { ForgeImprovementTask } from './Task/ForgeImprovementTask';
+
+interface QueueTasks {
+    queue: ProductionQueue;
+    tasks: Array<Task>;
+    finishTs: number;
+}
 
 export class VillageTaskCollection {
     private readonly storage: VillageStorage;
@@ -52,17 +58,31 @@ export class VillageTaskCollection {
         this.removeTasks(t => t.id === taskId);
     }
 
+    private getQueueGroupedTasks(): Array<QueueTasks> {
+        const tasks = this.storage.getTasks();
+        const result: Array<QueueTasks> = [];
+        for (let queue of OrderedProductionQueues) {
+            const queueTasks = tasks.filter(task => getProductionQueue(task.name) === queue);
+            result.push({
+                queue,
+                tasks: queueTasks,
+                finishTs: this.storage.getQueueTaskEnding(queue),
+            });
+        }
+        return result;
+    }
+
     getTasksInProductionQueue(queue: ProductionQueue): Array<Task> {
         return this.storage.getTasks().filter(task => getProductionQueue(task.name) === queue);
     }
 
     getReadyProductionTask(): Task | undefined {
-        let sortedTasks: Array<Task> = [];
-        for (let queue of ProductionQueueTypes) {
-            const tasks = this.getTasksInProductionQueue(queue);
-            sortedTasks = sortedTasks.concat(tasks);
+        const groups = this.getQueueGroupedTasks();
+        const firstReadyGroup = groups.filter(g => g.finishTs <= timestamp()).shift();
+        if (!firstReadyGroup) {
+            return undefined;
         }
-        return sortedTasks.shift();
+        return firstReadyGroup.tasks.shift();
     }
 
     postponeTask(taskId: TaskId, seconds: number) {
@@ -85,8 +105,7 @@ export class VillageTaskCollection {
     }
 
     getVillageRequiredResources(): Resources {
-        const tasks = this.storage.getTasks().filter(t => t.args.resources);
-        const first = tasks.shift();
+        const first = this.getReadyProductionTask();
         if (first && first.args.resources) {
             return Resources.fromObject(first.args.resources);
         }

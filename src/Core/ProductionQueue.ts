@@ -10,7 +10,7 @@ export enum ProductionQueue {
 /**
  * Placed in order of execution priority. Order is important!
  */
-export const ProductionQueueTypes: ReadonlyArray<ProductionQueue> = [
+export const OrderedProductionQueues: ReadonlyArray<ProductionQueue> = [
     ProductionQueue.TrainUnit,
     ProductionQueue.Celebration,
     ProductionQueue.UpgradeUnit,
@@ -37,7 +37,7 @@ export interface TaskNamePredicate {
 /**
  * List on non intersected task queue predicates.
  */
-export const TASK_TYPE_PREDICATES: Array<TaskNamePredicate> = ProductionQueueTypes.map(queue => {
+const TASK_TYPE_PREDICATES: Array<TaskNamePredicate> = OrderedProductionQueues.map(queue => {
     return (taskName: string) => getProductionQueue(taskName) === queue;
 });
 

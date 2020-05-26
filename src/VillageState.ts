@@ -4,7 +4,7 @@ import { VillageStorage } from './Storage/VillageStorage';
 import { calcGatheringTimings, GatheringTime } from './Core/GatheringTimings';
 import { VillageRepositoryInterface } from './VillageRepository';
 import { VillageNotFound } from './Errors';
-import { ProductionQueue, ProductionQueueTypes } from './Core/ProductionQueue';
+import { ProductionQueue, OrderedProductionQueues } from './Core/ProductionQueue';
 import { Task } from './Queue/TaskProvider';
 import { timestamp } from './utils';
 import { VillageTaskCollection } from './VillageTaskCollection';
@@ -157,7 +157,7 @@ function createProductionQueueState(
 
 function createAllProductionQueueStates(storage: VillageStorage, taskCollection: VillageTaskCollection) {
     let result: { [queue: string]: VillageProductionQueueState } = {};
-    for (let queue of ProductionQueueTypes) {
+    for (let queue of OrderedProductionQueues) {
         result[queue] = createProductionQueueState(queue, storage, taskCollection);
     }
     return result;
@@ -165,7 +165,7 @@ function createAllProductionQueueStates(storage: VillageStorage, taskCollection:
 
 function calcFrontierResources(taskCollection: VillageTaskCollection): Resources {
     let result = Resources.zero();
-    for (let queue of ProductionQueueTypes) {
+    for (let queue of OrderedProductionQueues) {
         const tasks = taskCollection.getTasksInProductionQueue(queue);
         const firstTaskResources = tasks.slice(0, 1).reduce(taskResourceReducer, Resources.zero());
         result = result.add(firstTaskResources);
