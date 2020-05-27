@@ -78,7 +78,6 @@ interface VillageOwnState {
      */
     totalRequired: ResourceLineState;
     incomingResources: Resources;
-    buildRemainingSeconds: number;
     settings: VillageSettings;
     queues: { [queue: string]: VillageProductionQueueState | undefined };
 }
@@ -196,7 +195,6 @@ function createVillageOwnState(
     const resources = storage.getResources();
     const resourceStorage = storage.getResourceStorage();
     const performance = storage.getResourcesPerformance();
-    const buildQueueInfo = storage.getBuildingQueueInfo();
     const requiredResources = taskCollection.getReadyTaskRequiredResources();
     const frontierResources = taskCollection.getFrontierResources();
     const totalRequiredResources = taskCollection.getAllTasksRequiredResources();
@@ -210,7 +208,6 @@ function createVillageOwnState(
         required: calcResourceBalance(requiredResources, resources, performance),
         frontierRequired: calcResourceBalance(frontierResources, resources, performance),
         totalRequired: calcResourceBalance(totalRequiredResources, resources, performance),
-        buildRemainingSeconds: buildQueueInfo.seconds,
         incomingResources: calcIncomingResources(storage),
         settings: storage.getSettings(),
         queues: createAllProductionQueueStates(storage, taskCollection),

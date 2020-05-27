@@ -13,7 +13,6 @@ export class VillageOverviewPageGrabber extends Grabber {
         }
 
         this.storage.storeResourcesPerformance(grabResourcesPerformance());
-        this.storage.storeBuildingQueueInfo(this.grabBuildingQueueInfoOrDefault());
 
         const buildingQueueInfo = this.grabBuildingQueueInfoOrDefault();
         const buildingEndTime = buildingQueueInfo.seconds
