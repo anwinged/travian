@@ -23,7 +23,6 @@ export class BalanceHeroResourcesAction extends ActionController {
         const requirements = [
             thisVillageState.required.balance,
             thisVillageState.commitments,
-            thisVillageState.totalRequired.balance,
             thisVillageState.resources.sub(thisVillageState.storage.capacity),
         ];
 
