@@ -116,7 +116,7 @@
           </tr>
 
           <resource-line
-            v-if="villageState.required.active && isExtended(villageState.id)"
+            v-if="villageState.required.active"
             :title="'Баланс след.:'"
             :hint="'Баланс следующей задачи'"
             :resources="villageState.required.balance"
