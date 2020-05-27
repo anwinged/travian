@@ -21,7 +21,11 @@
               :title="villageHint(villageState)"
             >
               {{ villageState.village.name }}
-              [<a href="#" v-on:click.prevent="openEditor(villageState.id)">ред</a>]:
+              [<a href="#" v-on:click.prevent="openEditor(villageState.id)">ред</a>] [<a
+                href="#"
+                v-on:click.prevent="toggleExtendedView(villageState.id)"
+                >👁️</a
+              >]:
             </td>
             <td class="right">
               <filling
@@ -73,7 +77,7 @@
             <td></td>
           </tr>
 
-          <tr class="required-line">
+          <tr class="required-line" v-if="villageState.required.active">
             <td class="right">След. задача:</td>
             <td class="right">
               <resource
@@ -112,7 +116,7 @@
           </tr>
 
           <resource-line
-            v-if="villageState.required.active"
+            v-if="villageState.required.active && isExtended(villageState.id)"
             :title="'Баланс след.:'"
             :hint="'Баланс следующей задачи'"
             :resources="villageState.required.balance"
@@ -122,7 +126,7 @@
           <resource-line
             v-for="queueState of villageState.queues"
             v-bind:key="villageState.id + queueState.queue"
-            v-if="queueState.isActive"
+            v-if="queueState.isActive && isExtended(villageState.id)"
             :title="queueTitle(queueState.queue) + ' (' + queueState.taskCount + '):'"
             :hint="'Задач в очереди: ' + queueState.taskCount"
             :resources="queueState.firstTask.balance"
@@ -131,6 +135,7 @@
           />
 
           <resource-line
+            v-if="isExtended(villageState.id)"
             :title="'Баланс фронтира:'"
             :hint="'Баланс первых задач во всех производственных очередях'"
             :resources="villageState.frontierRequired.balance"
@@ -138,6 +143,7 @@
           />
 
           <resource-line
+            v-if="isExtended(villageState.id)"
             :title="'Баланс очереди:'"
             :hint="'Баланс всех задач деревни в очереди'"
             :resources="villageState.totalRequired.balance"
@@ -148,7 +154,7 @@
             :title="'Торговцы:'"
             :resources="villageState.incomingResources"
             :hide-zero="true"
-            v-if="!villageState.incomingResources.empty()"
+            v-if="!villageState.incomingResources.empty() && isExtended(villageState.id)"
           />
 
           <tr class="normal-line">
@@ -210,6 +216,7 @@ export default {
   data() {
     return {
       shared: this.$root.$data,
+      extendedView: {},
     };
   },
   methods: {
@@ -265,6 +272,12 @@ export default {
     },
     openEditor(villageId) {
       this.$store.dispatch(Actions.OpenVillageEditor, { villageId });
+    },
+    isExtended(villageId) {
+      return !!this.extendedView[villageId];
+    },
+    toggleExtendedView(villageId) {
+      this.extendedView[villageId] = !this.extendedView[villageId];
     },
     queueTitle(queue) {
       return translateProductionQueue(queue);
