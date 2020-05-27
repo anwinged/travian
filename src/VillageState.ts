@@ -34,6 +34,10 @@ interface ResourceLineState {
      * Time to gather all type of resources (slowest time)
      */
     time: GatheringTime;
+    /**
+     * Is active - resources not equals to zero.
+     */
+    active: boolean;
 }
 
 interface VillageProductionQueueState {
@@ -99,6 +103,7 @@ function calcResourceBalance(
         resources,
         balance: current.sub(resources),
         time: timeToAllResources(current, resources, performance),
+        active: !resources.empty(),
     };
 }
 

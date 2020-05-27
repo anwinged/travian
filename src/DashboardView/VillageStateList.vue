@@ -112,6 +112,14 @@
           </tr>
 
           <resource-line
+            v-if="villageState.required.active"
+            :title="'Баланс след.:'"
+            :hint="'Баланс следующей задачи'"
+            :resources="villageState.required.balance"
+            :time1="renderGatheringTime(villageState.required.time)"
+          />
+
+          <resource-line
             v-for="queueState of villageState.queues"
             v-bind:key="villageState.id + queueState.queue"
             v-if="queueState.isActive"
