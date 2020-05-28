@@ -23,7 +23,9 @@ export class FindSendResourcesPath extends ActionController {
         const villages = this.villageFactory.getAllVillages();
         for (let fromVillage of villages) {
             for (let toVillage of villages) {
-                reports.push(calculator.calc(fromVillage.id, toVillage.id));
+                if (fromVillage.id !== toVillage.id) {
+                    reports.push(calculator.calc(fromVillage.id, toVillage.id));
+                }
             }
         }
 
