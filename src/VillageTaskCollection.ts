@@ -8,6 +8,7 @@ import { ContractAttributes, ContractType } from './Core/Contract';
 import { UpgradeBuildingTask } from './Task/UpgradeBuildingTask';
 import { ForgeImprovementTask } from './Task/ForgeImprovementTask';
 import * as _ from 'underscore';
+import { TrainTroopTask } from './Task/TrainTroopTask';
 
 interface QueueTasks {
     queue: ProductionQueue;
@@ -89,6 +90,7 @@ export class VillageTaskCollection {
 
         return firstReadyGroup.tasks.find(
             t =>
+                t.name === TrainTroopTask.name ||
                 !t.args.resources ||
                 maxCapacity.allGreaterOrEqual(Resources.fromObject(t.args.resources))
         );
