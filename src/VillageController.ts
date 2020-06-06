@@ -5,20 +5,33 @@ import { VillageState } from './VillageState';
 import { Resources } from './Core/Resources';
 import { TryLaterError } from './Errors';
 import { aroundMinutes } from './utils';
+import { MerchantsInfo } from './Core/Market';
+import { VillageStorage } from './Storage/VillageStorage';
 
 export class VillageController {
     private readonly villageId: number;
+    private readonly storage: VillageStorage;
     private readonly taskCollection: VillageTaskCollection;
     private readonly state: VillageState;
 
-    constructor(villageId: number, taskCollection: VillageTaskCollection, state: VillageState) {
+    constructor(
+        villageId: number,
+        storage: VillageStorage,
+        taskCollection: VillageTaskCollection,
+        state: VillageState
+    ) {
         this.villageId = villageId;
+        this.storage = storage;
         this.taskCollection = taskCollection;
         this.state = state;
     }
 
     getVillageId() {
         return this.villageId;
+    }
+
+    getState(): VillageState {
+        return this.state;
     }
 
     getReadyProductionTask(): Task | undefined {
@@ -37,7 +50,22 @@ export class VillageController {
         this.taskCollection.postponeTask(taskId, seconds);
     }
 
-    getAvailableForSendResources(): Resources {
+    getMerchantsInfo(): MerchantsInfo {
+        return this.storage.getMerchantsInfo();
+    }
+
+    getSendResourcesMultiplier(): number {
+        return this.state.settings.sendResourcesMultiplier;
+    }
+
+    getOverflowResources(): Resources {
+        const limit = this.state.storageOptimumFullness;
+        const currentResources = this.state.resources;
+
+        return currentResources.sub(limit).max(Resources.zero());
+    }
+
+    getFreeResources(): Resources {
         const balance = this.state.required.balance;
         const free = balance.max(Resources.zero());
 
@@ -57,11 +85,11 @@ export class VillageController {
     }
 
     getRequiredResources(): Resources {
-        const performance = this.state.performance;
-        const maxPossibleToStore = this.state.storage.capacity.sub(performance);
+        const maxPossibleToStore = this.state.storageOptimumFullness;
         const currentResources = this.state.resources;
         const incomingResources = this.state.incomingResources;
         const requirementResources = this.state.required.resources;
+
         const missingResources = requirementResources
             .min(maxPossibleToStore)
             .sub(incomingResources)
@@ -77,5 +105,12 @@ export class VillageController {
         ]);
 
         return missingResources;
+    }
+
+    getAvailableToReceiveResources(): Resources {
+        const maxPossibleToStore = this.state.storageOptimumFullness;
+        const currentResources = this.state.resources;
+
+        return maxPossibleToStore.sub(currentResources).max(Resources.zero());
     }
 }

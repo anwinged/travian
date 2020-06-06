@@ -4,7 +4,7 @@
 
 <script>
 export default {
-  props: ['value', 'max', 'speed'],
+  props: ['value', 'warning', 'critical', 'full'],
   data() {
     return {};
   },
@@ -13,29 +13,16 @@ export default {
       return this.value;
     },
     percent() {
-      return Math.floor((this.value / this.max) * 100);
+      return Math.floor((this.value / this.full) * 100);
     },
     title() {
-      if (this.speed < 0) {
-        const time = this.fractionalHourToTime(this.value / this.speed);
-        return `${this.value}, ${this.percent}%, опустеет через ${time}`;
-      } else {
-        const time = this.fractionalHourToTime((this.max - this.value) / this.speed);
-        return `${this.value}, ${this.percent}%, заполнится через ${time}`;
-      }
+      return `${this.value}/${this.full}, ${this.percent}%`;
     },
     classes() {
       return {
-        warning: this.percent >= 70 && this.percent < 95,
-        bad: this.percent >= 95,
+        warning: this.value >= this.warning && this.value < this.critical,
+        bad: this.value >= this.critical,
       };
-    },
-  },
-  methods: {
-    fractionalHourToTime(value) {
-      const hours = Math.floor(value);
-      const minutes = Math.round((value - hours) * 60);
-      return `${hours}:${String(minutes).padStart(2, '0')}`;
     },
   },
 };

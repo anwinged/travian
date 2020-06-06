@@ -30,52 +30,40 @@
             <td class="right">
               <filling
                 :value="villageState.resources.lumber"
-                :max="villageState.storage.capacity.lumber"
-                :speed="villageState.performance.lumber"
+                :warning="villageState.storageOptimumFullness.lumber"
+                :critical="villageState.upperCriticalLevel.lumber"
+                :full="villageState.storage.capacity.lumber"
               ></filling>
             </td>
             <td class="right">
               <filling
                 :value="villageState.resources.clay"
-                :max="villageState.storage.capacity.clay"
-                :speed="villageState.performance.clay"
+                :warning="villageState.storageOptimumFullness.clay"
+                :critical="villageState.upperCriticalLevel.clay"
+                :full="villageState.storage.capacity.clay"
               ></filling>
             </td>
             <td class="right">
               <filling
                 :value="villageState.resources.iron"
-                :max="villageState.storage.capacity.iron"
-                :speed="villageState.performance.iron"
+                :warning="villageState.storageOptimumFullness.iron"
+                :critical="villageState.upperCriticalLevel.iron"
+                :full="villageState.storage.capacity.iron"
               ></filling>
             </td>
             <td class="right">
               <filling
                 :value="villageState.resources.crop"
-                :max="villageState.storage.capacity.crop"
-                :speed="villageState.performance.crop"
+                :warning="villageState.storageOptimumFullness.crop"
+                :critical="villageState.upperCriticalLevel.crop"
+                :full="villageState.storage.capacity.crop"
               ></filling>
             </td>
             <td class="right" v-text="storageTime(villageState)"></td>
             <td></td>
           </tr>
 
-          <tr class="performance-line">
-            <td class="right">Прирост:</td>
-            <td class="right">
-              <resource :value="villageState.performance.lumber"></resource>
-            </td>
-            <td class="right">
-              <resource :value="villageState.performance.clay"></resource>
-            </td>
-            <td class="right">
-              <resource :value="villageState.performance.iron"></resource>
-            </td>
-            <td class="right">
-              <resource :value="villageState.performance.crop"></resource>
-            </td>
-            <td></td>
-            <td></td>
-          </tr>
+          <resource-line :title="'Прирост:'" :resources="villageState.performance" />
 
           <resource-line
             v-if="isExtended(villageState.id)"
@@ -84,43 +72,11 @@
             :resources="villageState.upperCriticalLevel"
           />
 
-          <tr class="required-line" v-if="villageState.required.active">
-            <td class="right">След. задача:</td>
-            <td class="right">
-              <resource
-                :value="villageState.required.resources.lumber"
-                :hide-zero="true"
-                :color="false"
-                :sign="false"
-              ></resource>
-            </td>
-            <td class="right">
-              <resource
-                :value="villageState.required.resources.clay"
-                :hide-zero="true"
-                :color="false"
-                :sign="false"
-              ></resource>
-            </td>
-            <td class="right">
-              <resource
-                :value="villageState.required.resources.iron"
-                :hide-zero="true"
-                :color="false"
-                :sign="false"
-              ></resource>
-            </td>
-            <td class="right">
-              <resource
-                :value="villageState.required.resources.crop"
-                :hide-zero="true"
-                :color="false"
-                :sign="false"
-              ></resource>
-            </td>
-            <td></td>
-            <td></td>
-          </tr>
+          <resource-line
+            v-if="villageState.required.active"
+            :title="'След. задача:'"
+            :resources="villageState.required.resources"
+          />
 
           <resource-line
             v-if="villageState.required.active"
@@ -169,6 +125,8 @@
             :title="'Крит. уровень:'"
             :hint="'Критический уровень'"
             :hide-zero="true"
+            :color="false"
+            :sign="false"
             :resources="villageState.upperCriticalLevel"
           />
 
@@ -177,6 +135,8 @@
             :title="'Опт. уровень:'"
             :hint="'Оптимальный уровень'"
             :hide-zero="true"
+            :color="false"
+            :sign="false"
             :resources="villageState.storageOptimumFullness"
           />
 
@@ -192,6 +152,11 @@
                 "
                 >$->{{ s.village.name }}</a
               >
+            </td>
+          </tr>
+
+          <tr class="normal-line">
+            <td class="right" colspan="7">
               <a class="village-quick-link" :href="quartersPath(villageState.village)">Казармы</a>
               <a class="village-quick-link" :href="horseStablePath(villageState.village)"
                 >Конюшни</a

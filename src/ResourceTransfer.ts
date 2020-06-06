@@ -1,11 +1,26 @@
 import { VillageFactory } from './VillageFactory';
-import { ResourcesInterface } from './Core/Resources';
+import { Resources, ResourcesInterface } from './Core/Resources';
+import { VillageController } from './VillageController';
+
+export interface ResourceTransferScore {
+    amount: number;
+    overflow: boolean;
+}
 
 export interface ResourceTransferReport {
     fromVillageId: number;
     toVillageId: number;
     resources: ResourcesInterface;
-    score: number;
+    score: ResourceTransferScore;
+}
+
+export function compareReports(r1: ResourceTransferReport, r2: ResourceTransferReport): number {
+    if (r1.score.overflow !== r2.score.overflow) {
+        const o1 = r1.score.overflow ? 1 : 0;
+        const o2 = r2.score.overflow ? 1 : 0;
+        return o2 - o1;
+    }
+    return r2.score.amount - r1.score.amount;
 }
 
 export class ResourceTransferCalculator {
@@ -15,20 +30,21 @@ export class ResourceTransferCalculator {
     }
 
     calc(fromVillageId: number, toVillageId: number): ResourceTransferReport {
-        const senderState = this.factory.createState(fromVillageId);
-        const senderController = this.factory.createController(fromVillageId);
-        const senderStorage = this.factory.createStorage(fromVillageId);
+        const sender = this.factory.createController(fromVillageId);
+        const recipient = this.factory.createController(toVillageId);
 
-        const recipientController = this.factory.createController(toVillageId);
+        let [senderReadyResources, recipientNeedResources] = this.getTransferResourcePair(
+            sender,
+            recipient
+        );
 
-        const multiplier = senderState.settings.sendResourcesMultiplier;
-        const senderReadyResources = senderController
-            .getAvailableForSendResources()
-            .downTo(multiplier);
-        const recipientNeedResources = recipientController.getRequiredResources().upTo(multiplier);
+        const multiplier = sender.getSendResourcesMultiplier();
+        senderReadyResources = senderReadyResources.downTo(multiplier);
+        recipientNeedResources = recipientNeedResources.upTo(multiplier);
+
         const contractResources = senderReadyResources.min(recipientNeedResources);
 
-        const merchantsInfo = senderStorage.getMerchantsInfo();
+        const merchantsInfo = sender.getMerchantsInfo();
         const merchantsCapacity = merchantsInfo.available * merchantsInfo.carry;
 
         let readyToTransfer = contractResources;
@@ -50,7 +66,21 @@ export class ResourceTransferCalculator {
             fromVillageId,
             toVillageId,
             resources: readyToTransfer,
-            score: readyToTransfer.amount(),
+            score: {
+                amount: readyToTransfer.amount(),
+                overflow: sender.getState().isOverflowing,
+            },
         };
+    }
+
+    private getTransferResourcePair(
+        sender: VillageController,
+        recipient: VillageController
+    ): [Resources, Resources] {
+        if (sender.getState().isOverflowing) {
+            return [sender.getOverflowResources(), recipient.getAvailableToReceiveResources()];
+        }
+
+        return [sender.getFreeResources(), recipient.getRequiredResources()];
     }
 }

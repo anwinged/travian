@@ -26,7 +26,10 @@ export class ResourceTransferStorage {
                     iron: 0,
                     crop: 0,
                 },
-                score: 0,
+                score: {
+                    amount: 0,
+                    overflow: false,
+                },
             }),
         });
     }

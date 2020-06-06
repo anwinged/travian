@@ -63,6 +63,7 @@ export class VillageFactory {
         const village = this.villageRepository.get(villageId);
         return new VillageController(
             village.id,
+            this.createStorage(village.id),
             this.createTaskCollection(village.id),
             this.createState(village.id)
         );

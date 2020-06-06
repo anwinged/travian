@@ -9,7 +9,11 @@ import { clickSendButton, fillSendResourcesForm } from '../Page/BuildingPage/Mar
 import { VillageState } from '../VillageState';
 import { MerchantsInfo } from '../Core/Market';
 import { goToMarketSendResourcesPage, goToResourceViewPage } from '../Task/ActionBundles';
-import { ResourceTransferCalculator, ResourceTransferReport } from '../ResourceTransfer';
+import {
+    compareReports,
+    ResourceTransferCalculator,
+    ResourceTransferReport,
+} from '../ResourceTransfer';
 import { ResourceTransferStorage } from '../Storage/ResourceTransferStorage';
 import { path } from '../Helpers/Path';
 import { MARKET_ID } from '../Core/Buildings';
@@ -29,7 +33,7 @@ export class FindSendResourcesPath extends ActionController {
             }
         }
 
-        reports.sort((r1, r2) => r2.score - r1.score);
+        reports.sort(compareReports);
 
         const bestReport = reports.shift();
 
