@@ -66,9 +66,6 @@ export function createStore(villageFactory: VillageFactory) {
             [Mutations.UpdateVillageSendResourceThreshold](state, value) {
                 state.villageSettings.sendResourcesThreshold = getNumber(value);
             },
-            [Mutations.UpdateVillageSendResourceTimeout](state, value) {
-                state.villageSettings.sendResourcesTimeout = getNumber(value);
-            },
             [Mutations.UpdateVillageSendResourcesMultiplier](state, value) {
                 state.villageSettings.sendResourcesMultiplier = getNumber(value);
             },
@@ -81,7 +78,6 @@ export function createStore(villageFactory: VillageFactory) {
                     villageId: state.id,
                     villageName: state.village.name,
                     sendResourcesThreshold: settings.sendResourcesThreshold,
-                    sendResourcesTimeout: settings.sendResourcesTimeout,
                     sendResourcesMultiplier: settings.sendResourcesMultiplier,
                 });
                 commit(Mutations.ToggleVillageEditor, true);
@@ -93,9 +89,6 @@ export function createStore(villageFactory: VillageFactory) {
                     sendResourcesThreshold:
                         state.villageSettings.sendResourcesThreshold ||
                         VillageSettingsDefaults.sendResourcesThreshold,
-                    sendResourcesTimeout:
-                        state.villageSettings.sendResourcesTimeout ||
-                        VillageSettingsDefaults.sendResourcesTimeout,
                     sendResourcesMultiplier:
                         state.villageSettings.sendResourcesMultiplier ||
                         VillageSettingsDefaults.sendResourcesMultiplier,

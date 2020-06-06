@@ -10,10 +10,6 @@
         <input class="input" type="text" v-model="sendResourcesThreshold" />
       </div>
       <div class="form-input">
-        <label class="label" title="Таймаут отправки (мин)">Таймаут отправки (мин)</label>
-        <input class="input" type="text" v-model="sendResourcesTimeout" />
-      </div>
-      <div class="form-input">
         <label class="label" title="Множитель отправки (up to)">Множитель отправки (up to)</label>
         <input class="input" type="text" v-model="sendResourcesMultiplier" />
       </div>
@@ -39,14 +35,6 @@ export default {
       },
       set(value) {
         this.$store.commit(Mutations.UpdateVillageSendResourceThreshold, value);
-      },
-    },
-    sendResourcesTimeout: {
-      get() {
-        return this.$store.state.villageSettings.sendResourcesTimeout;
-      },
-      set(value) {
-        this.$store.commit(Mutations.UpdateVillageSendResourceTimeout, value);
       },
     },
     sendResourcesMultiplier: {

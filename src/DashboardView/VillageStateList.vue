@@ -226,10 +226,9 @@ export default {
       return `${name}, ${id}`;
     },
     villageStatus(villageState) {
-      const timeout = villageState.settings.sendResourcesTimeout;
       const threshold = villageState.settings.sendResourcesThreshold;
       const multiplier = villageState.settings.sendResourcesMultiplier;
-      return `отправка ${timeout} мин, порог ${threshold}, множ. ${multiplier}`;
+      return `порог ${threshold}, множ. ${multiplier}`;
     },
     path(name, args) {
       return path(name, args);
