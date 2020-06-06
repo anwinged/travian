@@ -8,9 +8,8 @@ import { ContractAttributes, ContractType } from './Core/Contract';
 import { UpgradeBuildingTask } from './Task/UpgradeBuildingTask';
 import { ForgeImprovementTask } from './Task/ForgeImprovementTask';
 import * as _ from 'underscore';
-import { TrainTroopTask } from './Task/TrainTroopTask';
 
-interface QueueTasks {
+export interface QueueTasks {
     queue: ProductionQueue;
     tasks: Array<Task>;
     finishTs: number;
@@ -61,7 +60,7 @@ export class VillageTaskCollection {
         this.removeTasks(t => t.id === taskId);
     }
 
-    private getQueueGroupedTasks(): Array<QueueTasks> {
+    getQueueGroupedTasks(): Array<QueueTasks> {
         const tasks = this.storage.getTasks();
         const result: Array<QueueTasks> = [];
         for (let queue of OrderedProductionQueues) {
@@ -72,28 +71,6 @@ export class VillageTaskCollection {
             });
         }
         return result;
-    }
-
-    getTasksInProductionQueue(queue: ProductionQueue): Array<Task> {
-        return this.storage.getTasks().filter(isInQueue(queue));
-    }
-
-    getReadyForProductionTask(): Task | undefined {
-        const groups = this.getQueueGroupedTasks();
-        const nowTs = timestamp();
-        const firstReadyGroup = groups.find(g => g.finishTs <= nowTs && g.tasks.length !== 0);
-        if (!firstReadyGroup) {
-            return undefined;
-        }
-
-        const maxCapacity = Resources.fromStorage(this.storage.getResourceStorage());
-
-        return firstReadyGroup.tasks.find(
-            t =>
-                t.name === TrainTroopTask.name ||
-                !t.args.resources ||
-                maxCapacity.allGreaterOrEqual(Resources.fromObject(t.args.resources))
-        );
     }
 
     postponeTask(taskId: TaskId, seconds: number) {
@@ -114,14 +91,6 @@ export class VillageTaskCollection {
                 t.args.unitId === attr.unitId;
             this.modifyTasks(predicate, withResources(resources));
         }
-    }
-
-    getReadyTaskRequiredResources(): Resources {
-        const first = this.getReadyForProductionTask();
-        if (first && first.args.resources) {
-            return Resources.fromObject(first.args.resources);
-        }
-        return Resources.zero();
     }
 
     getFrontierResources(): Resources {

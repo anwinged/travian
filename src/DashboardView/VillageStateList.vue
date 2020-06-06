@@ -68,6 +68,9 @@
           <resource-line
             v-if="villageState.required.active"
             :title="'След. задача:'"
+            :color="false"
+            :sign="false"
+            :hide-zero="false"
             :resources="villageState.required.resources"
           />
 

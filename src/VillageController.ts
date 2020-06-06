@@ -35,7 +35,7 @@ export class VillageController {
     }
 
     getReadyProductionTask(): Task | undefined {
-        return this.taskCollection.getReadyForProductionTask();
+        return this.state.firstReadyTask;
     }
 
     addTask(name: string, args: Args) {
