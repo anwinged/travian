@@ -120,26 +120,6 @@
             v-if="!villageState.incomingResources.empty() && isExtended(villageState.id)"
           />
 
-          <resource-line
-            v-if="isExtended(villageState.id)"
-            :title="'Крит. уровень:'"
-            :hint="'Критический уровень'"
-            :hide-zero="true"
-            :color="false"
-            :sign="false"
-            :resources="villageState.upperCriticalLevel"
-          />
-
-          <resource-line
-            v-if="isExtended(villageState.id)"
-            :title="'Опт. уровень:'"
-            :hint="'Оптимальный уровень'"
-            :hide-zero="true"
-            :color="false"
-            :sign="false"
-            :resources="villageState.storageOptimumFullness"
-          />
-
           <tr class="normal-line">
             <td class="right" colspan="7">
               <a

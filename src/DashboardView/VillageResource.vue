@@ -16,7 +16,7 @@ export default {
       return Math.floor((this.value / this.full) * 100);
     },
     title() {
-      return `${this.value}/${this.full}, ${this.percent}%`;
+      return `тек. ${this.value} / опт. склад ${this.warning} / полн. ${this.full}, ${this.percent}%`;
     },
     classes() {
       return {

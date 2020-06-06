@@ -49,7 +49,7 @@ export class Scheduler {
             });
         }
 
-        this.createUniqTaskTimer(5 * 60, GrabVillageState.name);
+        this.createUniqTaskTimer(10 * 60, GrabVillageState.name);
         this.createUniqTaskTimer(10 * 60, SendResourcesTask.name);
         this.createUniqTaskTimer(10 * 60, BalanceHeroResourcesTask.name);
         this.createUniqTaskTimer(20 * 60, UpdateResourceContracts.name);
