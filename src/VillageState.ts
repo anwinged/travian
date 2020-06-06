@@ -65,6 +65,8 @@ interface VillageOwnState {
     resources: Resources;
     performance: Resources;
     storage: VillageStorageState;
+    upperCriticalLevel: Resources;
+    storageOptimumFullness: Resources;
     /**
      * Required resources for nearest task
      */
@@ -195,6 +197,8 @@ function createVillageOwnState(
     const resources = storage.getResources();
     const resourceStorage = storage.getResourceStorage();
     const performance = storage.getResourcesPerformance();
+    const upperCriticalLevel = Resources.fromStorage(resourceStorage).sub(performance.scale(2));
+    const storageOptimumFullness = Resources.fromStorage(resourceStorage).sub(performance.scale(3));
     const requiredResources = taskCollection.getReadyTaskRequiredResources();
     const frontierResources = taskCollection.getFrontierResources();
     const totalRequiredResources = taskCollection.getAllTasksRequiredResources();
@@ -206,6 +210,8 @@ function createVillageOwnState(
         performance,
         storage: calcStorageBalance(resources, Resources.fromStorage(resourceStorage), performance),
         required: calcResourceBalance(requiredResources, resources, performance),
+        upperCriticalLevel,
+        storageOptimumFullness,
         frontierRequired: calcResourceBalance(frontierResources, resources, performance),
         totalRequired: calcResourceBalance(totalRequiredResources, resources, performance),
         incomingResources: calcIncomingResources(storage),

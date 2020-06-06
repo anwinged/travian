@@ -77,6 +77,13 @@
             <td></td>
           </tr>
 
+          <resource-line
+            v-if="isExtended(villageState.id)"
+            :title="'Баланс след.:'"
+            :hint="'Баланс следующей задачи'"
+            :resources="villageState.upperCriticalLevel"
+          />
+
           <tr class="required-line" v-if="villageState.required.active">
             <td class="right">След. задача:</td>
             <td class="right">
@@ -155,6 +162,22 @@
             :resources="villageState.incomingResources"
             :hide-zero="true"
             v-if="!villageState.incomingResources.empty() && isExtended(villageState.id)"
+          />
+
+          <resource-line
+            v-if="isExtended(villageState.id)"
+            :title="'Крит. уровень:'"
+            :hint="'Критический уровень'"
+            :hide-zero="true"
+            :resources="villageState.upperCriticalLevel"
+          />
+
+          <resource-line
+            v-if="isExtended(villageState.id)"
+            :title="'Опт. уровень:'"
+            :hint="'Оптимальный уровень'"
+            :hide-zero="true"
+            :resources="villageState.storageOptimumFullness"
           />
 
           <tr class="normal-line">
@@ -273,7 +296,7 @@ export default {
       this.$store.dispatch(Actions.OpenVillageEditor, { villageId });
     },
     isExtended(villageId) {
-      return !!this.extendedView[villageId];
+      return !!this.extendedView[villageId] || this.shared.activeVillageState.id === villageId;
     },
     toggleExtendedView(villageId) {
       this.extendedView[villageId] = !this.extendedView[villageId];
