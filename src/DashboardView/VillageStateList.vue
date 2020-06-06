@@ -63,14 +63,7 @@
             <td></td>
           </tr>
 
-          <resource-line :title="'Прирост:'" :resources="villageState.performance" />
-
-          <resource-line
-            v-if="isExtended(villageState.id)"
-            :title="'Баланс след.:'"
-            :hint="'Баланс следующей задачи'"
-            :resources="villageState.upperCriticalLevel"
-          />
+          <resource-line :title="'Добыча:'" :resources="villageState.performance" />
 
           <resource-line
             v-if="villageState.required.active"

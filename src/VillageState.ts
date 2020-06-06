@@ -199,7 +199,7 @@ function createVillageOwnState(
     const resourceStorage = storage.getResourceStorage();
     const performance = storage.getResourcesPerformance();
     const upperCriticalLevel = Resources.fromStorage(resourceStorage).sub(performance.scale(1));
-    const storageOptimumFullness = Resources.fromStorage(resourceStorage).sub(performance.scale(2));
+    const storageOptimumFullness = Resources.fromStorage(resourceStorage).sub(performance.scale(3));
     const isOverflowing = upperCriticalLevel.anyLower(resources);
     const requiredResources = taskCollection.getReadyTaskRequiredResources();
     const frontierResources = taskCollection.getFrontierResources();
