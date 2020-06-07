@@ -230,6 +230,7 @@ function createVillageOwnState(
     storage: VillageStorage,
     taskCollection: VillageTaskCollection
 ): VillageOwnState {
+    const settings = storage.getSettings();
     const resources = storage.getResources();
     const storageResources = Resources.fromStorage(storage.getResourceStorage());
     const performance = storage.getResourcesPerformance();
@@ -257,7 +258,7 @@ function createVillageOwnState(
         frontierRequired: makeResourceBalance(frontierResources, resources, performance),
         totalRequired: makeResourceBalance(totalRequiredResources, resources, performance),
         incomingResources: calcIncomingResources(storage),
-        settings: storage.getSettings(),
+        settings,
     };
 }
 

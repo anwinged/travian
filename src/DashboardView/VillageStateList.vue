@@ -143,9 +143,7 @@
             </td>
           </tr>
 
-          <tr class="normal-line">
-            <td class="right" colspan="7" v-text="villageStatus(villageState)"></td>
-          </tr>
+          <status-line :village-state="villageState" />
         </template>
       </tbody>
     </table>
@@ -160,6 +158,7 @@ import { path } from '../Helpers/Path';
 import { Actions } from './Store';
 import { translateProductionQueue } from '../Core/ProductionQueue';
 import VillageStateResourceLine from './VillageStateResourceLine';
+import VillageStateStatusLine from './VillageStateStatusLine';
 
 function secondsToTime(value) {
   if (value === 0) {
@@ -176,6 +175,7 @@ export default {
     'resource': ResourceBalance,
     'filling': VillageResource,
     'resource-line': VillageStateResourceLine,
+    'status-line': VillageStateStatusLine,
   },
   data() {
     return {
@@ -188,11 +188,6 @@ export default {
       const id = villageState.id;
       const name = villageState.village.name;
       return `${name}, ${id}`;
-    },
-    villageStatus(villageState) {
-      const threshold = villageState.settings.sendResourcesThreshold;
-      const multiplier = villageState.settings.sendResourcesMultiplier;
-      return `порог ${threshold}, множ. ${multiplier}`;
     },
     path(name, args) {
       return path(name, args);

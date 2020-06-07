@@ -35,14 +35,21 @@ export class Village {
     }
 }
 
+export enum ReceiveResourcesMode {
+    Required = 'required',
+    Optimum = 'optimum',
+}
+
 export type VillageList = Array<Village>;
 
 export interface VillageSettings {
     sendResourcesThreshold: number;
     sendResourcesMultiplier: number;
+    receiveResourcesMode: ReceiveResourcesMode;
 }
 
 export const VillageSettingsDefaults: VillageSettings = {
     sendResourcesThreshold: 100,
     sendResourcesMultiplier: 10,
+    receiveResourcesMode: ReceiveResourcesMode.Required,
 } as const;

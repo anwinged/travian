@@ -1,6 +1,6 @@
 import Vuex from 'vuex';
 import { LogStorage } from '../Storage/LogStorage';
-import { VillageSettings, VillageSettingsDefaults } from '../Core/Village';
+import { ReceiveResourcesMode, VillageSettings, VillageSettingsDefaults } from '../Core/Village';
 import { getNumber, notify } from '../utils';
 import { VillageStorage } from '../Storage/VillageStorage';
 import { VillageFactory } from '../VillageFactory';
@@ -13,13 +13,13 @@ export enum Mutations {
     ToggleVillageEditor = 'toggle_village_editor',
     SetVillageSettings = 'set_village_settings',
     UpdateVillageSendResourceThreshold = 'UpdateVillageSendResourceThreshold',
-    UpdateVillageSendResourceTimeout = 'UpdateVillageSendResourceTimeout',
     UpdateVillageSendResourcesMultiplier = 'UpdateVillageSendResourcesMultiplier',
 }
 
 export enum Actions {
     OpenVillageEditor = 'open_village_editor',
     SaveVillageSettings = 'save_village_settings',
+    ToggleVillageReceiveMode = 'toggle_village_receive_mode',
 }
 
 export function createStore(villageFactory: VillageFactory) {
@@ -83,8 +83,9 @@ export function createStore(villageFactory: VillageFactory) {
                 commit(Mutations.ToggleVillageEditor, true);
             },
             [Actions.SaveVillageSettings]({ state }) {
-                const villageId = state.villageSettings.villageId;
                 const villageName = state.villageSettings.villageName;
+                const villageId = state.villageSettings.villageId;
+                const villageState = villageFactory.createState(villageId);
                 const newSettings: VillageSettings = {
                     sendResourcesThreshold:
                         state.villageSettings.sendResourcesThreshold ||
@@ -92,10 +93,15 @@ export function createStore(villageFactory: VillageFactory) {
                     sendResourcesMultiplier:
                         state.villageSettings.sendResourcesMultiplier ||
                         VillageSettingsDefaults.sendResourcesMultiplier,
+                    receiveResourcesMode: villageState.settings.receiveResourcesMode,
                 };
                 const storage = new VillageStorage(villageId);
                 storage.storeSettings(newSettings);
                 notify(`Настройки для ${villageName} сохранены`);
+            },
+            [Actions.ToggleVillageReceiveMode]({}, { villageId }) {
+                const controller = villageFactory.createController(villageId);
+                controller.toggleReceiveResourcesMode();
             },
         },
     });

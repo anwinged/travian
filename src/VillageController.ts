@@ -3,10 +3,9 @@ import { Task, TaskId } from './Queue/TaskProvider';
 import { Args } from './Queue/Args';
 import { VillageState } from './VillageState';
 import { Resources } from './Core/Resources';
-import { TryLaterError } from './Errors';
-import { aroundMinutes } from './utils';
 import { MerchantsInfo } from './Core/Market';
 import { VillageStorage } from './Storage/VillageStorage';
+import { ReceiveResourcesMode } from './Core/Village';
 
 export class VillageController {
     private readonly villageId: number;
@@ -85,19 +84,32 @@ export class VillageController {
     }
 
     getRequiredResources(): Resources {
-        const maxPossibleToStore = this.state.storageOptimumFullness;
+        const mode = this.state.settings.receiveResourcesMode;
+        const optimumToStoreResources = this.state.storageOptimumFullness;
         const currentResources = this.state.resources;
         const incomingResources = this.state.incomingResources;
         const requirementResources = this.state.required.resources;
 
-        const missingResources = requirementResources
-            .min(maxPossibleToStore)
-            .sub(incomingResources)
-            .sub(currentResources)
-            .max(Resources.zero());
+        let missingResources;
+
+        switch (mode) {
+            case ReceiveResourcesMode.Required:
+                missingResources = requirementResources
+                    .min(optimumToStoreResources)
+                    .sub(incomingResources)
+                    .sub(currentResources)
+                    .max(Resources.zero());
+                break;
+            case ReceiveResourcesMode.Optimum:
+                missingResources = optimumToStoreResources
+                    .sub(incomingResources)
+                    .sub(currentResources)
+                    .max(Resources.zero());
+                break;
+        }
 
         console.table([
-            { name: 'Recipient max possible', ...maxPossibleToStore },
+            { name: 'Recipient max possible', ...optimumToStoreResources },
             { name: 'Recipient resources', ...currentResources },
             { name: 'Recipient incoming', ...incomingResources },
             { name: 'Recipient requirements', ...requirementResources },
@@ -112,5 +124,17 @@ export class VillageController {
         const currentResources = this.state.resources;
 
         return maxPossibleToStore.sub(currentResources).max(Resources.zero());
+    }
+
+    toggleReceiveResourcesMode(): void {
+        const current = this.state.settings.receiveResourcesMode;
+        let next;
+        if (current === ReceiveResourcesMode.Required) {
+            next = ReceiveResourcesMode.Optimum;
+        } else {
+            next = ReceiveResourcesMode.Required;
+        }
+        const newSettings = { ...this.state.settings, receiveResourcesMode: next };
+        this.storage.storeSettings(newSettings);
     }
 }
