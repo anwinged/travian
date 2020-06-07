@@ -60,25 +60,12 @@ export class VillageTaskCollection {
         this.removeTasks(t => t.id === taskId);
     }
 
-    getQueueGroupedTasks(): Array<QueueTasks> {
-        const tasks = this.storage.getTasks();
-        const result: Array<QueueTasks> = [];
-        for (let queue of OrderedProductionQueues) {
-            result.push({
-                queue,
-                tasks: tasks.filter(isInQueue(queue)),
-                finishTs: this.storage.getQueueTaskEnding(queue),
-            });
-        }
-        return result;
-    }
-
     postponeTask(taskId: TaskId, seconds: number) {
         const modifyTime = withTime(timestamp() + seconds);
         this.modifyTasks(task => task.id === taskId, modifyTime);
     }
 
-    updateResources(resources: Resources, attr: ContractAttributes): void {
+    updateResourcesInTasks(resources: Resources, attr: ContractAttributes): void {
         if (attr.type === ContractType.UpgradeBuilding && attr.buildId) {
             const predicate = (t: Task) =>
                 t.name === UpgradeBuildingTask.name && t.args.buildId === attr.buildId;
@@ -93,9 +80,22 @@ export class VillageTaskCollection {
         }
     }
 
-    getFrontierResources(): Resources {
+    getGroupedByQueueTasks(): Array<QueueTasks> {
+        const tasks = this.storage.getTasks();
+        const result: Array<QueueTasks> = [];
+        for (let queue of OrderedProductionQueues) {
+            result.push({
+                queue,
+                tasks: tasks.filter(isInQueue(queue)),
+                finishTs: this.storage.getQueueTaskEnding(queue),
+            });
+        }
+        return result;
+    }
+
+    getFrontierTaskResources(): Resources {
         let result = Resources.zero();
-        const groups = this.getQueueGroupedTasks();
+        const groups = this.getGroupedByQueueTasks();
         for (let group of groups) {
             const firstTask = _.first(group.tasks);
             if (firstTask && firstTask.args.resources) {
@@ -105,7 +105,7 @@ export class VillageTaskCollection {
         return result;
     }
 
-    getAllTasksRequiredResources(): Resources {
+    getAllTasksResources(): Resources {
         const tasks = this.storage.getTasks().filter(t => t.args.resources);
         return tasks.reduce((acc, t) => acc.add(t.args.resources!), Resources.zero());
     }

@@ -20,7 +20,7 @@ export class BuildingContractGrabber extends Grabber {
 
         const contract = grabContractResources();
 
-        this.taskCollection.updateResources(contract, {
+        this.taskCollection.updateResourcesInTasks(contract, {
             type: ContractType.UpgradeBuilding,
             buildId: building.buildId,
         });

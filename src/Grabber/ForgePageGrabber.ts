@@ -20,7 +20,7 @@ export class ForgePageGrabber extends Grabber {
         const contracts = grabImprovementContracts();
 
         for (let { resources, unitId } of contracts) {
-            this.taskCollection.updateResources(resources, {
+            this.taskCollection.updateResourcesInTasks(resources, {
                 type: ContractType.ImproveTrooper,
                 buildId,
                 unitId,

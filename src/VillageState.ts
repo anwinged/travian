@@ -192,7 +192,7 @@ function createAllProductionQueueStates(
     taskCollection: VillageTaskCollection
 ) {
     let result: VillageProductionQueueStateDict = {};
-    for (let taskQueueInfo of taskCollection.getQueueGroupedTasks()) {
+    for (let taskQueueInfo of taskCollection.getGroupedByQueueTasks()) {
         result[taskQueueInfo.queue] = createProductionQueueState(taskQueueInfo, storage);
     }
     return result;
@@ -239,8 +239,8 @@ function createVillageOwnState(
     const queues = createAllProductionQueueStates(storage, taskCollection);
     const firstReadyTask = getReadyForProductionTask(queues, storageOptimumFullness);
     const requiredResources = getReadyTaskRequiredResources(firstReadyTask);
-    const frontierResources = taskCollection.getFrontierResources();
-    const totalRequiredResources = taskCollection.getAllTasksRequiredResources();
+    const frontierResources = taskCollection.getFrontierTaskResources();
+    const totalRequiredResources = taskCollection.getAllTasksResources();
 
     return {
         id: village.id,
