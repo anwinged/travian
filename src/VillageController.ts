@@ -65,13 +65,21 @@ export class VillageController {
     }
 
     getFreeResources(): Resources {
-        const balance = this.state.required.balance;
-        const free = balance.max(Resources.zero());
+        const mode = this.state.settings.receiveResourcesMode;
+        const requirementResources = this.state.required.resources;
+        const optimumToStoreResources = this.state.storageOptimumFullness;
 
-        console.table([
-            { name: 'Sender balance', ...balance },
-            { name: 'Sender free', ...free },
-        ]);
+        switch (mode) {
+            case ReceiveResourcesMode.Required:
+                return this.calcFreeResources(requirementResources);
+            case ReceiveResourcesMode.Optimum:
+                return this.calcFreeResources(optimumToStoreResources);
+        }
+    }
+
+    private calcFreeResources(targetResources: Resources): Resources {
+        const currentResources = this.state.resources;
+        const free = currentResources.sub(targetResources).max(Resources.zero());
 
         const amount = free.amount();
         const threshold = this.state.settings.sendResourcesThreshold;
@@ -86,54 +94,48 @@ export class VillageController {
     getRequiredResources(): Resources {
         const mode = this.state.settings.receiveResourcesMode;
         const optimumToStoreResources = this.state.storageOptimumFullness;
-        const currentResources = this.state.resources;
-        const incomingResources = this.state.incomingResources;
         const requirementResources = this.state.required.resources;
-
-        let missingResources;
 
         switch (mode) {
             case ReceiveResourcesMode.Required:
-                missingResources = requirementResources
-                    .min(optimumToStoreResources)
-                    .sub(incomingResources)
-                    .sub(currentResources)
-                    .max(Resources.zero());
-                break;
+                return this.calcRequiredResources(requirementResources);
             case ReceiveResourcesMode.Optimum:
-                missingResources = optimumToStoreResources
-                    .sub(incomingResources)
-                    .sub(currentResources)
-                    .max(Resources.zero());
-                break;
+                return this.calcRequiredResources(optimumToStoreResources);
         }
+    }
 
-        console.table([
-            { name: 'Recipient max possible', ...optimumToStoreResources },
-            { name: 'Recipient resources', ...currentResources },
-            { name: 'Recipient incoming', ...incomingResources },
-            { name: 'Recipient requirements', ...requirementResources },
-            { name: 'Recipient missing', ...missingResources },
-        ]);
+    private calcRequiredResources(targetResources: Resources): Resources {
+        const optimumToStoreResources = this.state.storageOptimumFullness;
+        const currentResources = this.state.resources;
+        const incomingResources = this.state.incomingResources;
 
-        return missingResources;
+        return targetResources
+            .min(optimumToStoreResources)
+            .sub(currentResources)
+            .sub(incomingResources)
+            .max(Resources.zero());
     }
 
     getAvailableToReceiveResources(): Resources {
-        const maxPossibleToStore = this.state.storageOptimumFullness;
+        const optimumToStoreResources = this.state.storageOptimumFullness;
         const currentResources = this.state.resources;
 
-        return maxPossibleToStore.sub(currentResources).max(Resources.zero());
+        return optimumToStoreResources.sub(currentResources).max(Resources.zero());
     }
 
     toggleReceiveResourcesMode(): void {
         const current = this.state.settings.receiveResourcesMode;
+
         let next;
-        if (current === ReceiveResourcesMode.Required) {
-            next = ReceiveResourcesMode.Optimum;
-        } else {
-            next = ReceiveResourcesMode.Required;
+        switch (current) {
+            case ReceiveResourcesMode.Required:
+                next = ReceiveResourcesMode.Optimum;
+                break;
+            case ReceiveResourcesMode.Optimum:
+                next = ReceiveResourcesMode.Required;
+                break;
         }
+
         const newSettings = { ...this.state.settings, receiveResourcesMode: next };
         this.storage.storeSettings(newSettings);
     }
