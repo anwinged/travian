@@ -82,8 +82,8 @@ export function* split(n: number, from: number = 2, to: number = 6) {
 
 export function toNumber(value: any): number | undefined {
     const normalized = String(value)
-        .replace('−‭', '-')
-        .replace(/[^0-9-]/gi, '');
+        .replace('\u2212', '\u002d') // minus to hyphen-minus
+        .replace(/[^0-9\u002d]/g, '');
     const converted = Number(normalized);
     return isNaN(converted) ? undefined : converted;
 }
