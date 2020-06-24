@@ -21,11 +21,7 @@
               :title="villageHint(villageState)"
             >
               {{ villageState.village.name }}
-              [<a href="#" v-on:click.prevent="openEditor(villageState.id)">ред</a>] [<a
-                href="#"
-                v-on:click.prevent="toggleExtendedView(villageState.id)"
-                >👁️</a
-              >]:
+              [<a href="#" v-on:click.prevent="openEditor(villageState.id)">ред</a>]:
             </td>
             <td class="right">
               <filling
@@ -85,7 +81,7 @@
           <resource-line
             v-for="queueState of villageState.queues"
             v-bind:key="villageState.id + queueState.queue"
-            v-if="queueState.isActive && isExtended(villageState.id)"
+            v-if="queueState.isActive"
             :title="queueTitle(queueState.queue) + ' (' + queueState.taskCount + '):'"
             :hint="'Задач в очереди: ' + queueState.taskCount"
             :resources="queueState.firstTask.balance"
@@ -94,26 +90,10 @@
           />
 
           <resource-line
-            v-if="isExtended(villageState.id)"
-            :title="'Баланс фронтира:'"
-            :hint="'Баланс первых задач во всех производственных очередях'"
-            :resources="villageState.frontierRequired.balance"
-            :time1="renderGatheringTime(villageState.frontierRequired.time)"
-          />
-
-          <resource-line
-            v-if="isExtended(villageState.id)"
-            :title="'Баланс очереди:'"
-            :hint="'Баланс всех задач деревни в очереди'"
-            :resources="villageState.totalRequired.balance"
-            :time1="renderGatheringTime(villageState.totalRequired.time)"
-          />
-
-          <resource-line
             :title="'Торговцы:'"
             :resources="villageState.incomingResources"
             :hide-zero="true"
-            v-if="!villageState.incomingResources.empty() && isExtended(villageState.id)"
+            v-if="!villageState.incomingResources.empty()"
           />
 
           <tr class="normal-line">
@@ -230,12 +210,6 @@ export default {
     },
     openEditor(villageId) {
       this.$store.dispatch(Actions.OpenVillageEditor, { villageId });
-    },
-    isExtended(villageId) {
-      return !!this.extendedView[villageId] || this.shared.activeVillageState.id === villageId;
-    },
-    toggleExtendedView(villageId) {
-      this.extendedView[villageId] = !this.extendedView[villageId];
     },
     queueTitle(queue) {
       return translateProductionQueue(queue);
