@@ -1,10 +1,12 @@
 <template>
-  <section>
-    <h1 class="title">
-      [{{ shared.name }}] {{ villageName }}
-      <span class="version">- {{ shared.version }}</span>
-    </h1>
-    <p>
+  <section class="header">
+    <div class="into-block">
+      <h1 class="title">
+        [{{ shared.name }}] {{ villageName }}
+        <span class="version">- {{ shared.version }}</span>
+      </h1>
+    </div>
+    <div class="actions-block">
       <a href="#" v-on:click.prevent="pause">
         pause
         <span
@@ -13,7 +15,7 @@
         ></span>
       </a>
       <a href="#" v-on:click.prevent="toggleLogs">logs</a>
-    </p>
+    </div>
   </section>
 </template>
 
@@ -44,6 +46,15 @@ export default {
 </script>
 
 <style scoped>
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.into-block {
+}
+.actions-block {
+}
 .title {
   font-size: 160%;
   padding-top: 8px;
