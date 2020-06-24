@@ -45,6 +45,7 @@ interface VillageProductionQueueState {
     queue: ProductionQueue;
     tasks: Array<Task>;
     isActive: boolean;
+    isWaiting: boolean;
     currentTaskFinishTimestamp: number;
     currentTaskFinishSeconds: number;
     firstTask: ResourceLineState;
@@ -165,20 +166,22 @@ function createProductionQueueState(
 ): VillageProductionQueueState {
     const queue = taskQueueInfo.queue;
     const tasks = taskQueueInfo.tasks;
+    const taskEndingTimestamp = taskQueueInfo.finishTs;
     const resources = storage.getResources();
     const performance = storage.getResourcesPerformance();
-
     const firstTaskResources = tasks.slice(0, 1).reduce(taskResourceReducer, Resources.zero());
     const allTaskResources = tasks.reduce(taskResourceReducer, Resources.zero());
-    const taskEndingTimestamp = taskQueueInfo.finishTs;
+
+    const currentTimestamp = timestamp();
 
     return {
         queue,
         tasks,
-        isActive: tasks.length !== 0 || taskEndingTimestamp > timestamp(),
+        isActive: tasks.length !== 0 || taskEndingTimestamp > currentTimestamp,
+        isWaiting: tasks.length !== 0 && taskEndingTimestamp < currentTimestamp,
         currentTaskFinishTimestamp: taskEndingTimestamp,
         currentTaskFinishSeconds: Math.max(
-            taskEndingTimestamp ? taskEndingTimestamp - timestamp() : 0,
+            taskEndingTimestamp ? taskEndingTimestamp - currentTimestamp : 0,
             0
         ),
         firstTask: makeResourceBalance(firstTaskResources, resources, performance),

@@ -59,24 +59,7 @@
             <td></td>
           </tr>
 
-          <resource-line :title="'Добыча:'" :resources="villageState.performance" />
-
-          <resource-line
-            v-if="villageState.required.active"
-            :title="'След. задача:'"
-            :color="false"
-            :sign="false"
-            :hide-zero="false"
-            :resources="villageState.required.resources"
-          />
-
-          <resource-line
-            v-if="villageState.required.active"
-            :title="'Баланс след.:'"
-            :hint="'Баланс следующей задачи'"
-            :resources="villageState.required.balance"
-            :time1="renderGatheringTime(villageState.required.time)"
-          />
+          <resource-line :title="'Добыча:'" :resources="villageState.performance" :color="false" />
 
           <resource-line
             v-for="queueState of villageState.queues"
@@ -87,6 +70,7 @@
             :resources="queueState.firstTask.balance"
             :time1="renderGatheringTime(queueState.firstTask.time)"
             :time2="renderTimeInSeconds(queueState.currentTaskFinishSeconds)"
+            :color="queueState.isWaiting"
           />
 
           <resource-line
