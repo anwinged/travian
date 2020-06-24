@@ -21,4 +21,5 @@ export interface Args {
     level?: number;
     selector?: string;
     path?: string;
+    celebrationIndex?: number;
 }

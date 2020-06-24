@@ -84,7 +84,7 @@ export class BuildingPageController {
         }
 
         if (isGuildHallPage()) {
-            createCelebrationButtons(res => this.onCelebration(res));
+            createCelebrationButtons((res, index) => this.onCelebration(res, index));
         }
     }
 
@@ -150,13 +150,14 @@ export class BuildingPageController {
         notify(`Researching ${unitId} scheduled`);
     }
 
-    private onCelebration(resources: Resources) {
+    private onCelebration(resources: Resources, index: number) {
         const villageId = grabActiveVillageId();
         this.villageController.addTask(CelebrationTask.name, {
             villageId,
             buildTypeId: this.attributes.buildTypeId,
             buildId: this.attributes.buildId,
             resources,
+            celebrationIndex: index,
         });
         notify(`Celebration scheduled`);
     }

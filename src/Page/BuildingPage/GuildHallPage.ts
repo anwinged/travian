@@ -8,24 +8,28 @@ interface CelebrationClickHandler {
 }
 
 export function createCelebrationButtons(onClickHandler: CelebrationClickHandler) {
-    const $els = jQuery('.build_details.researches .research');
-    if ($els.length === 0) {
+    const $blocks = findBlocks();
+    if ($blocks.length === 0) {
         throw new GrabError('No celebration research blocks');
     }
-    $els.each((idx, el) => createCelebrationButton(jQuery(el), idx, onClickHandler));
+    $blocks.each((idx, el) => createCelebrationButton(jQuery(el), idx, onClickHandler));
 }
 
-export function clickCelebrationButton() {
-    const $els = jQuery('.build_details.researches .research');
-    if ($els.length === 0) {
+export function clickCelebrationButton(celebrationIndex: number | undefined) {
+    const $blocks = findBlocks();
+    if ($blocks.length === 0) {
         throw new GrabError('No celebration research blocks');
     }
-    const $first = jQuery($els.get(0));
+    const $first = jQuery($blocks.get(celebrationIndex || 0));
     const $btn = $first.find('.cta').find('button.green');
     if ($btn.length !== 1) {
-        throw new GrabError('No celebration buttons');
+        throw new GrabError('No celebration button');
     }
     $btn.trigger('click');
+}
+
+function findBlocks(): JQuery {
+    return jQuery('.build_details.researches .research');
 }
 
 function createCelebrationButton(
@@ -36,7 +40,6 @@ function createCelebrationButton(
     const resources = grabResources($blockEl);
 
     const id = uniqId();
-
     $blockEl.find('.information').append(`<div style="padding: 8px 0">
         <a id="${id}" href="#">Праздновать</a>
     </div>`);

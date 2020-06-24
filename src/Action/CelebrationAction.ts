@@ -10,7 +10,7 @@ export class CelebrationAction extends ActionController {
     async run(args: Args, task: Task): Promise<any> {
         try {
             this.ensureSameVillage(args, task);
-            clickCelebrationButton();
+            clickCelebrationButton(args.celebrationIndex);
         } catch (e) {
             if (e instanceof GrabError) {
                 throw new TryLaterError(aroundMinutes(60), e.message);
