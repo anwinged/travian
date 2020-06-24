@@ -95,19 +95,7 @@
             </td>
           </tr>
 
-          <tr class="normal-line">
-            <td class="right" colspan="7">
-              <a class="village-quick-link" :href="quartersPath(villageState.village)">Казармы</a>
-              <a class="village-quick-link" :href="horseStablePath(villageState.village)"
-                >Конюшни</a
-              >
-              <a class="village-quick-link" :href="collectionPointPath(villageState.village)"
-                >Войска</a
-              >
-            </td>
-          </tr>
-
-          <status-line :village-state="villageState" />
+          <status-line class="second-line" :village-state="villageState" />
         </template>
       </tbody>
     </table>
@@ -117,7 +105,7 @@
 <script>
 import ResourceBalance from './ResourceBalance';
 import VillageResource from './VillageResource';
-import { COLLECTION_POINT_ID, HORSE_STABLE_ID, MARKET_ID, QUARTERS_ID } from '../Core/Buildings';
+import { MARKET_ID } from '../Core/Buildings';
 import { path } from '../Helpers/Path';
 import { Actions } from './Store';
 import { translateProductionQueue } from '../Core/ProductionQueue';
@@ -170,15 +158,6 @@ export default {
         y: toVillage.crd.y,
       });
     },
-    collectionPointPath(village) {
-      return path('/build.php', { newdid: village.id, gid: COLLECTION_POINT_ID, tt: 1 });
-    },
-    quartersPath(village) {
-      return path('/build.php', { newdid: village.id, gid: QUARTERS_ID });
-    },
-    horseStablePath(village) {
-      return path('/build.php', { newdid: village.id, gid: HORSE_STABLE_ID });
-    },
     renderTimeInSeconds(value) {
       return secondsToTime(value);
     },
@@ -214,6 +193,10 @@ export default {
 
 .normal-line td {
   padding: 4px;
+}
+
+.second-line td {
+  padding: 0 4px 4px;
 }
 
 .filling-line td {
