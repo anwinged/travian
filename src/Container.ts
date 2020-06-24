@@ -6,17 +6,23 @@ import { Executor } from './Executor';
 import { ControlPanel } from './ControlPanel';
 import { DataStorageTaskProvider } from './Queue/DataStorageTaskProvider';
 import { Statistics } from './Statistics';
-import { StatisticsStorage } from './Storage/StatisticsStorage';
 import { VillageRepository } from './VillageRepository';
-import { LogStorage } from './Storage/LogStorage';
 import { VillageFactory } from './VillageFactory';
 import { GrabberManager } from './Grabber/GrabberManager';
+import { StorageContainer } from './Storage/StorageContainer';
 
 export class Container {
     private readonly version: string;
 
     constructor(version: string) {
         this.version = version;
+    }
+
+    private _storageContainer: StorageContainer | undefined;
+
+    get storageContainer(): StorageContainer {
+        this._storageContainer = this._storageContainer || (() => new StorageContainer())();
+        return this._storageContainer;
     }
 
     private _villageRepository: VillageRepository | undefined;
@@ -36,7 +42,7 @@ export class Container {
         this._statistics =
             this._statistics ||
             (() => {
-                return new Statistics(new StatisticsStorage());
+                return new Statistics(this.storageContainer.statisticsStorage);
             })();
         return this._statistics;
     }
@@ -91,10 +97,12 @@ export class Container {
         this._executor =
             this._executor ||
             (() => {
-                const logger = new AggregateLogger([
-                    new ConsoleLogger(Executor.name),
-                    new StorageLogger(new LogStorage(), LogLevel.warning),
-                ]);
+                const consoleLogger = new ConsoleLogger(Executor.name);
+                const storageLogger = new StorageLogger(
+                    this.storageContainer.logStorage,
+                    LogLevel.warning
+                );
+                const logger = new AggregateLogger([consoleLogger, storageLogger]);
                 return new Executor(
                     this.version,
                     this.scheduler,

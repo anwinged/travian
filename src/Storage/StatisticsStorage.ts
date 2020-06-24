@@ -1,14 +1,13 @@
 import { DataStorage } from '../DataStorage';
 import { ActionStatistics, StatisticsStorageInterface } from '../Statistics';
 
-const NAMESPACE = 'statistics.v1';
-
 const ACTION_STATISTICS_KEY = 'actions';
 
 export class StatisticsStorage implements StatisticsStorageInterface {
     private storage: DataStorage;
-    constructor() {
-        this.storage = new DataStorage(NAMESPACE);
+
+    constructor(storage: DataStorage) {
+        this.storage = storage;
     }
 
     getActionStatistics(): ActionStatistics {

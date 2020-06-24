@@ -1,15 +1,14 @@
 import { DataStorage } from '../DataStorage';
 import { LogStorageInterface, StorageLogRecord } from '../Logger';
 
-const NAMESPACE = 'logs.v1';
 const RECORD_LIST_KEY = 'records';
-
 const RECORD_COUNT = 200;
 
 export class LogStorage implements LogStorageInterface {
-    private storage: DataStorage;
-    constructor() {
-        this.storage = new DataStorage(NAMESPACE);
+    private readonly storage: DataStorage;
+
+    constructor(storage: DataStorage) {
+        this.storage = storage;
     }
 
     write(record: StorageLogRecord): void {

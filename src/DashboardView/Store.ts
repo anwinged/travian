@@ -1,9 +1,9 @@
 import Vuex from 'vuex';
-import { LogStorage } from '../Storage/LogStorage';
-import { ReceiveResourcesMode, VillageSettings, VillageSettingsDefaults } from '../Core/Village';
+import { VillageSettings, VillageSettingsDefaults } from '../Core/Village';
 import { getNumber, notify } from '../utils';
 import { VillageStorage } from '../Storage/VillageStorage';
 import { VillageFactory } from '../VillageFactory';
+import { StorageContainer } from '../Storage/StorageContainer';
 
 export enum Mutations {
     showLogs = 'showLogs',
@@ -107,7 +107,8 @@ export function createStore(villageFactory: VillageFactory) {
     });
 
     setInterval(() => {
-        const logStorage = new LogStorage();
+        const stContainer = new StorageContainer();
+        const logStorage = stContainer.logStorage;
         const logs = logStorage.getRecords();
         store.commit(Mutations.updateLogs, { logs });
     }, 1000);
