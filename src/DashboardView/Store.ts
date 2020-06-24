@@ -20,6 +20,7 @@ export enum Actions {
     OpenVillageEditor = 'open_village_editor',
     SaveVillageSettings = 'save_village_settings',
     ToggleVillageReceiveMode = 'toggle_village_receive_mode',
+    RemoveVillageTask = 'remove_village_task',
 }
 
 export function createStore(villageFactory: VillageFactory) {
@@ -102,6 +103,10 @@ export function createStore(villageFactory: VillageFactory) {
             [Actions.ToggleVillageReceiveMode]({}, { villageId }) {
                 const controller = villageFactory.createController(villageId);
                 controller.toggleReceiveResourcesMode();
+            },
+            [Actions.RemoveVillageTask]({}, { villageId, taskId }) {
+                const controller = villageFactory.createController(villageId);
+                controller.removeTask(taskId);
             },
         },
     });

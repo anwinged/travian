@@ -21,7 +21,10 @@
               :title="villageHint(villageState)"
             >
               {{ villageState.village.name }}
-              [<a href="#" v-on:click.prevent="openEditor(villageState.id)">ред</a>]:
+              [
+              <a href="#" v-on:click.prevent="openEditor(villageState.id)">ред</a>,
+              <a href="#" v-on:click.prevent="toggleTaskList(villageState.id)">здч</a>
+              ]:
             </td>
             <td class="right">
               <filling
@@ -96,6 +99,12 @@
           </tr>
 
           <status-line class="second-line" :village-state="villageState" />
+
+          <tr class="task-list-line" v-if="isTaskListVisible(villageState.id)">
+            <td class="right" colspan="7">
+              <village-task-list :village-id="villageState.id" :tasks="villageState.tasks" />
+            </td>
+          </tr>
         </template>
       </tbody>
     </table>
@@ -111,6 +120,7 @@ import { Actions } from './Store';
 import { translateProductionQueue } from '../Core/ProductionQueue';
 import VillageStateResourceLine from './VillageStateResourceLine';
 import VillageStateStatusLine from './VillageStateStatusLine';
+import VillageTaskList from './VillageTaskList';
 
 function secondsToTime(value) {
   if (value === 0) {
@@ -124,6 +134,7 @@ function secondsToTime(value) {
 
 export default {
   components: {
+    VillageTaskList,
     'resource': ResourceBalance,
     'filling': VillageResource,
     'resource-line': VillageStateResourceLine,
@@ -132,7 +143,7 @@ export default {
   data() {
     return {
       shared: this.$root.$data,
-      extendedView: {},
+      taskListView: {},
     };
   },
   methods: {
@@ -177,13 +188,21 @@ export default {
     queueTitle(queue) {
       return translateProductionQueue(queue);
     },
+    toggleTaskList(villageId) {
+      this.taskListView[villageId] = !this.taskListView[villageId];
+    },
+    isTaskListVisible(villageId) {
+      return !!this.taskListView[villageId];
+    },
   },
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@import 'style';
 .village-table {
   width: 100%;
+  max-width: 100%;
   border-collapse: collapse;
 }
 
@@ -197,6 +216,12 @@ export default {
 
 .second-line td {
   padding: 0 4px 4px;
+}
+
+.task-list-line td {
+  padding: 0;
+  max-width: $panel-work-area;
+  overflow: hidden;
 }
 
 .filling-line td {

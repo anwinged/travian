@@ -55,7 +55,8 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@import 'style';
 #dashboard {
   position: absolute;
   display: flex;
@@ -68,11 +69,9 @@ export default {
   box-sizing: border-box;
 }
 #dashboard-primary {
-  /*height: 100vh;*/
-  /*overflow-y: scroll;*/
   background-color: white;
-  width: 500px;
-  padding: 5px;
+  width: $panel-size;
+  padding: $panel-padding;
 }
 #dashboard-secondary {
   background-color: transparent;

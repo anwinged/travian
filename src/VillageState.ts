@@ -76,6 +76,7 @@ interface VillageOwnState {
     storageOptimumFullness: Resources;
     isOverflowing: boolean;
     queues: VillageProductionQueueStateDict;
+    tasks: Array<Task>;
     firstReadyTask: Task | undefined;
     /**
      * Required resources for nearest task
@@ -257,6 +258,7 @@ function createVillageOwnState(
         storageOptimumFullness,
         isOverflowing,
         queues,
+        tasks: taskCollection.getTasks(),
         firstReadyTask,
         frontierRequired: makeResourceBalance(frontierResources, resources, performance),
         totalRequired: makeResourceBalance(totalRequiredResources, resources, performance),

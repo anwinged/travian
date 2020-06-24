@@ -1,3 +1,7 @@
+$panel-size: 500px;
+$panel-padding: 5px;
+$panel-work-area: $panel-size - 2 * $panel-padding;
+
 $component-padding-x: 4px;
 $component-padding-y: 2px;
 
@@ -11,6 +15,7 @@ $waring-color: #d49e00;
 
 %table {
   width: 100%;
+  max-width: 100%;
   border-collapse: collapse;
   margin: 6px auto 0;
 
