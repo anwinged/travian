@@ -60,6 +60,28 @@ export class VillageTaskCollection {
         this.removeTasks(t => t.id === taskId);
     }
 
+    upTask(taskId: TaskId): void {
+        const tasks = this.storage.getTasks();
+        const index = tasks.findIndex(t => t.id === taskId);
+        if (index < 0 || index === 0) {
+            return;
+        }
+        const movedTask = tasks.splice(index, 1)[0];
+        tasks.splice(index - 1, 0, movedTask);
+        this.storage.storeTaskList(tasks);
+    }
+
+    downTask(taskId: TaskId) {
+        const tasks = this.storage.getTasks();
+        const index = tasks.findIndex(t => t.id === taskId);
+        if (index < 0 || index === tasks.length - 1) {
+            return;
+        }
+        const movedTask = tasks.splice(index, 1)[0];
+        tasks.splice(index + 1, 0, movedTask);
+        this.storage.storeTaskList(tasks);
+    }
+
     postponeTask(taskId: TaskId, seconds: number) {
         const modifyTime = withTime(timestamp() + seconds);
         this.modifyTasks(task => task.id === taskId, modifyTime);

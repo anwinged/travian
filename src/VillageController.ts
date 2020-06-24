@@ -45,6 +45,14 @@ export class VillageController {
         this.taskCollection.removeTask(taskId);
     }
 
+    upTask(taskId: TaskId) {
+        this.taskCollection.upTask(taskId);
+    }
+
+    downTask(taskId: TaskId) {
+        this.taskCollection.downTask(taskId);
+    }
+
     postponeTask(taskId: TaskId, seconds: number) {
         this.taskCollection.postponeTask(taskId, seconds);
     }

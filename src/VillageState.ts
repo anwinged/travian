@@ -206,10 +206,7 @@ function getReadyForProductionTask(
     queues: VillageProductionQueueStateDict,
     maxResourcesForTask: Resources
 ): Task | undefined {
-    const nowTs = timestamp();
-    const firstReadyGroup = Object.values(queues).find(
-        group => group.currentTaskFinishTimestamp <= nowTs && group.tasks.length !== 0
-    );
+    const firstReadyGroup = Object.values(queues).find(group => group.isWaiting);
     if (!firstReadyGroup) {
         return undefined;
     }

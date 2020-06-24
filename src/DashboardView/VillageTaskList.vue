@@ -26,8 +26,12 @@ export default {
   props: ['villageId', 'tasks'],
   computed: {},
   methods: {
-    upTask(taskId) {},
-    downTask(taskId) {},
+    upTask(taskId) {
+      this.$store.dispatch(Actions.UpVillageTask, { villageId: this.villageId, taskId });
+    },
+    downTask(taskId) {
+      this.$store.dispatch(Actions.DownVillageTask, { villageId: this.villageId, taskId });
+    },
     removeTask(taskId) {
       this.$store.dispatch(Actions.RemoveVillageTask, { villageId: this.villageId, taskId });
     },

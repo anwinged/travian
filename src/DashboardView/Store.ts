@@ -21,6 +21,8 @@ export enum Actions {
     SaveVillageSettings = 'save_village_settings',
     ToggleVillageReceiveMode = 'toggle_village_receive_mode',
     RemoveVillageTask = 'remove_village_task',
+    UpVillageTask = 'up_village_task',
+    DownVillageTask = 'down_village_task',
 }
 
 export function createStore(villageFactory: VillageFactory) {
@@ -107,6 +109,14 @@ export function createStore(villageFactory: VillageFactory) {
             [Actions.RemoveVillageTask]({}, { villageId, taskId }) {
                 const controller = villageFactory.createController(villageId);
                 controller.removeTask(taskId);
+            },
+            [Actions.UpVillageTask]({}, { villageId, taskId }) {
+                const controller = villageFactory.createController(villageId);
+                controller.upTask(taskId);
+            },
+            [Actions.DownVillageTask]({}, { villageId, taskId }) {
+                const controller = villageFactory.createController(villageId);
+                controller.downTask(taskId);
             },
         },
     });
