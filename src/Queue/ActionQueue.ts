@@ -5,14 +5,9 @@ import { Args } from './Args';
 const NAMESPACE = 'actions.v1';
 const QUEUE_NAME = 'queue';
 
-export class Action {
-    readonly name: string;
-    readonly args: Args;
-
-    constructor(name: string, args: Args) {
-        this.name = name;
-        this.args = args;
-    }
+export interface Action {
+    name: string;
+    args: Args;
 }
 
 type ActionList = Array<Action>;
@@ -29,20 +24,20 @@ export class ActionQueue {
     }
 
     pop(): Action | undefined {
-        const commands = this.getCommands();
-        const first = commands.shift();
-        this.flushState(commands);
+        const actions = this.getActions();
+        const first = actions.shift();
+        this.flushState(actions);
         return first;
     }
 
     push(cmd: Action): void {
-        const commands = this.getCommands();
-        commands.push(cmd);
-        this.flushState(commands);
+        const actions = this.getActions();
+        actions.push(cmd);
+        this.flushState(actions);
     }
 
-    assign(commands: ActionList): void {
-        this.flushState(commands);
+    assign(actions: ActionList): void {
+        this.flushState(actions);
     }
 
     clear(): void {
@@ -50,10 +45,10 @@ export class ActionQueue {
     }
 
     seeItems(): ImmutableActionList {
-        return this.getCommands();
+        return this.getActions();
     }
 
-    private getCommands(): ActionList {
+    private getActions(): ActionList {
         const serialized = this.storage.get(QUEUE_NAME);
         if (!Array.isArray(serialized)) {
             return [];
@@ -62,7 +57,7 @@ export class ActionQueue {
         const items = serialized as Array<{ [key: string]: any }>;
 
         return items.map(i => {
-            const command = new Action('', {});
+            const command = { name: '', args: {} };
             return Object.assign(command, i);
         });
     }

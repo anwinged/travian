@@ -5,7 +5,10 @@ import { Args } from '../Queue/Args';
 import { Task } from '../Queue/TaskProvider';
 import { VillageFactory } from '../VillageFactory';
 
-export type ActionDefinition = [string] | [string, Args];
+export interface ActionDefinition {
+    name: string;
+    args?: Args;
+}
 
 export class TaskController {
     protected readonly scheduler: Scheduler;
@@ -27,15 +30,14 @@ export class TaskController {
 
     private createCommands(task: Task) {
         const args: Args = { ...task.args, taskId: task.id };
-        const commands: Array<Action> = [];
+        const actions: Array<Action> = [];
         for (let def of this.defineActions(task)) {
-            if (def.length === 1) {
-                commands.push(new Action(def[0], args));
-            } else {
-                commands.push(new Action(def[0], { ...args, ...def[1] }));
-            }
+            actions.push({
+                name: def.name,
+                args: def.args ? { ...args, ...def.args } : args,
+            });
         }
-        commands.push(new Action(CompleteTaskAction.name, args));
-        return commands;
+        actions.push({ name: CompleteTaskAction.name, args });
+        return actions;
     }
 }

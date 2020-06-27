@@ -10,6 +10,6 @@ export class ResourcesToLevel extends TaskController {
     defineActions(task: Task): Array<ActionDefinition> {
         const villageId = task.args.villageId || taskError('No village id');
 
-        return [goToResourceViewPage(villageId), [UpgradeResourceToLevel.name]];
+        return [goToResourceViewPage(villageId), { name: UpgradeResourceToLevel.name }];
     }
 }

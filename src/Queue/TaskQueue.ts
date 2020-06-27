@@ -1,13 +1,5 @@
 import { Logger } from '../Logger';
-import { Args } from './Args';
-import {
-    ImmutableTaskList,
-    Task,
-    TaskId,
-    TaskList,
-    TaskProvider,
-    uniqTaskId,
-} from './TaskProvider';
+import { ImmutableTaskList, Task, TaskId, TaskList, TaskProvider } from './TaskProvider';
 
 export class TaskQueue {
     private provider: TaskProvider;

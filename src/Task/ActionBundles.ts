@@ -5,39 +5,39 @@ import { path } from '../Helpers/Path';
 import { Village } from '../Core/Village';
 
 export function goToResourceViewPage(villageId: number): ActionDefinition {
-    return [
-        GoToPageAction.name,
-        {
+    return {
+        name: GoToPageAction.name,
+        args: {
             path: path('/dorf1.php', { newdid: villageId }),
         },
-    ];
+    };
 }
 
 export function goToMarketSendResourcesPage(villageId: number): ActionDefinition {
-    return [
-        GoToPageAction.name,
-        {
+    return {
+        name: GoToPageAction.name,
+        args: {
             path: path('/build.php', { newdid: villageId, gid: MARKET_ID, t: 5 }),
         },
-    ];
+    };
 }
 
 export function goToForgePage(villageId: number): ActionDefinition {
-    return [
-        GoToPageAction.name,
-        {
+    return {
+        name: GoToPageAction.name,
+        args: {
             path: path('/build.php', { newdid: villageId, gid: FORGE_ID }),
         },
-    ];
+    };
 }
 
 export function goToGuildHallPage(villageId: number): ActionDefinition {
-    return [
-        GoToPageAction.name,
-        {
+    return {
+        name: GoToPageAction.name,
+        args: {
             path: path('/build.php', { newdid: villageId, gid: GUILD_HALL_ID }),
         },
-    ];
+    };
 }
 
 export function scanAllVillagesBundle(villages: Array<Village>): Array<ActionDefinition> {

@@ -16,17 +16,19 @@ export class BuildBuildingTask extends TaskController {
 
         return [
             goToResourceViewPage(villageId),
-            [
-                GoToPageAction.name,
-                {
+            {
+                name: GoToPageAction.name,
+                args: {
                     path: path('/build.php', {
                         newdid: args.villageId,
                         id: args.buildId,
                         category: args.categoryId,
                     }),
                 },
-            ],
-            [BuildBuildingAction.name],
+            },
+            {
+                name: BuildBuildingAction.name,
+            },
         ];
     }
 }

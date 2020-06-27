@@ -1,4 +1,4 @@
-import { TaskController, ActionDefinition } from './TaskController';
+import { ActionDefinition, TaskController } from './TaskController';
 import { GoToPageAction } from '../Action/GoToPageAction';
 import { Task } from '../Queue/TaskProvider';
 import { ForgeImprovementAction } from '../Action/ForgeImprovementAction';
@@ -11,15 +11,18 @@ export class ForgeImprovementTask extends TaskController {
     defineActions(task: Task): Array<ActionDefinition> {
         const args = task.args;
 
-        const pathArgs = {
-            newdid: args.villageId,
-            gid: args.buildTypeId || undefined,
-            id: args.buildId || undefined,
-        };
-
         return [
-            [GoToPageAction.name, { path: path('/build.php', pathArgs) }],
-            [ForgeImprovementAction.name],
+            {
+                name: GoToPageAction.name,
+                args: {
+                    path: path('/build.php', {
+                        newdid: args.villageId,
+                        gid: args.buildTypeId,
+                        id: args.buildId,
+                    }),
+                },
+            },
+            { name: ForgeImprovementAction.name },
         ];
     }
 }

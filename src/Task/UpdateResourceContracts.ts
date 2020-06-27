@@ -20,7 +20,10 @@ export class UpdateResourceContracts extends TaskController {
             ...this.walkImprovementTask(tasks),
         ]);
 
-        return paths.map(p => [GoToPageAction.name, { path: path(p.name, p.query) }]);
+        return paths.map(p => ({
+            name: GoToPageAction.name,
+            args: { path: path(p.name, p.query) },
+        }));
     }
 
     private walkUpgradeTasks(tasks: ImmutableTaskList): PathList {

@@ -17,9 +17,12 @@ export class SendResourcesTask extends TaskController {
             actions.push(goToMarketSendResourcesPage(village.id));
         }
 
-        actions.push([FindSendResourcesPath.name]);
-        actions.push([SendResourcesAction.name]);
-        actions.push([ClickButtonAction.name, { selector: '#enabledButton.green.sendRessources' }]);
+        actions.push({ name: FindSendResourcesPath.name });
+        actions.push({ name: SendResourcesAction.name });
+        actions.push({
+            name: ClickButtonAction.name,
+            args: { selector: '#enabledButton.green.sendRessources' },
+        });
 
         return actions;
     }

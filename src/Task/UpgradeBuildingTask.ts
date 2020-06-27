@@ -16,13 +16,13 @@ export class UpgradeBuildingTask extends TaskController {
 
         return [
             goToResourceViewPage(villageId),
-            [
-                GoToPageAction.name,
-                {
+            {
+                name: GoToPageAction.name,
+                args: {
                     path: path('/build.php', { newdid: args.villageId, id: args.buildId }),
                 },
-            ],
-            [UpgradeBuildingAction.name],
+            },
+            { name: UpgradeBuildingAction.name },
         ];
     }
 }
