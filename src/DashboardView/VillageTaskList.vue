@@ -1,7 +1,11 @@
 <template>
   <table class="task-list">
     <tr v-for="task in tasks">
-      <td class="col-name" v-text="task.name" :title="task.name + ', ' + task.id"></td>
+      <td
+        class="col-name"
+        v-text="(task.canBeBuilt ? '' : '(!) ') + task.name"
+        :title="task.name + ', ' + task.id"
+      ></td>
       <td class="col-actions">
         <a href="#" class="action" @click.prevent="upTask(task.id)" title="Поднять задачу">up</a>
         <a href="#" class="action" @click.prevent="downTask(task.id)" title="Опустить задачу">dn</a>
@@ -46,6 +50,7 @@ export default {
 }
 .col-name {
   width: 20%;
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }

@@ -5,10 +5,18 @@ import { calcGatheringTimings, GatheringTime } from './Core/GatheringTimings';
 import { VillageRepositoryInterface } from './VillageRepository';
 import { VillageNotFound } from './Errors';
 import { ProductionQueue } from './Core/ProductionQueue';
-import { Task } from './Queue/TaskProvider';
+import { Task, TaskId } from './Queue/TaskProvider';
 import { timestamp } from './utils';
 import { QueueTasks, VillageTaskCollection } from './VillageTaskCollection';
 import { TrainTroopTask } from './Task/TrainTroopTask';
+import { Args } from './Queue/Args';
+
+export interface TaskState {
+    id: TaskId;
+    name: string;
+    args: Args;
+    canBeBuilt: boolean;
+}
 
 interface VillageStorageState {
     resources: Resources;
@@ -17,6 +25,9 @@ interface VillageStorageState {
     performance: Resources;
     timeToZero: GatheringTime;
     timeToFull: GatheringTime;
+    optimumFullness: Resources;
+    criticalFullness: Resources;
+    isOverflowing: boolean;
 }
 
 /**
@@ -43,7 +54,7 @@ interface ResourceLineState {
 
 interface VillageProductionQueueState {
     queue: ProductionQueue;
-    tasks: Array<Task>;
+    tasks: Array<TaskState>;
     isActive: boolean;
     isWaiting: boolean;
     currentTaskFinishTimestamp: number;
@@ -68,12 +79,9 @@ interface VillageOwnState {
     resources: Resources;
     performance: Resources;
     storage: VillageStorageState;
-    storageOptimumFullness: Resources;
-    storageCriticalFullness: Resources;
-    isOverflowing: boolean;
     queues: Array<VillageProductionQueueState>;
-    tasks: Array<Task>;
-    firstReadyTask: Task | undefined;
+    tasks: Array<TaskState>;
+    firstReadyTask: TaskState | undefined;
     /**
      * Required resources for nearest task
      */
@@ -111,6 +119,8 @@ function makeStorageState(
     storage: Resources,
     performance: Resources
 ): VillageStorageState {
+    const optimumFullness = storage.sub(performance.scale(3));
+    const criticalFullness = storage.sub(performance.scale(1));
     return {
         resources,
         capacity: storage,
@@ -118,6 +128,9 @@ function makeStorageState(
         balance: storage.sub(resources),
         timeToZero: timeToFastestResource(resources, Resources.zero(), performance),
         timeToFull: timeToFastestResource(resources, storage, performance),
+        optimumFullness: optimumFullness,
+        criticalFullness: criticalFullness,
+        isOverflowing: criticalFullness.anyLower(resources),
     };
 }
 
@@ -151,13 +164,13 @@ function taskResourceReducer(resources: Resources, task: Task) {
 
 function createProductionQueueState(
     taskQueueInfo: QueueTasks,
-    storage: VillageStorage
+    storage: VillageStorageState
 ): VillageProductionQueueState {
     const queue = taskQueueInfo.queue;
     const tasks = taskQueueInfo.tasks;
     const taskEndingTimestamp = taskQueueInfo.finishTs;
-    const resources = storage.getResources();
-    const performance = storage.getResourcesPerformance();
+    const resources = storage.resources;
+    const performance = storage.performance;
     const firstTaskResources = tasks.slice(0, 1).reduce(taskResourceReducer, Resources.zero());
     const allTaskResources = tasks.reduce(taskResourceReducer, Resources.zero());
 
@@ -165,7 +178,7 @@ function createProductionQueueState(
 
     return {
         queue,
-        tasks,
+        tasks: tasks.map(t => makeTaskState(t, storage.optimumFullness)),
         isActive: tasks.length !== 0 || taskEndingTimestamp > currentTimestamp,
         isWaiting: tasks.length !== 0 && taskEndingTimestamp < currentTimestamp,
         currentTaskFinishTimestamp: taskEndingTimestamp,
@@ -180,7 +193,7 @@ function createProductionQueueState(
 }
 
 function createAllProductionQueueStates(
-    storage: VillageStorage,
+    storage: VillageStorageState,
     taskCollection: VillageTaskCollection
 ) {
     let result: Array<VillageProductionQueueState> = [];
@@ -191,26 +204,30 @@ function createAllProductionQueueStates(
 }
 
 function getReadyForProductionTask(
-    queues: ReadonlyArray<VillageProductionQueueState>,
-    maxResourcesForTask: Resources
-): Task | undefined {
+    queues: ReadonlyArray<VillageProductionQueueState>
+): TaskState | undefined {
     const firstReadyQueue = queues.find(queue => queue.isWaiting);
     if (!firstReadyQueue) {
         return undefined;
     }
 
-    return firstReadyQueue.tasks.find(
-        task =>
-            task.name === TrainTroopTask.name ||
-            maxResourcesForTask.allGreaterOrEqual(getTaskResources(task))
-    );
+    return firstReadyQueue.tasks.find(task => task.name === TrainTroopTask.name || task.canBeBuilt);
 }
 
-function getTaskResources(task: Task | undefined): Resources {
+function getTaskResources(task: Task | TaskState | undefined): Resources {
     if (task && task.args.resources) {
         return Resources.fromObject(task.args.resources);
     }
     return Resources.zero();
+}
+
+function makeTaskState(task: Task, maxResourcesForTask: Resources): TaskState {
+    return {
+        id: task.id,
+        args: task.args,
+        name: task.name,
+        canBeBuilt: maxResourcesForTask.allGreaterOrEqual(getTaskResources(task)),
+    };
 }
 
 function createVillageOwnState(
@@ -222,25 +239,20 @@ function createVillageOwnState(
     const resources = storage.getResources();
     const storageResources = Resources.fromStorage(storage.getResourceStorage());
     const performance = storage.getResourcesPerformance();
-    const storageOptimumFullness = storageResources.sub(performance.scale(3));
-    const storageCriticalFullness = storageResources.sub(performance.scale(1));
-    const isOverflowing = storageCriticalFullness.anyLower(resources);
-    const queues = createAllProductionQueueStates(storage, taskCollection);
-    const firstReadyTask = getReadyForProductionTask(queues, storageOptimumFullness);
-    const requiredResources = getTaskResources(firstReadyTask);
+    const storageState = makeStorageState(resources, storageResources, performance);
+    const queues = createAllProductionQueueStates(storageState, taskCollection);
+    const firstReadyTask = getReadyForProductionTask(queues);
 
+    const requiredResources = getTaskResources(firstReadyTask);
     return {
         id: village.id,
         village,
         resources,
         performance,
-        storage: makeStorageState(resources, storageResources, performance),
+        storage: storageState,
         required: makeResourceState(requiredResources, resources, performance),
-        storageOptimumFullness,
-        storageCriticalFullness,
-        isOverflowing,
         queues,
-        tasks: taskCollection.getTasks(),
+        tasks: taskCollection.getTasks().map(t => makeTaskState(t, storageState.optimumFullness)),
         firstReadyTask,
         incomingResources: calcIncomingResources(storage),
         settings,

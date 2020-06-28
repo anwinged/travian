@@ -29,32 +29,32 @@
             <td class="right">
               <filling
                 :value="villageState.resources.lumber"
-                :warning="villageState.storageOptimumFullness.lumber"
-                :critical="villageState.storageCriticalFullness.lumber"
+                :warning="villageState.storage.optimumFullness.lumber"
+                :critical="villageState.storage.criticalFullness.lumber"
                 :full="villageState.storage.capacity.lumber"
               ></filling>
             </td>
             <td class="right">
               <filling
                 :value="villageState.resources.clay"
-                :warning="villageState.storageOptimumFullness.clay"
-                :critical="villageState.storageCriticalFullness.clay"
+                :warning="villageState.storage.optimumFullness.clay"
+                :critical="villageState.storage.criticalFullness.clay"
                 :full="villageState.storage.capacity.clay"
               ></filling>
             </td>
             <td class="right">
               <filling
                 :value="villageState.resources.iron"
-                :warning="villageState.storageOptimumFullness.iron"
-                :critical="villageState.storageCriticalFullness.iron"
+                :warning="villageState.storage.optimumFullness.iron"
+                :critical="villageState.storage.criticalFullness.iron"
                 :full="villageState.storage.capacity.iron"
               ></filling>
             </td>
             <td class="right">
               <filling
                 :value="villageState.resources.crop"
-                :warning="villageState.storageOptimumFullness.crop"
-                :critical="villageState.storageCriticalFullness.crop"
+                :warning="villageState.storage.optimumFullness.crop"
+                :critical="villageState.storage.criticalFullness.crop"
                 :full="villageState.storage.capacity.crop"
               ></filling>
             </td>

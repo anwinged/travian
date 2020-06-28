@@ -68,7 +68,7 @@ export class ResourceTransferCalculator {
             resources: readyToTransfer,
             score: {
                 amount: readyToTransfer.amount(),
-                overflow: sender.getState().isOverflowing,
+                overflow: sender.getState().storage.isOverflowing,
             },
         };
     }
@@ -77,7 +77,7 @@ export class ResourceTransferCalculator {
         sender: VillageController,
         recipient: VillageController
     ): [Resources, Resources] {
-        if (sender.getState().isOverflowing) {
+        if (sender.getState().storage.isOverflowing) {
             return [sender.getOverflowResources(), recipient.getAvailableToReceiveResources()];
         }
 
