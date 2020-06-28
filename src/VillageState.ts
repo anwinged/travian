@@ -53,10 +53,6 @@ interface VillageProductionQueueState {
     taskCount: number;
 }
 
-interface VillageProductionQueueStateDict {
-    [queue: string]: VillageProductionQueueState;
-}
-
 interface VillageOwnState {
     /**
      * Village id
@@ -72,24 +68,16 @@ interface VillageOwnState {
     resources: Resources;
     performance: Resources;
     storage: VillageStorageState;
-    upperCriticalLevel: Resources;
     storageOptimumFullness: Resources;
+    storageCriticalFullness: Resources;
     isOverflowing: boolean;
-    queues: VillageProductionQueueStateDict;
+    queues: Array<VillageProductionQueueState>;
     tasks: Array<Task>;
     firstReadyTask: Task | undefined;
     /**
      * Required resources for nearest task
      */
     required: ResourceLineState;
-    /**
-     * Required resources for first tasks in production queues
-     */
-    frontierRequired: ResourceLineState;
-    /**
-     * Required resources for all tasks
-     */
-    totalRequired: ResourceLineState;
     incomingResources: Resources;
     settings: VillageSettings;
 }
@@ -105,7 +93,7 @@ export interface VillageState extends VillageOwnState {
     commitments: Resources;
 }
 
-function makeResourceBalance(
+function makeResourceState(
     resources: Resources,
     current: Resources,
     performance: Resources
@@ -118,7 +106,7 @@ function makeResourceBalance(
     };
 }
 
-function makeStorageBalance(
+function makeStorageState(
     resources: Resources,
     storage: Resources,
     performance: Resources
@@ -185,8 +173,8 @@ function createProductionQueueState(
             taskEndingTimestamp ? taskEndingTimestamp - currentTimestamp : 0,
             0
         ),
-        firstTask: makeResourceBalance(firstTaskResources, resources, performance),
-        allTasks: makeResourceBalance(allTaskResources, resources, performance),
+        firstTask: makeResourceState(firstTaskResources, resources, performance),
+        allTasks: makeResourceState(allTaskResources, resources, performance),
         taskCount: tasks.length,
     };
 }
@@ -195,31 +183,30 @@ function createAllProductionQueueStates(
     storage: VillageStorage,
     taskCollection: VillageTaskCollection
 ) {
-    let result: VillageProductionQueueStateDict = {};
+    let result: Array<VillageProductionQueueState> = [];
     for (let taskQueueInfo of taskCollection.getGroupedByQueueTasks()) {
-        result[taskQueueInfo.queue] = createProductionQueueState(taskQueueInfo, storage);
+        result.push(createProductionQueueState(taskQueueInfo, storage));
     }
     return result;
 }
 
 function getReadyForProductionTask(
-    queues: VillageProductionQueueStateDict,
+    queues: ReadonlyArray<VillageProductionQueueState>,
     maxResourcesForTask: Resources
 ): Task | undefined {
-    const firstReadyGroup = Object.values(queues).find(group => group.isWaiting);
-    if (!firstReadyGroup) {
+    const firstReadyQueue = queues.find(queue => queue.isWaiting);
+    if (!firstReadyQueue) {
         return undefined;
     }
 
-    return firstReadyGroup.tasks.find(
-        t =>
-            t.name === TrainTroopTask.name ||
-            !t.args.resources ||
-            maxResourcesForTask.allGreaterOrEqual(Resources.fromObject(t.args.resources))
+    return firstReadyQueue.tasks.find(
+        task =>
+            task.name === TrainTroopTask.name ||
+            maxResourcesForTask.allGreaterOrEqual(getTaskResources(task))
     );
 }
 
-function getReadyTaskRequiredResources(task: Task | undefined): Resources {
+function getTaskResources(task: Task | undefined): Resources {
     if (task && task.args.resources) {
         return Resources.fromObject(task.args.resources);
     }
@@ -235,30 +222,26 @@ function createVillageOwnState(
     const resources = storage.getResources();
     const storageResources = Resources.fromStorage(storage.getResourceStorage());
     const performance = storage.getResourcesPerformance();
-    const upperCriticalLevel = storageResources.sub(performance.scale(1));
     const storageOptimumFullness = storageResources.sub(performance.scale(3));
-    const isOverflowing = upperCriticalLevel.anyLower(resources);
+    const storageCriticalFullness = storageResources.sub(performance.scale(1));
+    const isOverflowing = storageCriticalFullness.anyLower(resources);
     const queues = createAllProductionQueueStates(storage, taskCollection);
     const firstReadyTask = getReadyForProductionTask(queues, storageOptimumFullness);
-    const requiredResources = getReadyTaskRequiredResources(firstReadyTask);
-    const frontierResources = taskCollection.getFrontierTaskResources();
-    const totalRequiredResources = taskCollection.getAllTasksResources();
+    const requiredResources = getTaskResources(firstReadyTask);
 
     return {
         id: village.id,
         village,
         resources,
         performance,
-        storage: makeStorageBalance(resources, storageResources, performance),
-        required: makeResourceBalance(requiredResources, resources, performance),
-        upperCriticalLevel,
+        storage: makeStorageState(resources, storageResources, performance),
+        required: makeResourceState(requiredResources, resources, performance),
         storageOptimumFullness,
+        storageCriticalFullness,
         isOverflowing,
         queues,
         tasks: taskCollection.getTasks(),
         firstReadyTask,
-        frontierRequired: makeResourceBalance(frontierResources, resources, performance),
-        totalRequired: makeResourceBalance(totalRequiredResources, resources, performance),
         incomingResources: calcIncomingResources(storage),
         settings,
     };

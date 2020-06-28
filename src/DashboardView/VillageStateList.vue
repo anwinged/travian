@@ -30,7 +30,7 @@
               <filling
                 :value="villageState.resources.lumber"
                 :warning="villageState.storageOptimumFullness.lumber"
-                :critical="villageState.upperCriticalLevel.lumber"
+                :critical="villageState.storageCriticalFullness.lumber"
                 :full="villageState.storage.capacity.lumber"
               ></filling>
             </td>
@@ -38,7 +38,7 @@
               <filling
                 :value="villageState.resources.clay"
                 :warning="villageState.storageOptimumFullness.clay"
-                :critical="villageState.upperCriticalLevel.clay"
+                :critical="villageState.storageCriticalFullness.clay"
                 :full="villageState.storage.capacity.clay"
               ></filling>
             </td>
@@ -46,7 +46,7 @@
               <filling
                 :value="villageState.resources.iron"
                 :warning="villageState.storageOptimumFullness.iron"
-                :critical="villageState.upperCriticalLevel.iron"
+                :critical="villageState.storageCriticalFullness.iron"
                 :full="villageState.storage.capacity.iron"
               ></filling>
             </td>
@@ -54,7 +54,7 @@
               <filling
                 :value="villageState.resources.crop"
                 :warning="villageState.storageOptimumFullness.crop"
-                :critical="villageState.upperCriticalLevel.crop"
+                :critical="villageState.storageCriticalFullness.crop"
                 :full="villageState.storage.capacity.crop"
               ></filling>
             </td>

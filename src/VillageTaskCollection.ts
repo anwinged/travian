@@ -7,7 +7,6 @@ import { Resources } from './Core/Resources';
 import { ContractAttributes, ContractType } from './Core/Contract';
 import { UpgradeBuildingTask } from './Task/UpgradeBuildingTask';
 import { ForgeImprovementTask } from './Task/ForgeImprovementTask';
-import * as _ from 'underscore';
 
 export interface QueueTasks {
     queue: ProductionQueue;
@@ -113,22 +112,5 @@ export class VillageTaskCollection {
             });
         }
         return result;
-    }
-
-    getFrontierTaskResources(): Resources {
-        let result = Resources.zero();
-        const groups = this.getGroupedByQueueTasks();
-        for (let group of groups) {
-            const firstTask = _.first(group.tasks);
-            if (firstTask && firstTask.args.resources) {
-                result = result.add(Resources.fromObject(firstTask.args.resources));
-            }
-        }
-        return result;
-    }
-
-    getAllTasksResources(): Resources {
-        const tasks = this.storage.getTasks().filter(t => t.args.resources);
-        return tasks.reduce((acc, t) => acc.add(t.args.resources!), Resources.zero());
     }
 }
