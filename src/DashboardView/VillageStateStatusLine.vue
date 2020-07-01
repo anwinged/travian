@@ -5,6 +5,7 @@
       <a href="#" v-text="settings.receiveResourcesMode" v-on:click.prevent="toggleMode()"></a>,
       <span v-text="status"></span>
       |
+      <a class="village-quick-link" :href="marketPath(villageState.village)">Рынок</a>
       <a class="village-quick-link" :href="quartersPath(villageState.village)">Казармы</a>
       <a class="village-quick-link" :href="horseStablePath(villageState.village)">Конюшни</a>
       <a class="village-quick-link" :href="collectionPointPath(villageState.village)">Войска</a>
@@ -15,7 +16,7 @@
 <script>
 import { Actions } from './Store';
 import { path } from '../Helpers/Path';
-import { COLLECTION_POINT_ID, HORSE_STABLE_ID, QUARTERS_ID } from '../Core/Buildings';
+import { COLLECTION_POINT_ID, HORSE_STABLE_ID, MARKET_ID, QUARTERS_ID } from '../Core/Buildings';
 
 export default {
   props: {
@@ -38,6 +39,9 @@ export default {
     toggleMode() {
       const villageId = this.villageState.id;
       this.$store.dispatch(Actions.ToggleVillageReceiveMode, { villageId });
+    },
+    marketPath(village) {
+      return path('/build.php', { newdid: village.id, gid: MARKET_ID, t: 5 });
     },
     collectionPointPath(village) {
       return path('/build.php', { newdid: village.id, gid: COLLECTION_POINT_ID, tt: 1 });

@@ -83,21 +83,6 @@
             v-if="!villageState.incomingResources.empty()"
           />
 
-          <tr class="normal-line">
-            <td class="right" colspan="7">
-              <a
-                v-for="s in shared.villageStates"
-                v-if="s.id !== villageState.id"
-                class="village-quick-link"
-                :href="marketPath(villageState.village, s.village)"
-                :title="
-                  'Отправить ресурсы из ' + villageState.village.name + ' в ' + s.village.name
-                "
-                >$->{{ s.village.name }}</a
-              >
-            </td>
-          </tr>
-
           <status-line class="second-line" :village-state="villageState" />
 
           <tr class="task-list-line" v-if="isTaskListVisible(villageState.id)">
@@ -114,7 +99,6 @@
 <script>
 import ResourceBalance from './ResourceBalance';
 import VillageResource from './VillageResource';
-import { MARKET_ID } from '../Core/Buildings';
 import { path } from '../Helpers/Path';
 import { Actions } from './Store';
 import { translateProductionQueue } from '../Core/ProductionQueue';
@@ -159,15 +143,6 @@ export default {
       const toZero = villageState.storage.timeToZero;
       const toFull = villageState.storage.timeToFull;
       return this.renderGatheringTime(toFull.never ? toZero : toFull);
-    },
-    marketPath(fromVillage, toVillage) {
-      return path('/build.php', {
-        newdid: fromVillage.id,
-        gid: MARKET_ID,
-        t: 5,
-        x: toVillage.crd.x,
-        y: toVillage.crd.y,
-      });
     },
     renderTimeInSeconds(value) {
       return secondsToTime(value);
