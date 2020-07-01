@@ -4,7 +4,7 @@ import { BuildingPageController } from './Page/BuildingPageController';
 import { UpgradeBuildingTask } from './Task/UpgradeBuildingTask';
 import { grabActiveVillageId } from './Page/VillageBlock';
 import {
-    grabResourceDeposits,
+    grabResourceSlots,
     onBuildingSlotCtrlClick,
     onResourceSlotCtrlClick,
     showBuildingSlotIds,
@@ -166,7 +166,7 @@ export class ControlPanel {
     }
 
     private createDepositsQuickActions(villageId: number) {
-        const deposits = grabResourceDeposits();
+        const deposits = grabResourceSlots();
         if (deposits.length === 0) {
             return [];
         }

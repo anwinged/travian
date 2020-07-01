@@ -1,8 +1,8 @@
 import { ActionController, registerAction } from './ActionController';
 import { ActionError, taskError, TryLaterError } from '../Errors';
-import { grabResourceDeposits } from '../Page/SlotBlock';
+import { grabResourceSlots } from '../Page/SlotBlock';
 import { UpgradeBuildingTask } from '../Task/UpgradeBuildingTask';
-import { ResourceDeposit } from '../Game';
+import { ResourceSlot } from '../Game';
 import { aroundMinutes, getNumber } from '../utils';
 import { Args } from '../Queue/Args';
 import { Task } from '../Queue/TaskProvider';
@@ -10,7 +10,7 @@ import { Task } from '../Queue/TaskProvider';
 @registerAction
 export class UpgradeResourceToLevel extends ActionController {
     async run(args: Args, task: Task): Promise<any> {
-        const deposits = grabResourceDeposits();
+        const deposits = grabResourceSlots();
         if (deposits.length === 0) {
             throw new ActionError('No deposits');
         }
@@ -20,7 +20,7 @@ export class UpgradeResourceToLevel extends ActionController {
         const requiredLevel = getNumber(args.level);
 
         const notUpgraded = deposits.filter(
-            dep => !dep.underConstruction && requiredLevel > dep.level
+            dep => !dep.isUnderConstruction && requiredLevel > dep.level
         );
 
         if (notUpgraded.length === 0) {
@@ -52,7 +52,7 @@ export class UpgradeResourceToLevel extends ActionController {
         throw new TryLaterError(aroundMinutes(10), 'Sleep for next round');
     }
 
-    private isTaskNotInQueue(villageId: number, dep: ResourceDeposit): boolean {
+    private isTaskNotInQueue(villageId: number, dep: ResourceSlot): boolean {
         const tasks = this.scheduler.getTaskItems();
         return (
             undefined ===

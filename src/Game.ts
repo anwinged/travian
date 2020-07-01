@@ -7,10 +7,20 @@ export class BuildingQueueInfo {
     }
 }
 
-export interface ResourceDeposit {
+export interface ResourceSlot {
     readonly buildId: number;
     readonly type: ResourceType;
     readonly level: number;
-    readonly ready: boolean;
-    readonly underConstruction: boolean;
+    readonly isReady: boolean;
+    readonly isUnderConstruction: boolean;
+    readonly isMaxLevel: boolean;
 }
+
+export const ResourceSlotDefaults: ResourceSlot = {
+    buildId: 0,
+    type: ResourceType.Lumber,
+    level: 0,
+    isReady: false,
+    isUnderConstruction: false,
+    isMaxLevel: false,
+};

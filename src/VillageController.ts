@@ -6,6 +6,9 @@ import { Resources } from './Core/Resources';
 import { MerchantsInfo } from './Core/Market';
 import { VillageStorage } from './Storage/VillageStorage';
 import { ReceiveResourcesMode } from './Core/Village';
+import { ResourceType } from './Core/ResourceType';
+import { UpgradeBuildingTask } from './Task/UpgradeBuildingTask';
+import * as _ from 'underscore';
 
 export class VillageController {
     private readonly villageId: number;
@@ -146,5 +149,48 @@ export class VillageController {
 
         const newSettings = { ...this.state.settings, receiveResourcesMode: next };
         this.storage.storeSettings(newSettings);
+    }
+
+    planTasks(): void {
+        const performance = this.state.performance;
+
+        if (performance.crop < 100) {
+            this.planCropBuilding();
+        }
+    }
+
+    private planCropBuilding() {
+        const resourceSlots = this.storage.getResourceSlots();
+        const tasks = this.taskCollection.getTasks();
+
+        const cropSlots = resourceSlots.filter(s => s.type === ResourceType.Crop);
+
+        // Check, if crop field is building now
+        const isCropBuilding = cropSlots.filter(s => s.isUnderConstruction);
+        if (isCropBuilding) {
+            return;
+        }
+
+        // Check, if we already have crop task in queue
+        const cropBuildIds = cropSlots.map(s => s.buildId);
+        const cropBuildingTaskInQueue = tasks.find(
+            t => t.args.buildId && cropBuildIds.includes(t.args.buildId)
+        );
+        if (cropBuildingTaskInQueue !== undefined) {
+            return;
+        }
+
+        // Find ready for building slots and sort them by level
+        const readyCropSlots = cropSlots.filter(s => !s.isMaxLevel);
+        readyCropSlots.sort((s1, s2) => s1.level - s2.level);
+
+        const targetCropBuildId = _.first(readyCropSlots)?.buildId;
+        if (!targetCropBuildId) {
+            return;
+        }
+
+        this.taskCollection.addTaskAsFirst(UpgradeBuildingTask.name, {
+            buildId: targetCropBuildId,
+        });
     }
 }

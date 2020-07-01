@@ -6,12 +6,15 @@ import { VillageSettings, VillageSettingsDefaults } from '../Core/Village';
 import { ProductionQueue } from '../Core/ProductionQueue';
 import { getNumber } from '../utils';
 import { Task, uniqTaskId } from '../Queue/TaskProvider';
+import { ResourceSlot, ResourceSlotDefaults } from '../Game';
 
 const RESOURCES_KEY = 'resources';
 const CAPACITY_KEY = 'capacity';
 const PERFORMANCE_KEY = 'performance';
 const INCOMING_MERCHANTS_KEY = 'incoming_merchants';
 const MERCHANTS_INFO_KEY = 'merchants_info';
+const RESOURCE_SLOTS_KEY = 'resource_slots';
+const BUILDING_SLOTS_KEY = 'building_slots';
 const SETTINGS_KEY = 'settings';
 const QUEUE_ENDING_TIME_KEY = 'queue_ending_time';
 const TASK_LIST_KEY = 'tasks';
@@ -81,6 +84,16 @@ export class VillageStorage {
             const norm = plain as ResourcesInterface & { ts: number };
             return new IncomingMerchant(Resources.fromObject(norm), Number(norm.ts || 0));
         });
+    }
+
+    getResourceSlots(): ReadonlyArray<ResourceSlot> {
+        return this.storage.getTypedList<ResourceSlot>(RESOURCE_SLOTS_KEY, {
+            factory: () => Object.assign({}, ResourceSlotDefaults),
+        });
+    }
+
+    storeResourceSlots(slots: ReadonlyArray<ResourceSlot>): void {
+        this.storage.set(RESOURCE_SLOTS_KEY, slots);
     }
 
     getSettings(): VillageSettings {

@@ -1,14 +1,14 @@
 import { elClassId, getNumber } from '../utils';
-import { ResourceDeposit } from '../Game';
+import { ResourceSlot } from '../Game';
 import { numberToResourceType } from '../Core/ResourceType';
 
-interface Slot {
+interface SlotElement {
     el: HTMLElement;
     buildId: number;
 }
 
-function slotElements(prefix: string): Array<Slot> {
-    const result: Array<Slot> = [];
+function slotElements(prefix: string): Array<SlotElement> {
+    const result: Array<SlotElement> = [];
     jQuery('.level.colorLayer').each((idx, el) => {
         const buildId = getNumber(elClassId(jQuery(el).attr('class'), prefix));
         result.push({ el, buildId });
@@ -74,18 +74,19 @@ export function onBuildingSlotCtrlClick(onClickHandler: (buildId: number) => voi
     onSlotCtrlClick('aid', onClickHandler);
 }
 
-function slotToDepositMapper(slot: Slot): ResourceDeposit {
-    const el = slot.el;
-    const classes = jQuery(el).attr('class');
+function makeResourceSlot(slot: SlotElement): ResourceSlot {
+    const $el = jQuery(slot.el);
+    const classes = $el.attr('class');
     return {
         buildId: getNumber(elClassId(classes, 'buildingSlot')),
         type: numberToResourceType(getNumber(elClassId(classes, 'gid'))),
         level: getNumber(elClassId(classes, 'level')),
-        ready: !jQuery(el).hasClass('notNow'),
-        underConstruction: jQuery(el).hasClass('underConstruction'),
+        isReady: !$el.hasClass('notNow'),
+        isUnderConstruction: $el.hasClass('underConstruction'),
+        isMaxLevel: $el.hasClass('maxLevel'),
     };
 }
 
-export function grabResourceDeposits(): Array<ResourceDeposit> {
-    return slotElements('buildingSlot').map(slotToDepositMapper);
+export function grabResourceSlots(): Array<ResourceSlot> {
+    return slotElements('buildingSlot').map(makeResourceSlot);
 }

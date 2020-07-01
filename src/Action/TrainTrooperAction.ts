@@ -25,7 +25,7 @@ export class TrainTrooperAction extends ActionController {
         const nextToTrainCount = trainCount - readyToTrainCount;
 
         if (readyToTrainCount <= 0) {
-            throw new TryLaterError(aroundMinutes(15), 'No ready to train troops');
+            throw new TryLaterError(aroundMinutes(15), 'No isReady to train troops');
         }
 
         if (nextToTrainCount > 0) {

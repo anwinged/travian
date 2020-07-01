@@ -40,19 +40,29 @@ export class VillageTaskCollection {
     }
 
     addTask(name: string, args: Args) {
+        const tasks = this.getTasks();
+        tasks.push(this.createVillageTask(name, args));
+        this.storage.storeTaskList(tasks);
+    }
+
+    addTaskAsFirst(name: string, args: Args) {
+        const tasks = this.getTasks();
+        tasks.unshift(this.createVillageTask(name, args));
+        this.storage.storeTaskList(tasks);
+    }
+
+    private createVillageTask(name: string, args: Args): Task {
         if (!isProductionTask(name)) {
             throw new Error(`Task "${name}" is not production task`);
         }
+
         if (args.villageId !== this.villageId) {
             throw new Error(
                 `Task village id (${args.villageId}) not equal controller village id (${this.villageId}`
             );
         }
-        const task = new Task(uniqTaskId(), 0, name, { villageId: this.villageId, ...args });
 
-        const tasks = this.getTasks();
-        tasks.push(task);
-        this.storage.storeTaskList(tasks);
+        return new Task(uniqTaskId(), 0, name, { villageId: this.villageId, ...args });
     }
 
     removeTask(taskId: TaskId) {

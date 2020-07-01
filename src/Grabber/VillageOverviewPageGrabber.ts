@@ -4,6 +4,7 @@ import { parseLocation, timestamp } from '../utils';
 import { GrabError } from '../Errors';
 import { BuildingQueueInfo } from '../Game';
 import { ProductionQueue } from '../Core/ProductionQueue';
+import { grabResourceSlots } from '../Page/SlotBlock';
 
 export class VillageOverviewPageGrabber extends Grabber {
     grab(): void {
@@ -13,6 +14,7 @@ export class VillageOverviewPageGrabber extends Grabber {
         }
 
         this.storage.storeResourcesPerformance(grabResourcesPerformance());
+        this.storage.storeResourceSlots(grabResourceSlots());
 
         const buildingQueueInfo = this.grabBuildingQueueInfoOrDefault();
         const buildingEndTime = buildingQueueInfo.seconds

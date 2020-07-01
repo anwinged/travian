@@ -74,7 +74,7 @@ export class Scheduler {
     nextTask(ts: number): NextExecution {
         const task = this.taskQueue.get(ts);
 
-        // Task not found - next task not ready or queue is empty
+        // Task not found - next task not isReady or queue is empty
         if (!task) {
             this.clearActions();
             return {};
@@ -99,13 +99,21 @@ export class Scheduler {
     private replaceTask(task: Task): Task | undefined {
         if (task.name === RunVillageProductionTask.name && task.args.villageId) {
             const villageId = task.args.villageId;
-            const controller = this.villageControllerFactory.createController(villageId);
-            const villageTask = controller.getReadyProductionTask();
+
+            // First stage - plan new tasks if needed.
+            const controllerForPlan = this.villageControllerFactory.createController(villageId);
+            controllerForPlan.planTasks();
+
+            // Second stage - select isReady for production task.
+            // We recreate controller, because need new village state.
+            const controllerForSelect = this.villageControllerFactory.createController(villageId);
+            const villageTask = controllerForSelect.getReadyProductionTask();
+
             if (villageTask) {
                 this.removeTask(task.id);
                 const newTask = new Task(villageTask.id, 0, villageTask.name, {
                     ...villageTask.args,
-                    villageId: controller.getVillageId(),
+                    villageId: controllerForSelect.getVillageId(),
                 });
                 this.taskQueue.add(newTask);
                 return newTask;
