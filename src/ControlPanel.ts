@@ -4,6 +4,7 @@ import { BuildingPageController } from './Page/BuildingPageController';
 import { UpgradeBuildingTask } from './Task/UpgradeBuildingTask';
 import { grabActiveVillageId } from './Page/VillageBlock';
 import {
+    grabBuildingSlots,
     grabResourceSlots,
     onBuildingSlotCtrlClick,
     onResourceSlotCtrlClick,
@@ -126,6 +127,7 @@ export class ControlPanel {
                 .map(t => t.args.buildId || 0);
 
         if (p.pathname === '/dorf1.php') {
+            console.log('RSLOTS', grabResourceSlots());
             showResourceSlotIds(getBuildingsInQueue());
             state.quickActions.push(...this.createDepositsQuickActions(villageId));
             onResourceSlotCtrlClick(buildId => {
@@ -135,6 +137,7 @@ export class ControlPanel {
         }
 
         if (p.pathname === '/dorf2.php') {
+            console.log('BSLOTS', grabBuildingSlots());
             showBuildingSlotIds(getBuildingsInQueue());
             onBuildingSlotCtrlClick(buildId => {
                 this.onSlotCtrlClick(villageId, buildId);

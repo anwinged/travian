@@ -20,7 +20,12 @@ export function uniqTaskId(): TaskId {
     return 'tid.' + ts + '.' + String(idSequence).padStart(4, '0') + '.' + uniqId('');
 }
 
-export class Task {
+export interface TaskCore {
+    readonly name: string;
+    readonly args: Args;
+}
+
+export class Task implements TaskCore {
     readonly id: TaskId;
     readonly ts: number;
     readonly name: string;
@@ -51,7 +56,26 @@ export interface TaskTransformer {
 }
 
 export function isInQueue(queue: ProductionQueue): TaskMatcher {
-    return (task: Task) => getProductionQueue(task.name) === queue;
+    return (task: TaskCore) => getProductionQueue(task.name) === queue;
+}
+
+export function isBuildingPlanned(
+    name: string,
+    buildId: number | undefined,
+    buildTypeId: number | undefined
+) {
+    return (task: TaskCore) => {
+        if (name !== task.name) {
+            return false;
+        }
+        if (buildId && task.args.buildId) {
+            return buildId === task.args.buildId;
+        }
+        if (buildTypeId && task.args.buildTypeId) {
+            return buildTypeId === task.args.buildTypeId;
+        }
+        return false;
+    };
 }
 
 export function withTime(ts: number): TaskTransformer {

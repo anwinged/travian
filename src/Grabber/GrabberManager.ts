@@ -7,6 +7,7 @@ import { BuildingContractGrabber } from './BuildingContractGrabber';
 import { ForgePageGrabber } from './ForgePageGrabber';
 import { GuildHallPageGrabber } from './GuildHallPageGrabber';
 import { VillageFactory } from '../VillageFactory';
+import { VillageBuildingsPageGrabber } from './VillageBuildingsPageGrabber';
 
 export class GrabberManager {
     private factory: VillageFactory;
@@ -28,6 +29,7 @@ export class GrabberManager {
         const grabbers: Array<Grabber> = [];
         grabbers.push(new VillageResourceGrabber(taskCollection, storage));
         grabbers.push(new VillageOverviewPageGrabber(taskCollection, storage));
+        grabbers.push(new VillageBuildingsPageGrabber(taskCollection, storage));
         grabbers.push(new HeroPageGrabber(taskCollection, storage));
         grabbers.push(new MarketPageGrabber(taskCollection, storage));
         grabbers.push(new BuildingContractGrabber(taskCollection, storage));

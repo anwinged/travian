@@ -13,6 +13,15 @@ export function goToResourceViewPage(villageId: number): ActionDefinition {
     };
 }
 
+export function goToBuildingsViewPage(villageId: number): ActionDefinition {
+    return {
+        name: GoToPageAction.name,
+        args: {
+            path: path('/dorf2.php', { newdid: villageId }),
+        },
+    };
+}
+
 export function goToMarketSendResourcesPage(villageId: number): ActionDefinition {
     return {
         name: GoToPageAction.name,
@@ -44,6 +53,7 @@ export function scanAllVillagesBundle(villages: Array<Village>): Array<ActionDef
     const actions: Array<ActionDefinition> = [];
     for (let village of villages) {
         actions.push(goToResourceViewPage(village.id));
+        actions.push(goToBuildingsViewPage(village.id));
         actions.push(goToMarketSendResourcesPage(village.id));
         actions.push(goToForgePage(village.id));
         actions.push(goToGuildHallPage(village.id));

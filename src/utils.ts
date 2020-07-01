@@ -59,8 +59,9 @@ export function elClassId(classes: string | undefined, prefix: string): number |
     }
     let result: number | undefined = undefined;
     classes.split(/\s/).forEach(part => {
-        if (part.startsWith(prefix)) {
-            result = toNumber(part.substr(prefix.length));
+        const match = part.match(new RegExp(prefix + '(\\d+)'));
+        if (match) {
+            result = toNumber(match[1]);
         }
     });
     return result;

@@ -56,13 +56,7 @@ export class VillageTaskCollection {
             throw new Error(`Task "${name}" is not production task`);
         }
 
-        if (args.villageId !== this.villageId) {
-            throw new Error(
-                `Task village id (${args.villageId}) not equal controller village id (${this.villageId}`
-            );
-        }
-
-        return new Task(uniqTaskId(), 0, name, { villageId: this.villageId, ...args });
+        return new Task(uniqTaskId(), 0, name, { ...args, villageId: this.villageId });
     }
 
     removeTask(taskId: TaskId) {

@@ -1,5 +1,5 @@
 import { elClassId, getNumber } from '../utils';
-import { ResourceSlot } from '../Game';
+import { BuildingSlot, ResourceSlot } from '../Game';
 import { numberToResourceType } from '../Core/ResourceType';
 
 interface SlotElement {
@@ -89,4 +89,23 @@ function makeResourceSlot(slot: SlotElement): ResourceSlot {
 
 export function grabResourceSlots(): Array<ResourceSlot> {
     return slotElements('buildingSlot').map(makeResourceSlot);
+}
+
+function makeBuildingSlot(slot: SlotElement): BuildingSlot {
+    const $el = jQuery(slot.el);
+    const classes = $el.attr('class');
+    const $parent = $el.closest('.buildingSlot');
+    const parentClasses = $parent.attr('class');
+    return {
+        buildId: getNumber(elClassId(classes, 'aid')),
+        buildTypeId: getNumber(elClassId(parentClasses, 'g')),
+        level: getNumber(elClassId(classes, 'level')),
+        isReady: !$el.hasClass('notNow'),
+        isUnderConstruction: $el.hasClass('underConstruction'),
+        isMaxLevel: $el.hasClass('maxLevel'),
+    };
+}
+
+export function grabBuildingSlots(): Array<BuildingSlot> {
+    return slotElements('aid').map(makeBuildingSlot);
 }

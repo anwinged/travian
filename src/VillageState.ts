@@ -15,6 +15,8 @@ export interface TaskState {
     id: TaskId;
     name: string;
     args: Args;
+    isEnoughWarehouseCapacity: boolean;
+    isEnoughGranaryCapacity: boolean;
     canBeBuilt: boolean;
 }
 
@@ -222,11 +224,29 @@ function getTaskResources(task: Task | TaskState | undefined): Resources {
 }
 
 function makeTaskState(task: Task, maxResourcesForTask: Resources): TaskState {
+    const taskResources = getTaskResources(task);
+    const taskWarehouseRequirements = new Resources(
+        taskResources.lumber,
+        taskResources.clay,
+        taskResources.iron,
+        0
+    );
+    const isEnoughWarehouseCapacity = maxResourcesForTask.allGreaterOrEqual(
+        taskWarehouseRequirements
+    );
+
+    const taskGranaryRequirements = new Resources(0, 0, 0, taskResources.crop);
+    const isEnoughGranaryCapacity = maxResourcesForTask.allGreaterOrEqual(taskGranaryRequirements);
+
+    const canBeBuilt = isEnoughWarehouseCapacity && isEnoughGranaryCapacity;
+
     return {
         id: task.id,
         args: task.args,
         name: task.name,
-        canBeBuilt: maxResourcesForTask.allGreaterOrEqual(getTaskResources(task)),
+        isEnoughWarehouseCapacity,
+        isEnoughGranaryCapacity,
+        canBeBuilt,
     };
 }
 

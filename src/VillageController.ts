@@ -1,5 +1,5 @@
 import { VillageTaskCollection } from './VillageTaskCollection';
-import { TaskId } from './Queue/TaskProvider';
+import { isBuildingPlanned, TaskId } from './Queue/TaskProvider';
 import { Args } from './Queue/Args';
 import { TaskState, VillageState } from './VillageState';
 import { Resources } from './Core/Resources';
@@ -9,6 +9,7 @@ import { ReceiveResourcesMode } from './Core/Village';
 import { ResourceType } from './Core/ResourceType';
 import { UpgradeBuildingTask } from './Task/UpgradeBuildingTask';
 import * as _ from 'underscore';
+import { GARNER_ID, WAREHOUSE_ID } from './Core/Buildings';
 
 export class VillageController {
     private readonly villageId: number;
@@ -152,39 +153,49 @@ export class VillageController {
     }
 
     planTasks(): void {
-        const performance = this.state.performance;
-
-        if (performance.crop < 100) {
-            this.planCropBuilding();
+        if (this.state.tasks.length >= 100) {
+            return;
         }
+        this.planCropBuilding();
+        this.planWarehouseBuilding();
+        this.planGranaryBuilding();
     }
 
     private planCropBuilding() {
+        const performance = this.state.performance;
+        if (performance.crop >= 100) {
+            return;
+        }
+
         const resourceSlots = this.storage.getResourceSlots();
         const tasks = this.taskCollection.getTasks();
 
-        const cropSlots = resourceSlots.filter(s => s.type === ResourceType.Crop);
+        const cropSlots = resourceSlots.filter(s => s.type === ResourceType.Crop && !s.isMaxLevel);
+        if (cropSlots.length === 0) {
+            return;
+        }
 
         // Check, if crop field is building now
-        const isCropBuilding = cropSlots.filter(s => s.isUnderConstruction);
-        if (isCropBuilding) {
+        const underContraction = cropSlots.find(s => s.isUnderConstruction);
+        if (underContraction !== undefined) {
             return;
         }
 
         // Check, if we already have crop task in queue
         const cropBuildIds = cropSlots.map(s => s.buildId);
-        const cropBuildingTaskInQueue = tasks.find(
-            t => t.args.buildId && cropBuildIds.includes(t.args.buildId)
-        );
-        if (cropBuildingTaskInQueue !== undefined) {
-            return;
+        for (let buildId of cropBuildIds) {
+            const upgradeTask = tasks.find(
+                isBuildingPlanned(UpgradeBuildingTask.name, buildId, undefined)
+            );
+            if (upgradeTask !== undefined) {
+                return;
+            }
         }
 
         // Find ready for building slots and sort them by level
-        const readyCropSlots = cropSlots.filter(s => !s.isMaxLevel);
-        readyCropSlots.sort((s1, s2) => s1.level - s2.level);
+        cropSlots.sort((s1, s2) => s1.level - s2.level);
 
-        const targetCropBuildId = _.first(readyCropSlots)?.buildId;
+        const targetCropBuildId = _.first(cropSlots)?.buildId;
         if (!targetCropBuildId) {
             return;
         }
@@ -192,5 +203,56 @@ export class VillageController {
         this.taskCollection.addTaskAsFirst(UpgradeBuildingTask.name, {
             buildId: targetCropBuildId,
         });
+    }
+
+    private planWarehouseBuilding(): void {
+        this.planStorageBuilding(WAREHOUSE_ID, t => !t.isEnoughWarehouseCapacity);
+    }
+
+    private planGranaryBuilding(): void {
+        this.planStorageBuilding(GARNER_ID, t => !t.isEnoughGranaryCapacity);
+    }
+
+    private planStorageBuilding(
+        buildTypeId: number,
+        checkNeedEnlargeFunc: (task: TaskState) => boolean
+    ): void {
+        const buildingSlots = this.storage.getBuildingSlots();
+
+        const storageSlots = buildingSlots.filter(
+            s => s.buildTypeId === buildTypeId && !s.isMaxLevel
+        );
+        if (storageSlots.length === 0) {
+            return;
+        }
+
+        // Check, if storage is building now
+        const underConstruction = storageSlots.find(s => s.isUnderConstruction);
+        if (underConstruction !== undefined) {
+            return;
+        }
+
+        const tasks = this.state.tasks;
+
+        // Check, if we have storage is in building queue
+        const storageBuildIds = storageSlots.map(s => s.buildId);
+        for (let buildId of storageBuildIds) {
+            const upgradeTask = tasks.find(
+                isBuildingPlanned(UpgradeBuildingTask.name, buildId, buildTypeId)
+            );
+            if (upgradeTask !== undefined) {
+                return;
+            }
+        }
+
+        const needStorageEnlargeTasks = tasks.filter(checkNeedEnlargeFunc);
+        if (needStorageEnlargeTasks.length === 0) {
+            return;
+        }
+
+        const firstSlot = _.first(storageSlots);
+        if (firstSlot) {
+            this.addTask(UpgradeBuildingTask.name, { buildId: firstSlot.buildId, buildTypeId });
+        }
     }
 }

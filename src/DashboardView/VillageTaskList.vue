@@ -1,11 +1,7 @@
 <template>
   <table class="task-list">
     <tr v-for="task in tasks">
-      <td
-        class="col-name"
-        v-text="(task.canBeBuilt ? '' : '(!) ') + task.name"
-        :title="task.name + ', ' + task.id"
-      ></td>
+      <td class="col-name" v-text="taskLabel(task)" :title="task.name + ', ' + task.id"></td>
       <td class="col-actions">
         <a href="#" class="action" @click.prevent="upTask(task.id)" title="Поднять задачу">up</a>
         <a href="#" class="action" @click.prevent="downTask(task.id)" title="Опустить задачу">dn</a>
@@ -30,6 +26,19 @@ export default {
   props: ['villageId', 'tasks'],
   computed: {},
   methods: {
+    taskLabel(task) {
+      let taskStatus = '';
+      if (!task.isEnoughWarehouseCapacity) {
+        taskStatus += 'w!';
+      }
+      if (!task.isEnoughGranaryCapacity) {
+        taskStatus += 'g!';
+      }
+      if (taskStatus) {
+        taskStatus = '(' + taskStatus + ') ';
+      }
+      return taskStatus + task.name;
+    },
     upTask(taskId) {
       this.$store.dispatch(Actions.UpVillageTask, { villageId: this.villageId, taskId });
     },
