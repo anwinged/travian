@@ -4,8 +4,6 @@ import { BuildingPageController } from './Page/BuildingPageController';
 import { UpgradeBuildingTask } from './Task/UpgradeBuildingTask';
 import { grabActiveVillageId } from './Page/VillageBlock';
 import {
-    grabBuildingSlots,
-    grabResourceSlots,
     onBuildingSlotCtrlClick,
     onResourceSlotCtrlClick,
     showBuildingSlotIds,
@@ -14,7 +12,6 @@ import {
 import Vue from 'vue';
 import Vuex from 'vuex';
 import DashboardApp from './DashboardView/Dashboard.vue';
-import { ResourcesToLevel } from './Task/ResourcesToLevel';
 import { ConsoleLogger, Logger } from './Logger';
 import { DataStorage } from './DataStorage';
 import { getBuildingPageAttributes, isBuildingPage } from './Page/PageDetectors';
@@ -27,11 +24,6 @@ import { VillageFactory } from './VillageFactory';
 
 Vue.use(Vuex);
 
-interface QuickAction {
-    label: string;
-    cb: () => void;
-}
-
 interface GameState {
     name: string;
     version: string;
@@ -39,7 +31,6 @@ interface GameState {
     villageStates: ReadonlyArray<VillageState>;
     taskList: ReadonlyArray<Task>;
     actionList: ReadonlyArray<Action>;
-    quickActions: Array<QuickAction>;
     pauseSeconds: number;
 
     refresh(): void;
@@ -65,8 +56,6 @@ export class ControlPanel {
         await waitForLoad();
 
         const p = parseLocation();
-        this.logger.info('PARSED LOCATION', p);
-
         const villageId = grabActiveVillageId();
 
         const scheduler = this.scheduler;
@@ -81,7 +70,6 @@ export class ControlPanel {
             villageStates: [],
             taskList: [],
             actionList: [],
-            quickActions: [],
             pauseSeconds: 0,
 
             refresh() {
@@ -127,9 +115,7 @@ export class ControlPanel {
                 .map(t => t.args.buildId || 0);
 
         if (p.pathname === '/dorf1.php') {
-            console.log('RSLOTS', grabResourceSlots());
             showResourceSlotIds(getBuildingsInQueue());
-            state.quickActions.push(...this.createDepositsQuickActions(villageId));
             onResourceSlotCtrlClick(buildId => {
                 this.onSlotCtrlClick(villageId, buildId);
                 showResourceSlotIds(getBuildingsInQueue());
@@ -137,7 +123,6 @@ export class ControlPanel {
         }
 
         if (p.pathname === '/dorf2.php') {
-            console.log('BSLOTS', grabBuildingSlots());
             showBuildingSlotIds(getBuildingsInQueue());
             onBuildingSlotCtrlClick(buildId => {
                 this.onSlotCtrlClick(villageId, buildId);
@@ -166,25 +151,6 @@ export class ControlPanel {
             store: createStore(villageFactory),
             render: h => h(DashboardApp),
         });
-    }
-
-    private createDepositsQuickActions(villageId: number) {
-        const deposits = grabResourceSlots();
-        if (deposits.length === 0) {
-            return [];
-        }
-        const quickActions: QuickAction[] = [];
-        const sorted = deposits.sort((x, y) => x.level - y.level);
-        const minLevel = sorted[0].level;
-        for (let i = minLevel + 1; i < minLevel + 4; ++i) {
-            quickActions.push({
-                label: `Ресурсы до уровня ${i}`,
-                cb: () => {
-                    this.scheduler.scheduleTask(ResourcesToLevel.name, { villageId, level: i });
-                },
-            });
-        }
-        return quickActions;
     }
 
     private onSlotCtrlClick(villageId: number, buildId: number) {

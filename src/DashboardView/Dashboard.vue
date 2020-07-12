@@ -4,8 +4,6 @@
       <hdr></hdr>
       <village-state-list />
       <hr class="separator" />
-      <quick-actions />
-      <hr class="separator" />
       <task-list />
     </section>
     <section id="dashboard-secondary" v-if="isSecondaryDashboardVisible">
@@ -18,7 +16,6 @@
 <script>
 import Header from './Header';
 import TaskList from './TaskList';
-import QuickActions from './QuickActions';
 import VillageStateList from './VillageStateList';
 import LogList from './LogList';
 import { mapState } from 'vuex';
@@ -29,7 +26,6 @@ export default {
     'village-editor': VillageEditor,
     'hdr': Header,
     'task-list': TaskList,
-    'quick-actions': QuickActions,
     'village-state-list': VillageStateList,
     'log-list': LogList,
   },
