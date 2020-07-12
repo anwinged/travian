@@ -21,6 +21,7 @@ export function uniqTaskId(): TaskId {
 }
 
 export interface TaskCore {
+    readonly id: TaskId;
     readonly name: string;
     readonly args: Args;
 }
@@ -48,7 +49,7 @@ export interface TaskProvider {
 }
 
 export interface TaskMatcher {
-    (task: Task): boolean;
+    (task: TaskCore): boolean;
 }
 
 export interface TaskTransformer {

@@ -1,18 +1,12 @@
 import { VillageStorage } from './Storage/VillageStorage';
-import { isInQueue, Task, TaskId, uniqTaskId, withResources, withTime } from './Queue/TaskProvider';
+import { Task, TaskId, uniqTaskId, withResources, withTime } from './Queue/TaskProvider';
 import { Args } from './Queue/Args';
-import { isProductionTask, OrderedProductionQueues, ProductionQueue } from './Core/ProductionQueue';
+import { isProductionTask } from './Core/ProductionQueue';
 import { timestamp } from './utils';
 import { Resources } from './Core/Resources';
 import { ContractAttributes, ContractType } from './Core/Contract';
 import { UpgradeBuildingTask } from './Task/UpgradeBuildingTask';
 import { ForgeImprovementTask } from './Task/ForgeImprovementTask';
-
-export interface QueueTasks {
-    queue: ProductionQueue;
-    tasks: Array<Task>;
-    finishTs: number;
-}
 
 export class VillageTaskCollection {
     private readonly storage: VillageStorage;
@@ -103,18 +97,5 @@ export class VillageTaskCollection {
                 t.args.unitId === attr.unitId;
             this.modifyTasks(predicate, withResources(resources));
         }
-    }
-
-    getGroupedByQueueTasks(): Array<QueueTasks> {
-        const tasks = this.storage.getTasks();
-        const result: Array<QueueTasks> = [];
-        for (let queue of OrderedProductionQueues) {
-            result.push({
-                queue,
-                tasks: tasks.filter(isInQueue(queue)),
-                finishTs: this.storage.getQueueTaskEnding(queue),
-            });
-        }
-        return result;
     }
 }

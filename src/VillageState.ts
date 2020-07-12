@@ -4,10 +4,10 @@ import { VillageStorage } from './Storage/VillageStorage';
 import { calcGatheringTimings, GatheringTime } from './Core/GatheringTimings';
 import { VillageRepositoryInterface } from './VillageRepository';
 import { VillageNotFound } from './Errors';
-import { ProductionQueue } from './Core/ProductionQueue';
-import { Task, TaskId } from './Queue/TaskProvider';
+import { OrderedProductionQueues, ProductionQueue } from './Core/ProductionQueue';
+import { isInQueue, TaskCore, TaskId } from './Queue/TaskProvider';
 import { timestamp } from './utils';
-import { QueueTasks, VillageTaskCollection } from './VillageTaskCollection';
+import { VillageTaskCollection } from './VillageTaskCollection';
 import { TrainTroopTask } from './Task/TrainTroopTask';
 import { Args } from './Queue/Args';
 
@@ -20,7 +20,13 @@ export interface TaskState {
     canBeBuilt: boolean;
 }
 
-interface VillageStorageState {
+export interface TaskQueueState {
+    queue: ProductionQueue;
+    tasks: ReadonlyArray<TaskState>;
+    finishTs: number;
+}
+
+interface VillageWarehouseState {
     resources: Resources;
     capacity: Resources;
     balance: Resources;
@@ -56,7 +62,7 @@ interface ResourceLineState {
 
 interface VillageProductionQueueState {
     queue: ProductionQueue;
-    tasks: Array<TaskState>;
+    tasks: ReadonlyArray<TaskState>;
     isActive: boolean;
     isWaiting: boolean;
     currentTaskFinishTimestamp: number;
@@ -80,7 +86,7 @@ interface VillageOwnState {
      */
     resources: Resources;
     performance: Resources;
-    storage: VillageStorageState;
+    storage: VillageWarehouseState;
     queues: Array<VillageProductionQueueState>;
     tasks: Array<TaskState>;
     firstReadyTask: TaskState | undefined;
@@ -120,7 +126,7 @@ function makeStorageState(
     resources: Resources,
     storage: Resources,
     performance: Resources
-): VillageStorageState {
+): VillageWarehouseState {
     const optimumFullness = storage.sub(performance.scale(3));
     const criticalFullness = storage.sub(performance.scale(1));
     return {
@@ -158,19 +164,13 @@ function calcIncomingResources(storage: VillageStorage): Resources {
     return storage.getIncomingMerchants().reduce((m, i) => m.add(i.resources), Resources.zero());
 }
 
-function taskResourceReducer(resources: Resources, task: Task) {
-    return task.args.resources
-        ? resources.add(Resources.fromObject(task.args.resources))
-        : resources;
-}
-
 function createProductionQueueState(
-    taskQueueInfo: QueueTasks,
-    storage: VillageStorageState
+    taskQueueState: TaskQueueState,
+    storage: VillageWarehouseState
 ): VillageProductionQueueState {
-    const queue = taskQueueInfo.queue;
-    const tasks = taskQueueInfo.tasks;
-    const taskEndingTimestamp = taskQueueInfo.finishTs;
+    const queue = taskQueueState.queue;
+    const tasks = taskQueueState.tasks;
+    const taskEndingTimestamp = taskQueueState.finishTs;
     const resources = storage.resources;
     const performance = storage.performance;
     const firstTaskResources = tasks.slice(0, 1).reduce(taskResourceReducer, Resources.zero());
@@ -180,7 +180,7 @@ function createProductionQueueState(
 
     return {
         queue,
-        tasks: tasks.map(t => makeTaskState(t, storage.optimumFullness)),
+        tasks,
         isActive: tasks.length !== 0 || taskEndingTimestamp > currentTimestamp,
         isWaiting: tasks.length !== 0 && taskEndingTimestamp < currentTimestamp,
         currentTaskFinishTimestamp: taskEndingTimestamp,
@@ -194,13 +194,30 @@ function createProductionQueueState(
     };
 }
 
-function createAllProductionQueueStates(
-    storage: VillageStorageState,
-    taskCollection: VillageTaskCollection
+function getGroupedByQueueTasks(
+    tasks: ReadonlyArray<TaskState>,
+    storage: VillageStorage
+): Array<TaskQueueState> {
+    const result: Array<TaskQueueState> = [];
+    for (let queue of OrderedProductionQueues) {
+        result.push({
+            queue,
+            tasks: tasks.filter(isInQueue(queue)),
+            finishTs: storage.getQueueTaskEnding(queue),
+        });
+    }
+    return result;
+}
+
+function createTaskQueueStates(
+    warehouse: VillageWarehouseState,
+    tasks: ReadonlyArray<TaskState>,
+    storage: VillageStorage
 ) {
     let result: Array<VillageProductionQueueState> = [];
-    for (let taskQueueInfo of taskCollection.getGroupedByQueueTasks()) {
-        result.push(createProductionQueueState(taskQueueInfo, storage));
+    const possibleTasks = tasks.filter(task => task.canBeBuilt);
+    for (let taskQueueInfo of getGroupedByQueueTasks(possibleTasks, storage)) {
+        result.push(createProductionQueueState(taskQueueInfo, warehouse));
     }
     return result;
 }
@@ -216,27 +233,27 @@ function getReadyForProductionTask(
     return firstReadyQueue.tasks.find(task => task.name === TrainTroopTask.name || task.canBeBuilt);
 }
 
-function getTaskResources(task: Task | TaskState | undefined): Resources {
+function getTaskResources(task: TaskCore | undefined): Resources {
     if (task && task.args.resources) {
         return Resources.fromObject(task.args.resources);
     }
     return Resources.zero();
 }
 
-function makeTaskState(task: Task, maxResourcesForTask: Resources): TaskState {
-    const taskResources = getTaskResources(task);
-    const taskWarehouseRequirements = new Resources(
-        taskResources.lumber,
-        taskResources.clay,
-        taskResources.iron,
-        0
-    );
-    const isEnoughWarehouseCapacity = maxResourcesForTask.allGreaterOrEqual(
-        taskWarehouseRequirements
-    );
+function taskResourceReducer(resources: Resources, task: TaskCore) {
+    return task.args.resources
+        ? resources.add(Resources.fromObject(task.args.resources))
+        : resources;
+}
 
-    const taskGranaryRequirements = new Resources(0, 0, 0, taskResources.crop);
-    const isEnoughGranaryCapacity = maxResourcesForTask.allGreaterOrEqual(taskGranaryRequirements);
+function makeTaskState(task: TaskCore, maxResourcesForTask: Resources): TaskState {
+    const taskResources = getTaskResources(task);
+    const isEnoughWarehouseCapacity = maxResourcesForTask.allGreaterOrEqual(
+        new Resources(taskResources.lumber, taskResources.clay, taskResources.iron, 0)
+    );
+    const isEnoughGranaryCapacity = maxResourcesForTask.allGreaterOrEqual(
+        new Resources(0, 0, 0, taskResources.crop)
+    );
 
     const canBeBuilt = isEnoughWarehouseCapacity && isEnoughGranaryCapacity;
 
@@ -260,9 +277,11 @@ function createVillageOwnState(
     const storageResources = Resources.fromStorage(storage.getResourceStorage());
     const performance = storage.getResourcesPerformance();
     const storageState = makeStorageState(resources, storageResources, performance);
-    const queues = createAllProductionQueueStates(storageState, taskCollection);
+    const tasks = taskCollection
+        .getTasks()
+        .map(t => makeTaskState(t, storageState.optimumFullness));
+    const queues = createTaskQueueStates(storageState, tasks, storage);
     const firstReadyTask = getReadyForProductionTask(queues);
-
     const requiredResources = getTaskResources(firstReadyTask);
     return {
         id: village.id,
@@ -271,8 +290,8 @@ function createVillageOwnState(
         performance,
         storage: storageState,
         required: makeResourceState(requiredResources, resources, performance),
+        tasks,
         queues,
-        tasks: taskCollection.getTasks().map(t => makeTaskState(t, storageState.optimumFullness)),
         firstReadyTask,
         incomingResources: calcIncomingResources(storage),
         settings,
