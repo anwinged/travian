@@ -1,13 +1,8 @@
-import { uniqId } from './utils';
-import * as dateFormat from 'dateformat';
 import { ImmutableTaskList } from './Queue/TaskProvider';
+import { uniqId } from './Helpers/Identity';
+import { formatDate } from './Helpers/Format';
 
 const ID = uniqId();
-
-function formatDate(ts: number) {
-    const d = new Date(ts * 1000);
-    return dateFormat(d, 'HH:MM:ss');
-}
 
 export class TaskQueueRenderer {
     render(tasks: ImmutableTaskList) {

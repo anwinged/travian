@@ -1,6 +1,6 @@
 import { it, describe } from 'mocha';
 import { expect } from 'chai';
-import { elClassId, getNumber } from '../src/utils';
+import { elClassId, getNumber } from '../../src/Helpers/Convert';
 
 describe('Utils', function() {
     describe('getNumber', function() {

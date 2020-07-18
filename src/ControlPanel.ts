@@ -1,4 +1,3 @@
-import { notify, parseLocation, timestamp, uniqId, waitForLoad } from './utils';
 import { Scheduler } from './Scheduler';
 import { BuildingPageController } from './Page/BuildingPageController';
 import { UpgradeBuildingTask } from './Task/UpgradeBuildingTask';
@@ -21,6 +20,9 @@ import { Task } from './Queue/TaskProvider';
 import { Action } from './Queue/ActionQueue';
 import { createStore } from './DashboardView/Store';
 import { VillageFactory } from './VillageFactory';
+import { uniqId } from './Helpers/Identity';
+import { timestamp } from './Helpers/Time';
+import { notify, parseLocation, waitForLoad } from './Helpers/Browser';
 
 Vue.use(Vuex);
 

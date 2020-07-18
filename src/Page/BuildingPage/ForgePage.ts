@@ -1,7 +1,8 @@
-import { elClassId, getNumber, uniqId } from '../../utils';
 import { Resources } from '../../Core/Resources';
 import { grabResourcesFromList } from './BuildingPage';
 import { GrabError } from '../../Errors';
+import { elClassId, getNumber } from '../../Helpers/Convert';
+import { uniqId } from '../../Helpers/Identity';
 
 interface ResearchClickHandler {
     (resources: Resources, unitId: number): void;

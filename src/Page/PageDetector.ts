@@ -1,5 +1,6 @@
-import { elClassId, getNumber, parseLocation } from '../utils';
 import { FORGE_ID, GUILD_HALL_ID, MARKET_ID } from '../Core/Buildings';
+import { elClassId, getNumber } from '../Helpers/Convert';
+import { parseLocation } from '../Helpers/Browser';
 
 export interface BuildingPageAttributes {
     buildTypeId: number;

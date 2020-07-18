@@ -6,10 +6,10 @@ import { VillageRepositoryInterface } from './VillageRepository';
 import { VillageNotFound } from './Errors';
 import { OrderedProductionQueues, ProductionQueue } from './Core/ProductionQueue';
 import { isInQueue, TaskCore, TaskId } from './Queue/TaskProvider';
-import { timestamp } from './utils';
 import { VillageTaskCollection } from './VillageTaskCollection';
 import { TrainTroopTask } from './Task/TrainTroopTask';
 import { Args } from './Queue/Args';
+import { timestamp } from './Helpers/Time';
 
 export interface TaskState {
     id: TaskId;

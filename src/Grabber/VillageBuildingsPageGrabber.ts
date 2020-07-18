@@ -1,6 +1,6 @@
 import { Grabber } from './Grabber';
-import { parseLocation } from '../utils';
 import { grabBuildingSlots } from '../Page/SlotBlock';
+import { parseLocation } from '../Helpers/Browser';
 
 export class VillageBuildingsPageGrabber extends Grabber {
     grab(): void {

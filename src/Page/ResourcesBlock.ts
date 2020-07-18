@@ -1,8 +1,8 @@
 import { GrabError } from '../Errors';
-import { getNumber } from '../utils';
 import { Resources } from '../Core/Resources';
 import { ResourceType } from '../Core/ResourceType';
 import { ResourceStorage } from '../Core/ResourceStorage';
+import { getNumber } from '../Helpers/Convert';
 
 export function grabVillageResources(): Resources {
     const lumber = grabResource(ResourceType.Lumber);

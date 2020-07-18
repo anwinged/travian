@@ -1,9 +1,9 @@
 import { ActionController, registerAction } from './ActionController';
 import { GrabError, TryLaterError } from '../Errors';
-import { aroundMinutes } from '../utils';
 import { Args } from '../Queue/Args';
 import { Task } from '../Queue/TaskProvider';
 import { clickCelebrationButton } from '../Page/BuildingPage/GuildHallPage';
+import { aroundMinutes } from '../Helpers/Time';
 
 @registerAction
 export class CelebrationAction extends ActionController {

@@ -1,7 +1,8 @@
 import { Resources } from '../../Core/Resources';
 import { GrabError } from '../../Errors';
-import { elClassId, getNumber, uniqId } from '../../utils';
 import { grabResourcesFromList } from './BuildingPage';
+import { elClassId, getNumber } from '../../Helpers/Convert';
+import { uniqId } from '../../Helpers/Identity';
 
 export function createTrainTroopButtons(
     onClickHandler: (troopId: number, resources: Resources, count: number) => void

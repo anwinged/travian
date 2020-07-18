@@ -1,6 +1,5 @@
 import { ActionController, registerAction } from './ActionController';
 import { taskError, TryLaterError } from '../Errors';
-import { aroundMinutes, randomInRange } from '../utils';
 import { Args } from '../Queue/Args';
 import { Task } from '../Queue/TaskProvider';
 import {
@@ -10,6 +9,8 @@ import {
 } from '../Page/BuildingPage/TrooperPage';
 import { TrainTroopTask } from '../Task/TrainTroopTask';
 import { Resources } from '../Core/Resources';
+import { randomInRange } from '../Helpers/Random';
+import { aroundMinutes } from '../Helpers/Time';
 
 @registerAction
 export class TrainTrooperAction extends ActionController {

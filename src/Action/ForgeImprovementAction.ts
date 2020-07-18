@@ -1,9 +1,9 @@
 import { ActionController, registerAction } from './ActionController';
 import { GrabError, taskError, TryLaterError } from '../Errors';
-import { aroundMinutes } from '../utils';
 import { Args } from '../Queue/Args';
 import { Task } from '../Queue/TaskProvider';
 import { clickResearchButton } from '../Page/BuildingPage/ForgePage';
+import { aroundMinutes } from '../Helpers/Time';
 
 @registerAction
 export class ForgeImprovementAction extends ActionController {

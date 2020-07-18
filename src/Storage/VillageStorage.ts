@@ -4,7 +4,6 @@ import { ResourceStorage } from '../Core/ResourceStorage';
 import { IncomingMerchant, MerchantsInfo } from '../Core/Market';
 import { VillageSettings, VillageSettingsDefaults } from '../Core/Village';
 import { ProductionQueue } from '../Core/ProductionQueue';
-import { getNumber } from '../utils';
 import { Task, uniqTaskId } from '../Queue/TaskProvider';
 import {
     BuildingSlot,
@@ -12,6 +11,7 @@ import {
     ResourceSlot,
     ResourceSlotDefaults,
 } from '../Core/Slot';
+import { getNumber } from '../Helpers/Convert';
 
 const RESOURCES_KEY = 'resources';
 const CAPACITY_KEY = 'capacity';

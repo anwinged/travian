@@ -1,6 +1,7 @@
 import { GrabError } from '../../Errors';
-import { getNumber, trimPrefix, uniqId } from '../../utils';
 import { Resources } from '../../Core/Resources';
+import { getNumber, trimPrefix } from '../../Helpers/Convert';
+import { uniqId } from '../../Helpers/Identity';
 
 export function clickBuildButton(typeId: number) {
     const section = jQuery(`#contract_building${typeId}`);

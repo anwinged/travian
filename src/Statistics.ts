@@ -1,4 +1,4 @@
-import * as dateFormat from 'dateformat';
+import { formatDate } from './Helpers/Format';
 
 const KEY_FORMAT = 'yyyy-mm-dd-HH';
 const KEEP_RECORD_COUNT = 24;
@@ -23,7 +23,7 @@ export class Statistics {
 
     incrementAction(ts: number): void {
         const stat = this.storage.getActionStatistics();
-        const key = dateFormat(ts * 1000, KEY_FORMAT);
+        const key = formatDate(ts, KEY_FORMAT);
         stat[key] = (stat[key] || 0) + 1;
         this.trimStatistics(stat);
         this.storage.setActionStatistics(stat);

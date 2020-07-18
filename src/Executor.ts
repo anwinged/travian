@@ -1,4 +1,3 @@
-import { markPage, sleepMicro, timestamp, waitForLoad } from './utils';
 import {
     AbortTaskError,
     ActionError,
@@ -18,6 +17,8 @@ import { Action } from './Queue/ActionQueue';
 import { Task } from './Queue/TaskProvider';
 import { createTaskHandler } from './Task/TaskMap';
 import { VillageFactory } from './VillageFactory';
+import { sleepMicro, timestamp } from './Helpers/Time';
+import { markPage, waitForLoad } from './Helpers/Browser';
 
 export interface ExecutionSettings {
     pauseTs: number;

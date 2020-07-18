@@ -13,8 +13,8 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import * as dateFormat from 'dateformat';
 import { Mutations } from './Store';
+import { formatDate } from '../Helpers/Format';
 
 export default {
   computed: {
@@ -30,8 +30,7 @@ export default {
       };
     },
     formatDate(ts) {
-      const d = new Date(ts * 1000);
-      return dateFormat(d, 'HH:MM:ss');
+      return formatDate(ts);
     },
     close() {
       this.$store.commit(Mutations.hideLogs);

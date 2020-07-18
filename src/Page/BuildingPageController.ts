@@ -1,4 +1,3 @@
-import { notify } from '../utils';
 import { UpgradeBuildingTask } from '../Task/UpgradeBuildingTask';
 import { Scheduler } from '../Scheduler';
 import { TrainTroopTask } from '../Task/TrainTroopTask';
@@ -23,6 +22,7 @@ import { ForgeImprovementTask } from '../Task/ForgeImprovementTask';
 import { createCelebrationButtons } from './BuildingPage/GuildHallPage';
 import { CelebrationTask } from '../Task/CelebrationTask';
 import { VillageController } from '../VillageController';
+import { notify } from '../Helpers/Browser';
 
 export class BuildingPageController {
     private scheduler: Scheduler;

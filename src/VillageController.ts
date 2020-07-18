@@ -9,7 +9,7 @@ import { ReceiveResourcesMode } from './Core/Village';
 import { ResourceType } from './Core/ResourceType';
 import { UpgradeBuildingTask } from './Task/UpgradeBuildingTask';
 import { GARNER_ID, WAREHOUSE_ID } from './Core/Buildings';
-import { first } from './utils';
+import { first } from './Helpers/Collection';
 
 export class VillageController {
     private readonly villageId: number;

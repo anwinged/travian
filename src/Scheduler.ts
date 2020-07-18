@@ -1,4 +1,3 @@
-import { around, timestamp } from './utils';
 import { TaskQueue } from './Queue/TaskQueue';
 import { BalanceHeroResourcesTask } from './Task/BalanceHeroResourcesTask';
 import { Logger } from './Logger';
@@ -12,6 +11,8 @@ import { VillageRepositoryInterface } from './VillageRepository';
 import { VillageFactory } from './VillageFactory';
 import { RunVillageProductionTask } from './Task/RunVillageProductionTask';
 import { isProductionTask } from './Task/TaskMap';
+import { around } from './Helpers/Random';
+import { timestamp } from './Helpers/Time';
 
 interface NextExecution {
     task?: Task;

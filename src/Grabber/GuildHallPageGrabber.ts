@@ -2,7 +2,7 @@ import { Grabber } from './Grabber';
 import { isGuildHallPage } from '../Page/PageDetector';
 import { grabRemainingSeconds } from '../Page/BuildingPage/GuildHallPage';
 import { ProductionQueue } from '../Core/ProductionQueue';
-import { timestamp } from '../utils';
+import { timestamp } from '../Helpers/Time';
 
 export class GuildHallPageGrabber extends Grabber {
     grab(): void {

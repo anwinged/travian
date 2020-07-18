@@ -1,8 +1,9 @@
-import { getNumber, uniqId } from '../../utils';
 import { Resources, ResourcesInterface } from '../../Core/Resources';
 import { Coordinates } from '../../Core/Village';
 import { IncomingMerchant, MerchantsInfo } from '../../Core/Market';
 import { grabResourcesFromList } from './BuildingPage';
+import { getNumber } from '../../Helpers/Convert';
+import { uniqId } from '../../Helpers/Identity';
 
 interface SendResourcesClickHandler {
     (resources: Resources, crd: Coordinates): void;

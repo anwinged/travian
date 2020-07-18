@@ -3,7 +3,7 @@ import { getBuildingPageAttributes, isForgePage } from '../Page/PageDetector';
 import { ContractType } from '../Core/Contract';
 import { grabImprovementContracts, grabRemainingSeconds } from '../Page/BuildingPage/ForgePage';
 import { ProductionQueue } from '../Core/ProductionQueue';
-import { timestamp } from '../utils';
+import { timestamp } from '../Helpers/Time';
 
 export class ForgePageGrabber extends Grabber {
     grab(): void {

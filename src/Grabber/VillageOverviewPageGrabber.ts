@@ -1,10 +1,11 @@
 import { Grabber } from './Grabber';
 import { grabBuildingQueueInfo, grabResourcesPerformance } from '../Page/VillageBlock';
-import { parseLocation, timestamp } from '../utils';
 import { GrabError } from '../Errors';
 import { ProductionQueue } from '../Core/ProductionQueue';
 import { grabResourceSlots } from '../Page/SlotBlock';
 import { BuildingQueueInfo } from '../Core/BuildingQueueInfo';
+import { timestamp } from '../Helpers/Time';
+import { parseLocation } from '../Helpers/Browser';
 
 export class VillageOverviewPageGrabber extends Grabber {
     grab(): void {

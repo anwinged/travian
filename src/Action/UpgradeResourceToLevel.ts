@@ -2,10 +2,11 @@ import { ActionController, registerAction } from './ActionController';
 import { ActionError, taskError, TryLaterError } from '../Errors';
 import { grabResourceSlots } from '../Page/SlotBlock';
 import { UpgradeBuildingTask } from '../Task/UpgradeBuildingTask';
-import { aroundMinutes, getNumber } from '../utils';
 import { Args } from '../Queue/Args';
 import { Task } from '../Queue/TaskProvider';
 import { ResourceSlot } from '../Core/Slot';
+import { getNumber } from '../Helpers/Convert';
+import { aroundMinutes } from '../Helpers/Time';
 
 @registerAction
 export class UpgradeResourceToLevel extends ActionController {

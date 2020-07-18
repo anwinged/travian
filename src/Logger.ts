@@ -1,4 +1,4 @@
-import { timestamp } from './utils';
+import { timestamp } from './Helpers/Time';
 
 export interface Logger {
     info(...args: any[]): void;

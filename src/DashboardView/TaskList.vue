@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import * as dateFormat from 'dateformat';
+import { formatDate } from '../Helpers/Format';
 
 export default {
   data() {
@@ -61,8 +61,7 @@ export default {
   },
   methods: {
     formatDate(ts) {
-      const d = new Date(ts * 1000);
-      return dateFormat(d, 'HH:MM:ss');
+      return formatDate(ts);
     },
     isThisVillageTask(task) {
       const taskVillageId = (task.args || {}).villageId;

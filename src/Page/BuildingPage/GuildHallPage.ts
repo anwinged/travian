@@ -1,7 +1,8 @@
-import { getNumber, uniqId } from '../../utils';
 import { Resources } from '../../Core/Resources';
 import { grabResourcesFromList } from './BuildingPage';
 import { GrabError } from '../../Errors';
+import { getNumber } from '../../Helpers/Convert';
+import { uniqId } from '../../Helpers/Identity';
 
 interface CelebrationClickHandler {
     (resources: Resources, id: number): void;

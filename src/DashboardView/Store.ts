@@ -1,9 +1,10 @@
 import Vuex from 'vuex';
 import { VillageSettings, VillageSettingsDefaults } from '../Core/Village';
-import { getNumber, notify } from '../utils';
 import { VillageStorage } from '../Storage/VillageStorage';
 import { VillageFactory } from '../VillageFactory';
 import { StorageContainer } from '../Storage/StorageContainer';
+import { getNumber } from '../Helpers/Convert';
+import { notify } from '../Helpers/Browser';
 
 export enum Mutations {
     showLogs = 'showLogs',

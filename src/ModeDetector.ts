@@ -1,4 +1,4 @@
-import { parseLocation } from './utils';
+import { parseLocation } from './Helpers/Browser';
 
 export enum ManagementMode {
     Blank = 'blank',
