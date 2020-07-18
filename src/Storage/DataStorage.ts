@@ -1,4 +1,5 @@
-import { Logger, NullLogger } from './Logger';
+import { Logger, NullLogger } from '../Logger';
+import { createMapper, ObjectMapperOptions } from './Mapper';
 
 const NAMESPACE = 'travian:v1';
 
@@ -6,40 +7,6 @@ const storage = localStorage;
 
 function join(...parts: Array<string>) {
     return parts.map(p => p.replace(/[:]+$/g, '').replace(/^[:]+/g, '')).join(':');
-}
-
-interface EmptyObjectFactory<T> {
-    (): T;
-}
-
-interface ObjectMapper<T> {
-    (item: any): T;
-}
-
-interface ObjectMapperOptions<T> {
-    factory?: EmptyObjectFactory<T>;
-    mapper?: ObjectMapper<T>;
-}
-
-function createMapper<T>(options: ObjectMapperOptions<T>): ObjectMapper<T> {
-    const { mapper, factory } = options;
-
-    if (mapper) {
-        return mapper;
-    }
-
-    if (factory) {
-        return plain => {
-            let item = factory();
-            if (typeof plain === 'object' && typeof item === 'object') {
-                return Object.assign(item, plain) as T;
-            } else {
-                return item;
-            }
-        };
-    }
-
-    throw new Error('Factory or mapper must be specified');
 }
 
 export class DataStorage {

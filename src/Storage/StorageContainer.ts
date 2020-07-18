@@ -1,5 +1,5 @@
 import { LogStorage } from './LogStorage';
-import { DataStorage } from '../DataStorage';
+import { DataStorage } from './DataStorage';
 import { StatisticsStorage } from './StatisticsStorage';
 
 export class StorageContainer {

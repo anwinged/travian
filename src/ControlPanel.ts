@@ -12,7 +12,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import DashboardApp from './DashboardView/Dashboard.vue';
 import { ConsoleLogger, Logger } from './Logger';
-import { DataStorage } from './DataStorage';
+import { DataStorage } from './Storage/DataStorage';
 import { getBuildingPageAttributes, isBuildingPage } from './Page/PageDetector';
 import { ExecutionStorage } from './Storage/ExecutionStorage';
 import { VillageState } from './VillageState';

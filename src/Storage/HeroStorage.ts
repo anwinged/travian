@@ -1,4 +1,4 @@
-import { DataStorage } from '../DataStorage';
+import { DataStorage } from './DataStorage';
 import { HeroAttributes } from '../Core/Hero';
 
 const VILLAGE_ID_KEY = 'village_id';

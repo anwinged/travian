@@ -1,4 +1,4 @@
-import { DataStorage } from '../DataStorage';
+import { DataStorage } from './DataStorage';
 import { ExecutionSettings } from '../Executor';
 
 const NAMESPACE = 'execution.v1';

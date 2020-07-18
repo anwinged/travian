@@ -1,4 +1,4 @@
-import { DataStorage } from '../DataStorage';
+import { DataStorage } from './DataStorage';
 import { Resources, ResourcesInterface } from '../Core/Resources';
 import { ResourceStorage } from '../Core/ResourceStorage';
 import { IncomingMerchant, MerchantsInfo } from '../Core/Market';

@@ -1,4 +1,4 @@
-import { DataStorage } from '../DataStorage';
+import { DataStorage } from './DataStorage';
 import { ResourceTransferReport } from '../ResourceTransfer';
 
 const NAMESPACE = 'resource_transfer.v1';

@@ -1,4 +1,4 @@
-import { DataStorage } from '../DataStorage';
+import { DataStorage } from './DataStorage';
 import { ActionStatistics, StatisticsStorageInterface } from '../Statistics';
 
 const ACTION_STATISTICS_KEY = 'actions';

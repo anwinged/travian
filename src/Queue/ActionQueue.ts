@@ -1,5 +1,5 @@
 import { ConsoleLogger, Logger } from '../Logger';
-import { DataStorage } from '../DataStorage';
+import { DataStorage } from '../Storage/DataStorage';
 import { Args } from './Args';
 
 const NAMESPACE = 'actions.v1';

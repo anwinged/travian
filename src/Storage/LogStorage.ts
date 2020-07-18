@@ -1,4 +1,4 @@
-import { DataStorage } from '../DataStorage';
+import { DataStorage } from './DataStorage';
 import { LogStorageInterface, StorageLogRecord } from '../Logger';
 
 const RECORD_LIST_KEY = 'records';
