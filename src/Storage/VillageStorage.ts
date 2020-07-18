@@ -6,7 +6,12 @@ import { VillageSettings, VillageSettingsDefaults } from '../Core/Village';
 import { ProductionQueue } from '../Core/ProductionQueue';
 import { getNumber } from '../utils';
 import { Task, uniqTaskId } from '../Queue/TaskProvider';
-import { BuildingSlot, BuildingSlotDefaults, ResourceSlot, ResourceSlotDefaults } from '../Game';
+import {
+    BuildingSlot,
+    BuildingSlotDefaults,
+    ResourceSlot,
+    ResourceSlotDefaults,
+} from '../Core/Slot';
 
 const RESOURCES_KEY = 'resources';
 const CAPACITY_KEY = 'capacity';

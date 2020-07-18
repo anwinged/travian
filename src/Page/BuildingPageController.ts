@@ -15,7 +15,7 @@ import {
     isForgePage,
     isGuildHallPage,
     isMarketSendResourcesPage,
-} from './PageDetectors';
+} from './PageDetector';
 import { createTrainTroopButtons } from './BuildingPage/TrooperPage';
 import { createSendResourcesButton } from './BuildingPage/MarketPage';
 import { createResearchButtons } from './BuildingPage/ForgePage';

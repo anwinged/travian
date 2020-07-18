@@ -1,5 +1,5 @@
 import { Grabber } from './Grabber';
-import { isGuildHallPage } from '../Page/PageDetectors';
+import { isGuildHallPage } from '../Page/PageDetector';
 import { grabRemainingSeconds } from '../Page/BuildingPage/GuildHallPage';
 import { ProductionQueue } from '../Core/ProductionQueue';
 import { timestamp } from '../utils';

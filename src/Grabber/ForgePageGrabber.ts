@@ -1,5 +1,5 @@
 import { Grabber } from './Grabber';
-import { getBuildingPageAttributes, isForgePage } from '../Page/PageDetectors';
+import { getBuildingPageAttributes, isForgePage } from '../Page/PageDetector';
 import { ContractType } from '../Core/Contract';
 import { grabImprovementContracts, grabRemainingSeconds } from '../Page/BuildingPage/ForgePage';
 import { ProductionQueue } from '../Core/ProductionQueue';

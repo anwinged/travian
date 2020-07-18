@@ -1,5 +1,5 @@
 import { Grabber } from './Grabber';
-import { getBuildingPageAttributes, isBuildingPage } from '../Page/PageDetectors';
+import { getBuildingPageAttributes, isBuildingPage } from '../Page/PageDetector';
 import { grabContractResources, hasContractResources } from '../Page/BuildingPage/BuildingPage';
 import { ContractType } from '../Core/Contract';
 

@@ -1,5 +1,5 @@
 import { Grabber } from './Grabber';
-import { isMarketSendResourcesPage } from '../Page/PageDetectors';
+import { isMarketSendResourcesPage } from '../Page/PageDetector';
 import { grabIncomingMerchants, grabMerchantsInfo } from '../Page/BuildingPage/MarketPage';
 
 export class MarketPageGrabber extends Grabber {

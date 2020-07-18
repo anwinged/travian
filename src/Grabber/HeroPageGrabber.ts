@@ -2,7 +2,7 @@ import { Grabber } from './Grabber';
 import { grabVillageList } from '../Page/VillageBlock';
 import { HeroStorage } from '../Storage/HeroStorage';
 import { grabHeroAttributes, grabHeroVillage } from '../Page/HeroPage';
-import { isHeroPage } from '../Page/PageDetectors';
+import { isHeroPage } from '../Page/PageDetector';
 
 export class HeroPageGrabber extends Grabber {
     grab(): void {

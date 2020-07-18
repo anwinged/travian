@@ -1,6 +1,6 @@
 import { elClassId, getNumber } from '../utils';
-import { BuildingSlot, ResourceSlot } from '../Game';
 import { numberToResourceType } from '../Core/ResourceType';
+import { BuildingSlot, ResourceSlot } from '../Core/Slot';
 
 interface SlotElement {
     el: HTMLElement;

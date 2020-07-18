@@ -14,7 +14,7 @@ import Vuex from 'vuex';
 import DashboardApp from './DashboardView/Dashboard.vue';
 import { ConsoleLogger, Logger } from './Logger';
 import { DataStorage } from './DataStorage';
-import { getBuildingPageAttributes, isBuildingPage } from './Page/PageDetectors';
+import { getBuildingPageAttributes, isBuildingPage } from './Page/PageDetector';
 import { ExecutionStorage } from './Storage/ExecutionStorage';
 import { VillageState } from './VillageState';
 import { Task } from './Queue/TaskProvider';
