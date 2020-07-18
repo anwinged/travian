@@ -8,8 +8,8 @@ import { VillageStorage } from './Storage/VillageStorage';
 import { ReceiveResourcesMode } from './Core/Village';
 import { ResourceType } from './Core/ResourceType';
 import { UpgradeBuildingTask } from './Task/UpgradeBuildingTask';
-import * as _ from 'underscore';
 import { GARNER_ID, WAREHOUSE_ID } from './Core/Buildings';
+import { first } from './utils';
 
 export class VillageController {
     private readonly villageId: number;
@@ -195,7 +195,7 @@ export class VillageController {
         // Find ready for building slots and sort them by level
         cropSlots.sort((s1, s2) => s1.level - s2.level);
 
-        const targetCropBuildId = _.first(cropSlots)?.buildId;
+        const targetCropBuildId = first(cropSlots)?.buildId;
         if (!targetCropBuildId) {
             return;
         }
@@ -250,7 +250,7 @@ export class VillageController {
             return;
         }
 
-        const firstSlot = _.first(storageSlots);
+        const firstSlot = first(storageSlots);
         if (firstSlot) {
             this.addTask(UpgradeBuildingTask.name, { buildId: firstSlot.buildId, buildTypeId });
         }

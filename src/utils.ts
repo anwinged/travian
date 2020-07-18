@@ -1,4 +1,5 @@
 import * as URLParse from 'url-parse';
+import * as _ from 'underscore';
 
 export function sleep(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -67,20 +68,6 @@ export function elClassId(classes: string | undefined, prefix: string): number |
     return result;
 }
 
-export function* split(n: number, from: number = 2, to: number = 6) {
-    let c = n;
-    while (c > 0) {
-        const next = from + Math.floor(Math.random() * (to - from));
-        if (next < c) {
-            yield next;
-            c -= next;
-        } else {
-            yield c;
-            c = 0;
-        }
-    }
-}
-
 export function toNumber(value: any): number | undefined {
     const normalized = String(value)
         .replace('\u2212', '\u002d') // minus to hyphen-minus
@@ -118,4 +105,8 @@ export function markPage(text: string, version: string) {
             version +
             '</div>'
     );
+}
+
+export function first<T>(items: ReadonlyArray<T>): T | undefined {
+    return _.first(items);
 }

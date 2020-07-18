@@ -26,6 +26,18 @@ export interface TaskQueueState {
     finishTs: number;
 }
 
+interface VillageProductionQueueState {
+    queue: ProductionQueue;
+    tasks: ReadonlyArray<TaskState>;
+    isActive: boolean;
+    isWaiting: boolean;
+    currentTaskFinishTimestamp: number;
+    currentTaskFinishSeconds: number;
+    firstTask: ResourceLineState;
+    allTasks: ResourceLineState;
+    taskCount: number;
+}
+
 interface VillageWarehouseState {
     resources: Resources;
     capacity: Resources;
@@ -58,18 +70,6 @@ interface ResourceLineState {
      * Is active - resources not equals to zero.
      */
     active: boolean;
-}
-
-interface VillageProductionQueueState {
-    queue: ProductionQueue;
-    tasks: ReadonlyArray<TaskState>;
-    isActive: boolean;
-    isWaiting: boolean;
-    currentTaskFinishTimestamp: number;
-    currentTaskFinishSeconds: number;
-    firstTask: ResourceLineState;
-    allTasks: ResourceLineState;
-    taskCount: number;
 }
 
 interface VillageOwnState {
