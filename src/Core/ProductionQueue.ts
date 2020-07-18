@@ -1,5 +1,3 @@
-import { getProductionQueue } from '../Task/TaskMap';
-
 export enum ProductionQueue {
     Building = 'building',
     TrainUnit = 'train_unit',
@@ -32,15 +30,4 @@ export function translateProductionQueue(queue: ProductionQueue): string {
 
 export interface TaskNamePredicate {
     (name: string): boolean;
-}
-
-/**
- * List on non intersected task queue predicates.
- */
-const TASK_TYPE_PREDICATES: Array<TaskNamePredicate> = OrderedProductionQueues.map(queue => {
-    return (taskName: string) => getProductionQueue(taskName) === queue;
-});
-
-export function isProductionTask(taskName: string): boolean {
-    return TASK_TYPE_PREDICATES.reduce((memo, predicate) => memo || predicate(taskName), false);
 }

@@ -1,6 +1,10 @@
 import { Scheduler } from '../Scheduler';
 import { TaskController } from './TaskController';
-import { ProductionQueue } from '../Core/ProductionQueue';
+import {
+    OrderedProductionQueues,
+    ProductionQueue,
+    TaskNamePredicate,
+} from '../Core/ProductionQueue';
 import { VillageFactory } from '../VillageFactory';
 
 interface TaskOptions {
@@ -46,4 +50,15 @@ export function createTaskHandler(
     }
     const constructor = (taskDescription.ctor as unknown) as typeof TaskController;
     return new constructor(scheduler, factory);
+}
+
+/**
+ * List on non intersected task queue predicates.
+ */
+const TASK_TYPE_PREDICATES: Array<TaskNamePredicate> = OrderedProductionQueues.map(queue => {
+    return (taskName: string) => getProductionQueue(taskName) === queue;
+});
+
+export function isProductionTask(taskName: string): boolean {
+    return TASK_TYPE_PREDICATES.reduce((memo, predicate) => memo || predicate(taskName), false);
 }

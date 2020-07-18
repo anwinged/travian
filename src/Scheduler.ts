@@ -9,9 +9,9 @@ import { SendResourcesTask } from './Task/SendResourcesTask';
 import { Args } from './Queue/Args';
 import { ImmutableTaskList, Task, TaskId, uniqTaskId, withTime } from './Queue/TaskProvider';
 import { VillageRepositoryInterface } from './VillageRepository';
-import { isProductionTask } from './Core/ProductionQueue';
 import { VillageFactory } from './VillageFactory';
 import { RunVillageProductionTask } from './Task/RunVillageProductionTask';
+import { isProductionTask } from './Task/TaskMap';
 
 export interface NextExecution {
     task?: Task;
