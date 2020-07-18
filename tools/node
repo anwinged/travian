@@ -17,5 +17,5 @@ docker run \
     --user "$(id -u):$(id -g)" \
     --volume "$PWD:/app" \
     --workdir /app \
-    ${NODE_IMAGE} \
+    "${NODE_IMAGE}" \
     node "$@"

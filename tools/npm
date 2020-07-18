@@ -7,7 +7,7 @@ source .env
 HOST_CACHE_DIR=$PWD/var/docker-cache/.npm
 CONTAINER_CACHE_DIR=/tmp/.npm
 
-mkdir -p ${HOST_CACHE_DIR}
+mkdir -p "${HOST_CACHE_DIR}"
 
 TTY=
 if [ -t 1 ] ; then
@@ -23,5 +23,5 @@ docker run \
     --volume "$PWD:/app" \
     --env npm_config_cache="${CONTAINER_CACHE_DIR}" \
     --workdir /app \
-    ${NODE_IMAGE} \
+    "${NODE_IMAGE}" \
     npm "$@"

@@ -1,7 +1,7 @@
 all: test format build
 
-restart-server:
-	docker-compose restart
+setup:
+	tools/npm install
 
 write-version:
 	@echo $(shell date +'%Y%m%d-%H.%M.%S') > ./src/version.txt
@@ -21,6 +21,9 @@ test:
 
 coverage:
 	tools/npm run coverage
+
+restart-server:
+	docker-compose restart
 
 publish:
 	tools/npm publish --access public
