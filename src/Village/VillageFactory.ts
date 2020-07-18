@@ -1,9 +1,9 @@
 import { VillageController } from './VillageController';
-import { VillageStorage } from './Storage/VillageStorage';
+import { VillageStorage } from '../Storage/VillageStorage';
 import { VillageRepository } from './VillageRepository';
 import { VillageTaskCollection } from './VillageTaskCollection';
 import { VillageState, VillageStateFactory } from './VillageState';
-import { Village } from './Core/Village';
+import { Village } from '../Core/Village';
 
 export class VillageFactory {
     private readonly villageRepository: VillageRepository;

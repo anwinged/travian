@@ -1,15 +1,15 @@
 import { VillageTaskCollection } from './VillageTaskCollection';
-import { isBuildingPlanned, TaskId } from './Queue/TaskProvider';
-import { Args } from './Queue/Args';
+import { isBuildingPlanned, TaskId } from '../Queue/TaskProvider';
+import { Args } from '../Queue/Args';
 import { TaskState, VillageState } from './VillageState';
-import { Resources } from './Core/Resources';
-import { MerchantsInfo } from './Core/Market';
-import { VillageStorage } from './Storage/VillageStorage';
-import { ReceiveResourcesMode } from './Core/Village';
-import { ResourceType } from './Core/ResourceType';
-import { UpgradeBuildingTask } from './Task/UpgradeBuildingTask';
-import { GARNER_ID, WAREHOUSE_ID } from './Core/Buildings';
-import { first } from './Helpers/Collection';
+import { Resources } from '../Core/Resources';
+import { MerchantsInfo } from '../Core/Market';
+import { VillageStorage } from '../Storage/VillageStorage';
+import { ReceiveResourcesMode } from '../Core/Village';
+import { ResourceType } from '../Core/ResourceType';
+import { UpgradeBuildingTask } from '../Task/UpgradeBuildingTask';
+import { GARNER_ID, WAREHOUSE_ID } from '../Core/Buildings';
+import { first } from '../Helpers/Collection';
 
 export class VillageController {
     private readonly villageId: number;

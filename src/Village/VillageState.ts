@@ -1,15 +1,15 @@
-import { Village, VillageSettings } from './Core/Village';
-import { Resources } from './Core/Resources';
-import { VillageStorage } from './Storage/VillageStorage';
-import { calcGatheringTimings, GatheringTime } from './Core/GatheringTimings';
+import { Village, VillageSettings } from '../Core/Village';
+import { Resources } from '../Core/Resources';
+import { VillageStorage } from '../Storage/VillageStorage';
+import { calcGatheringTimings, GatheringTime } from '../Core/GatheringTimings';
 import { VillageRepositoryInterface } from './VillageRepository';
-import { VillageNotFound } from './Errors';
-import { OrderedProductionQueues, ProductionQueue } from './Core/ProductionQueue';
-import { isInQueue, TaskCore, TaskId } from './Queue/TaskProvider';
+import { VillageNotFound } from '../Errors';
+import { OrderedProductionQueues, ProductionQueue } from '../Core/ProductionQueue';
+import { isInQueue, TaskCore, TaskId } from '../Queue/TaskProvider';
 import { VillageTaskCollection } from './VillageTaskCollection';
-import { TrainTroopTask } from './Task/TrainTroopTask';
-import { Args } from './Queue/Args';
-import { timestamp } from './Helpers/Time';
+import { TrainTroopTask } from '../Task/TrainTroopTask';
+import { Args } from '../Queue/Args';
+import { timestamp } from '../Helpers/Time';
 
 export interface TaskState {
     id: TaskId;

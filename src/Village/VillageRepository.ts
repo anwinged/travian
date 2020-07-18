@@ -1,6 +1,6 @@
-import { Coordinates, Village } from './Core/Village';
-import { grabVillageList } from './Page/VillageBlock';
-import { VillageNotFound } from './Errors';
+import { Coordinates, Village } from '../Core/Village';
+import { grabVillageList } from '../Page/VillageBlock';
+import { VillageNotFound } from '../Errors';
 
 export interface VillageRepositoryInterface {
     all(): Array<Village>;

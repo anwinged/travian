@@ -4,7 +4,7 @@ import { grabActiveVillageId } from '../Page/VillageBlock';
 import { Args } from '../Queue/Args';
 import { Task } from '../Queue/TaskProvider';
 import { VillageStorage } from '../Storage/VillageStorage';
-import { VillageFactory } from '../VillageFactory';
+import { VillageFactory } from '../Village/VillageFactory';
 import { aroundMinutes } from '../Helpers/Time';
 
 const actionMap: { [name: string]: Function | undefined } = {};

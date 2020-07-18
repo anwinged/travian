@@ -6,7 +6,7 @@ import { MarketPageGrabber } from './MarketPageGrabber';
 import { BuildingContractGrabber } from './BuildingContractGrabber';
 import { ForgePageGrabber } from './ForgePageGrabber';
 import { GuildHallPageGrabber } from './GuildHallPageGrabber';
-import { VillageFactory } from '../VillageFactory';
+import { VillageFactory } from '../Village/VillageFactory';
 import { VillageBuildingsPageGrabber } from './VillageBuildingsPageGrabber';
 
 export class GrabberManager {

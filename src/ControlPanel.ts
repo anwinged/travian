@@ -11,15 +11,15 @@ import {
 import Vue from 'vue';
 import Vuex from 'vuex';
 import DashboardApp from './DashboardView/Dashboard.vue';
+import { createStore } from './DashboardView/Store';
 import { ConsoleLogger, Logger } from './Logger';
 import { DataStorage } from './Storage/DataStorage';
 import { getBuildingPageAttributes, isBuildingPage } from './Page/PageDetector';
 import { ExecutionStorage } from './Storage/ExecutionStorage';
-import { VillageState } from './VillageState';
+import { VillageState } from './Village/VillageState';
 import { Task } from './Queue/TaskProvider';
 import { Action } from './Queue/ActionQueue';
-import { createStore } from './DashboardView/Store';
-import { VillageFactory } from './VillageFactory';
+import { VillageFactory } from './Village/VillageFactory';
 import { uniqId } from './Helpers/Identity';
 import { timestamp } from './Helpers/Time';
 import { notify, parseLocation, waitForLoad } from './Helpers/Browser';

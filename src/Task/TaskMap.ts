@@ -5,7 +5,7 @@ import {
     ProductionQueue,
     TaskNamePredicate,
 } from '../Core/ProductionQueue';
-import { VillageFactory } from '../VillageFactory';
+import { VillageFactory } from '../Village/VillageFactory';
 
 interface TaskOptions {
     queue?: ProductionQueue;

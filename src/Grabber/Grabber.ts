@@ -1,4 +1,4 @@
-import { VillageTaskCollection } from '../VillageTaskCollection';
+import { VillageTaskCollection } from '../Village/VillageTaskCollection';
 import { VillageStorage } from '../Storage/VillageStorage';
 
 export abstract class Grabber {

@@ -21,7 +21,7 @@ import { createResearchButtons } from './BuildingPage/ForgePage';
 import { ForgeImprovementTask } from '../Task/ForgeImprovementTask';
 import { createCelebrationButtons } from './BuildingPage/GuildHallPage';
 import { CelebrationTask } from '../Task/CelebrationTask';
-import { VillageController } from '../VillageController';
+import { VillageController } from '../Village/VillageController';
 import { notify } from '../Helpers/Browser';
 
 export class BuildingPageController {

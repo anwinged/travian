@@ -16,7 +16,7 @@ import { ExecutionStorage } from './Storage/ExecutionStorage';
 import { Action } from './Queue/ActionQueue';
 import { Task } from './Queue/TaskProvider';
 import { createTaskHandler } from './Task/TaskMap';
-import { VillageFactory } from './VillageFactory';
+import { VillageFactory } from './Village/VillageFactory';
 import { sleepMicro, timestamp } from './Helpers/Time';
 import { markPage, waitForLoad } from './Helpers/Browser';
 

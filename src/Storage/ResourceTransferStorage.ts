@@ -1,5 +1,5 @@
 import { DataStorage } from './DataStorage';
-import { ResourceTransferReport } from '../ResourceTransfer';
+import { ResourceTransferReport } from '../Village/ResourceTransfer';
 
 const NAMESPACE = 'resource_transfer.v1';
 

@@ -5,14 +5,14 @@ import { Coordinates } from '../Core/Village';
 import { Args } from '../Queue/Args';
 import { Task } from '../Queue/TaskProvider';
 import { clickSendButton, fillSendResourcesForm } from '../Page/BuildingPage/MarketPage';
-import { VillageState } from '../VillageState';
+import { VillageState } from '../Village/VillageState';
 import { MerchantsInfo } from '../Core/Market';
 import { goToMarketSendResourcesPage, goToResourceViewPage } from '../Task/ActionBundles';
 import {
     compareReports,
     ResourceTransferCalculator,
     ResourceTransferReport,
-} from '../ResourceTransfer';
+} from '../Village/ResourceTransfer';
 import { ResourceTransferStorage } from '../Storage/ResourceTransferStorage';
 import { path } from '../Helpers/Path';
 import { MARKET_ID } from '../Core/Buildings';

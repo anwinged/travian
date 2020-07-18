@@ -1,12 +1,12 @@
-import { VillageStorage } from './Storage/VillageStorage';
-import { Task, TaskId, uniqTaskId, withResources, withTime } from './Queue/TaskProvider';
-import { Args } from './Queue/Args';
-import { Resources } from './Core/Resources';
-import { ContractAttributes, ContractType } from './Core/Contract';
-import { UpgradeBuildingTask } from './Task/UpgradeBuildingTask';
-import { ForgeImprovementTask } from './Task/ForgeImprovementTask';
-import { isProductionTask } from './Task/TaskMap';
-import { timestamp } from './Helpers/Time';
+import { VillageStorage } from '../Storage/VillageStorage';
+import { Task, TaskId, uniqTaskId, withResources, withTime } from '../Queue/TaskProvider';
+import { Args } from '../Queue/Args';
+import { Resources } from '../Core/Resources';
+import { ContractAttributes, ContractType } from '../Core/Contract';
+import { UpgradeBuildingTask } from '../Task/UpgradeBuildingTask';
+import { ForgeImprovementTask } from '../Task/ForgeImprovementTask';
+import { isProductionTask } from '../Task/TaskMap';
+import { timestamp } from '../Helpers/Time';
 
 export class VillageTaskCollection {
     private readonly storage: VillageStorage;

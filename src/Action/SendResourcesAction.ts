@@ -2,7 +2,7 @@ import { ActionController, registerAction } from './ActionController';
 import { Args } from '../Queue/Args';
 import { Task } from '../Queue/TaskProvider';
 import { clickSendButton, fillSendResourcesForm } from '../Page/BuildingPage/MarketPage';
-import { ResourceTransferCalculator } from '../ResourceTransfer';
+import { ResourceTransferCalculator } from '../Village/ResourceTransfer';
 import { ResourceTransferStorage } from '../Storage/ResourceTransferStorage';
 import { Resources } from '../Core/Resources';
 import { AbortTaskError } from '../Errors';

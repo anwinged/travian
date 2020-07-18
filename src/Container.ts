@@ -6,8 +6,8 @@ import { Executor } from './Executor';
 import { ControlPanel } from './ControlPanel';
 import { DataStorageTaskProvider } from './Queue/DataStorageTaskProvider';
 import { Statistics } from './Statistics';
-import { VillageRepository } from './VillageRepository';
-import { VillageFactory } from './VillageFactory';
+import { VillageRepository } from './Village/VillageRepository';
+import { VillageFactory } from './Village/VillageFactory';
 import { GrabberManager } from './Grabber/GrabberManager';
 import { StorageContainer } from './Storage/StorageContainer';
 

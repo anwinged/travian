@@ -3,7 +3,7 @@ import { CompleteTaskAction } from '../Action/CompleteTaskAction';
 import { Action } from '../Queue/ActionQueue';
 import { Args } from '../Queue/Args';
 import { Task } from '../Queue/TaskProvider';
-import { VillageFactory } from '../VillageFactory';
+import { VillageFactory } from '../Village/VillageFactory';
 
 export interface ActionDefinition {
     name: string;

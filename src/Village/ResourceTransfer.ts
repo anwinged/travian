@@ -1,5 +1,5 @@
 import { VillageFactory } from './VillageFactory';
-import { Resources, ResourcesInterface } from './Core/Resources';
+import { Resources, ResourcesInterface } from '../Core/Resources';
 import { VillageController } from './VillageController';
 
 export interface ResourceTransferScore {
