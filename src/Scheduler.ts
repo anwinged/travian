@@ -13,7 +13,7 @@ import { VillageFactory } from './VillageFactory';
 import { RunVillageProductionTask } from './Task/RunVillageProductionTask';
 import { isProductionTask } from './Task/TaskMap';
 
-export interface NextExecution {
+interface NextExecution {
     task?: Task;
     action?: Action;
 }
