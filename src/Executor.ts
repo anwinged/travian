@@ -7,7 +7,6 @@ import {
     VillageNotFound,
 } from './Errors';
 import { TaskQueueRenderer } from './TaskQueueRenderer';
-import { createActionHandler } from './Action/ActionController';
 import { Logger } from './Logger';
 import { GrabberManager } from './Grabber/GrabberManager';
 import { Scheduler } from './Scheduler';
@@ -15,10 +14,11 @@ import { Statistics } from './Statistics';
 import { ExecutionStorage } from './Storage/ExecutionStorage';
 import { Action } from './Queue/ActionQueue';
 import { Task } from './Queue/TaskProvider';
-import { createTaskHandler } from './Task/TaskMap';
+import { createTaskHandler } from './Handler/TaskMap';
 import { VillageFactory } from './Village/VillageFactory';
 import { sleepMicro, timestamp } from './Helpers/Time';
 import { markPage, waitForLoad } from './Helpers/Browser';
+import { createActionHandler } from './Handler/ActionMap';
 
 export interface ExecutionSettings {
     pauseTs: number;
@@ -27,11 +27,11 @@ export interface ExecutionSettings {
 export class Executor {
     private readonly version: string;
     private readonly scheduler: Scheduler;
-    private villageFactory: VillageFactory;
-    private grabberManager: GrabberManager;
-    private statistics: Statistics;
-    private executionState: ExecutionStorage;
-    private logger: Logger;
+    private readonly villageFactory: VillageFactory;
+    private readonly grabberManager: GrabberManager;
+    private readonly statistics: Statistics;
+    private readonly executionState: ExecutionStorage;
+    private readonly logger: Logger;
 
     constructor(
         version: string,
@@ -101,18 +101,18 @@ export class Executor {
 
         try {
             if (task && action) {
-                return await this.processActionCommand(action, task);
+                return await this.processAction(action, task);
             }
 
             if (task) {
-                return await this.processTaskCommand(task);
+                return await this.processTask(task);
             }
         } catch (e) {
             this.handleError(e, task);
         }
     }
 
-    private async processActionCommand(action: Action, task: Task) {
+    private async processAction(action: Action, task: Task) {
         const actionHandler = createActionHandler(action.name, this.scheduler, this.villageFactory);
         this.logger.info('Process action', action.name, actionHandler);
         if (actionHandler) {
@@ -123,7 +123,7 @@ export class Executor {
         }
     }
 
-    private async processTaskCommand(task: Task) {
+    private async processTask(task: Task) {
         const taskHandler = createTaskHandler(task.name, this.scheduler, this.villageFactory);
         this.logger.info('Process task', task.name, task, taskHandler);
         if (taskHandler) {

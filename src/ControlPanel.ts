@@ -1,6 +1,6 @@
 import { Scheduler } from './Scheduler';
 import { BuildingPageController } from './Page/BuildingPageController';
-import { UpgradeBuildingTask } from './Task/UpgradeBuildingTask';
+import { UpgradeBuildingTask } from './Handler/Task/UpgradeBuildingTask';
 import { grabActiveVillageId } from './Page/VillageBlock';
 import {
     onBuildingSlotCtrlClick,

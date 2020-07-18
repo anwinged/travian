@@ -7,7 +7,7 @@ import { VillageNotFound } from '../Errors';
 import { OrderedProductionQueues, ProductionQueue } from '../Core/ProductionQueue';
 import { isInQueue, TaskCore, TaskId } from '../Queue/TaskProvider';
 import { VillageTaskCollection } from './VillageTaskCollection';
-import { TrainTroopTask } from '../Task/TrainTroopTask';
+import { TrainTroopTask } from '../Handler/Task/TrainTroopTask';
 import { Args } from '../Queue/Args';
 import { timestamp } from '../Helpers/Time';
 

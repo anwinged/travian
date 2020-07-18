@@ -1,13 +1,13 @@
-import { UpgradeBuildingTask } from '../Task/UpgradeBuildingTask';
+import { UpgradeBuildingTask } from '../Handler/Task/UpgradeBuildingTask';
 import { Scheduler } from '../Scheduler';
-import { TrainTroopTask } from '../Task/TrainTroopTask';
+import { TrainTroopTask } from '../Handler/Task/TrainTroopTask';
 import { grabActiveVillageId, grabVillageList } from './VillageBlock';
 import { ConsoleLogger, Logger } from '../Logger';
 import { createBuildButton, createUpgradeButton } from './BuildingPage/BuildingPage';
-import { BuildBuildingTask } from '../Task/BuildBuildingTask';
+import { BuildBuildingTask } from '../Handler/Task/BuildBuildingTask';
 import { Resources } from '../Core/Resources';
 import { Coordinates } from '../Core/Village';
-import { SendResourcesTask } from '../Task/SendResourcesTask';
+import { SendResourcesTask } from '../Handler/Task/SendResourcesTask';
 import { EMBASSY_ID, HORSE_STABLE_ID, PALACE_ID, QUARTERS_ID } from '../Core/Buildings';
 import {
     BuildingPageAttributes,
@@ -18,9 +18,9 @@ import {
 import { createTrainTroopButtons } from './BuildingPage/TrooperPage';
 import { createSendResourcesButton } from './BuildingPage/MarketPage';
 import { createResearchButtons } from './BuildingPage/ForgePage';
-import { ForgeImprovementTask } from '../Task/ForgeImprovementTask';
+import { ForgeImprovementTask } from '../Handler/Task/ForgeImprovementTask';
 import { createCelebrationButtons } from './BuildingPage/GuildHallPage';
-import { CelebrationTask } from '../Task/CelebrationTask';
+import { CelebrationTask } from '../Handler/Task/CelebrationTask';
 import { VillageController } from '../Village/VillageController';
 import { notify } from '../Helpers/Browser';
 

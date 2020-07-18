@@ -1,16 +1,16 @@
 import { TaskQueue } from './Queue/TaskQueue';
-import { BalanceHeroResourcesTask } from './Task/BalanceHeroResourcesTask';
+import { BalanceHeroResourcesTask } from './Handler/Task/BalanceHeroResourcesTask';
 import { Logger } from './Logger';
-import { GrabVillageState } from './Task/GrabVillageState';
+import { GrabVillageStateTask } from './Handler/Task/GrabVillageStateTask';
 import { Action, ActionQueue, ImmutableActionList } from './Queue/ActionQueue';
-import { UpdateResourceContracts } from './Task/UpdateResourceContracts';
-import { SendResourcesTask } from './Task/SendResourcesTask';
+import { UpdateResourceContractsTask } from './Handler/Task/UpdateResourceContractsTask';
+import { SendResourcesTask } from './Handler/Task/SendResourcesTask';
 import { Args } from './Queue/Args';
 import { ImmutableTaskList, Task, TaskId, uniqTaskId, withTime } from './Queue/TaskProvider';
 import { VillageRepositoryInterface } from './Village/VillageRepository';
 import { VillageFactory } from './Village/VillageFactory';
-import { RunVillageProductionTask } from './Task/RunVillageProductionTask';
-import { isProductionTask } from './Task/TaskMap';
+import { RunVillageProductionTask } from './Handler/Task/RunVillageProductionTask';
+import { isProductionTask } from './Handler/TaskMap';
 import { around } from './Helpers/Random';
 import { timestamp } from './Helpers/Time';
 
@@ -39,8 +39,8 @@ export class Scheduler {
         this.villageControllerFactory = villageControllerFactory;
         this.logger = logger;
 
-        // this.taskQueue.push(GrabVillageState.name, {}, timestamp());
-        // this.taskQueue.push(UpdateResourceContracts.name, {}, timestamp());
+        // this.taskQueue.push(GrabVillageStateTask.name, {}, timestamp());
+        // this.taskQueue.push(UpdateResourceContractsTask.name, {}, timestamp());
         // this.taskQueue.push(BalanceHeroResourcesTask.name, {}, timestamp());
 
         const villages = this.villageRepository.all();
@@ -50,10 +50,10 @@ export class Scheduler {
             });
         }
 
-        this.createUniqTaskTimer(10 * 60, GrabVillageState.name);
+        this.createUniqTaskTimer(10 * 60, GrabVillageStateTask.name);
         this.createUniqTaskTimer(10 * 60, SendResourcesTask.name);
         this.createUniqTaskTimer(10 * 60, BalanceHeroResourcesTask.name);
-        this.createUniqTaskTimer(20 * 60, UpdateResourceContracts.name);
+        this.createUniqTaskTimer(20 * 60, UpdateResourceContractsTask.name);
         // this.createUniqTaskTimer(60 * 60, SendOnAdventureTask.name);
     }
 

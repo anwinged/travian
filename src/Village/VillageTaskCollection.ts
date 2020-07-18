@@ -3,9 +3,9 @@ import { Task, TaskId, uniqTaskId, withResources, withTime } from '../Queue/Task
 import { Args } from '../Queue/Args';
 import { Resources } from '../Core/Resources';
 import { ContractAttributes, ContractType } from '../Core/Contract';
-import { UpgradeBuildingTask } from '../Task/UpgradeBuildingTask';
-import { ForgeImprovementTask } from '../Task/ForgeImprovementTask';
-import { isProductionTask } from '../Task/TaskMap';
+import { UpgradeBuildingTask } from '../Handler/Task/UpgradeBuildingTask';
+import { ForgeImprovementTask } from '../Handler/Task/ForgeImprovementTask';
+import { isProductionTask } from '../Handler/TaskMap';
 import { timestamp } from '../Helpers/Time';
 
 export class VillageTaskCollection {

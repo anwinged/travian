@@ -7,7 +7,7 @@ import { MerchantsInfo } from '../Core/Market';
 import { VillageStorage } from '../Storage/VillageStorage';
 import { ReceiveResourcesMode } from '../Core/Village';
 import { ResourceType } from '../Core/ResourceType';
-import { UpgradeBuildingTask } from '../Task/UpgradeBuildingTask';
+import { UpgradeBuildingTask } from '../Handler/Task/UpgradeBuildingTask';
 import { GARNER_ID, WAREHOUSE_ID } from '../Core/Buildings';
 import { first } from '../Helpers/Collection';
 

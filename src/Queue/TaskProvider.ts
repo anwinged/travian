@@ -1,7 +1,7 @@
 import { Args } from './Args';
 import { ResourcesInterface } from '../Core/Resources';
 import { ProductionQueue } from '../Core/ProductionQueue';
-import { getProductionQueue } from '../Task/TaskMap';
+import { getProductionQueue } from '../Handler/TaskMap';
 import { uniqId } from '../Helpers/Identity';
 
 export type TaskId = string;
