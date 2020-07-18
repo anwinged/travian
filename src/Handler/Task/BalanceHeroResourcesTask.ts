@@ -3,9 +3,9 @@ import { GoToPageAction } from '../Action/GoToPageAction';
 import { CompleteTaskAction } from '../Action/CompleteTaskAction';
 import { BalanceHeroResourcesAction } from '../Action/BalanceHeroResourcesAction';
 import { GoToHeroVillageAction } from '../Action/GoToHeroVillageAction';
-import { Task } from '../../Queue/TaskProvider';
 import { path } from '../../Helpers/Path';
 import { registerTask } from '../TaskMap';
+import { Task } from '../../Queue/Task';
 
 @registerTask()
 export class BalanceHeroResourcesTask extends BaseTask {

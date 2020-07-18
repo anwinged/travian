@@ -2,9 +2,9 @@ import { BaseTask, ActionDefinition } from './BaseTask';
 import { SendResourcesAction } from '../Action/SendResourcesAction';
 import { ClickButtonAction } from '../Action/ClickButtonAction';
 import { goToMarketSendResourcesPage, goToResourceViewPage } from '../ActionBundles';
-import { Task } from '../../Queue/TaskProvider';
 import { registerTask } from '../TaskMap';
 import { FindSendResourcesPathAction } from '../Action/FindSendResourcesPathAction';
+import { Task } from '../../Queue/Task';
 
 @registerTask()
 export class SendResourcesTask extends BaseTask {

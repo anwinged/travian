@@ -1,5 +1,4 @@
 import { VillageTaskCollection } from './VillageTaskCollection';
-import { isBuildingPlanned, TaskId } from '../Queue/TaskProvider';
 import { Args } from '../Queue/Args';
 import { TaskState, VillageState } from './VillageState';
 import { Resources } from '../Core/Resources';
@@ -10,6 +9,8 @@ import { ResourceType } from '../Core/ResourceType';
 import { UpgradeBuildingTask } from '../Handler/Task/UpgradeBuildingTask';
 import { GARNER_ID, WAREHOUSE_ID } from '../Core/Buildings';
 import { first } from '../Helpers/Collection';
+import { isBuildingPlanned } from '../Queue/Task';
+import { TaskId } from '../Queue/TaskId';
 
 export class VillageController {
     private readonly villageId: number;

@@ -1,10 +1,10 @@
 import { ActionDefinition, BaseTask } from './BaseTask';
 import { GoToPageAction } from '../Action/GoToPageAction';
-import { Task } from '../../Queue/TaskProvider';
 import { ForgeImprovementAction } from '../Action/ForgeImprovementAction';
 import { path } from '../../Helpers/Path';
 import { registerTask } from '../TaskMap';
 import { ProductionQueue } from '../../Core/ProductionQueue';
+import { Task } from '../../Queue/Task';
 
 @registerTask({ queue: ProductionQueue.UpgradeUnit })
 export class ForgeImprovementTask extends BaseTask {

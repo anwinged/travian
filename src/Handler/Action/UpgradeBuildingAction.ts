@@ -2,9 +2,9 @@ import { BaseAction } from './BaseAction';
 import { GrabError, TryLaterError } from '../../Errors';
 import { clickUpgradeButton } from '../../Page/BuildingPage/BuildingPage';
 import { Args } from '../../Queue/Args';
-import { Task } from '../../Queue/TaskProvider';
 import { aroundMinutes } from '../../Helpers/Time';
 import { registerAction } from '../ActionMap';
+import { Task } from '../../Queue/Task';
 
 @registerAction
 export class UpgradeBuildingAction extends BaseAction {

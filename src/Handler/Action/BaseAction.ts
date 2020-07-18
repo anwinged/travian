@@ -2,9 +2,9 @@ import { Scheduler } from '../../Scheduler';
 import { taskError, TryLaterError } from '../../Errors';
 import { grabActiveVillageId } from '../../Page/VillageBlock';
 import { Args } from '../../Queue/Args';
-import { Task } from '../../Queue/TaskProvider';
 import { VillageFactory } from '../../Village/VillageFactory';
 import { aroundMinutes } from '../../Helpers/Time';
+import { Task } from '../../Queue/Task';
 
 export class BaseAction {
     protected readonly scheduler: Scheduler;

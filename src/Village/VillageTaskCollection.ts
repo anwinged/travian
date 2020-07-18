@@ -1,5 +1,4 @@
 import { VillageStorage } from '../Storage/VillageStorage';
-import { Task, TaskId, uniqTaskId, withResources, withTime } from '../Queue/TaskProvider';
 import { Args } from '../Queue/Args';
 import { Resources } from '../Core/Resources';
 import { ContractAttributes, ContractType } from '../Core/Contract';
@@ -7,6 +6,8 @@ import { UpgradeBuildingTask } from '../Handler/Task/UpgradeBuildingTask';
 import { ForgeImprovementTask } from '../Handler/Task/ForgeImprovementTask';
 import { isProductionTask } from '../Handler/TaskMap';
 import { timestamp } from '../Helpers/Time';
+import { Task, withResources, withTime } from '../Queue/Task';
+import { TaskId, uniqTaskId } from '../Queue/TaskId';
 
 export class VillageTaskCollection {
     private readonly storage: VillageStorage;

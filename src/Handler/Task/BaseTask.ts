@@ -1,9 +1,9 @@
 import { Scheduler } from '../../Scheduler';
 import { CompleteTaskAction } from '../Action/CompleteTaskAction';
-import { Action } from '../../Queue/ActionQueue';
 import { Args } from '../../Queue/Args';
-import { Task } from '../../Queue/TaskProvider';
 import { VillageFactory } from '../../Village/VillageFactory';
+import { Action } from '../../Queue/Action';
+import { Task } from '../../Queue/Task';
 
 export interface ActionDefinition {
     name: string;

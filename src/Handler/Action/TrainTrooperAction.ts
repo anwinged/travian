@@ -1,7 +1,6 @@
 import { BaseAction } from './BaseAction';
 import { taskError, TryLaterError } from '../../Errors';
 import { Args } from '../../Queue/Args';
-import { Task } from '../../Queue/TaskProvider';
 import {
     clickTrainButton,
     fillTrainCount,
@@ -12,6 +11,7 @@ import { Resources } from '../../Core/Resources';
 import { randomInRange } from '../../Helpers/Random';
 import { aroundMinutes } from '../../Helpers/Time';
 import { registerAction } from '../ActionMap';
+import { Task } from '../../Queue/Task';
 
 @registerAction
 export class TrainTrooperAction extends BaseAction {

@@ -1,12 +1,12 @@
 import { UpgradeBuildingAction } from '../Action/UpgradeBuildingAction';
 import { BaseTask, ActionDefinition } from './BaseTask';
 import { GoToPageAction } from '../Action/GoToPageAction';
-import { Task } from '../../Queue/TaskProvider';
 import { path } from '../../Helpers/Path';
 import { registerTask } from '../TaskMap';
 import { goToResourceViewPage } from '../ActionBundles';
 import { taskError } from '../../Errors';
 import { ProductionQueue } from '../../Core/ProductionQueue';
+import { Task } from '../../Queue/Task';
 
 @registerTask({ queue: ProductionQueue.Building })
 export class UpgradeBuildingTask extends BaseTask {

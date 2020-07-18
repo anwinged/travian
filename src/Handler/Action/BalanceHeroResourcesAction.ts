@@ -5,8 +5,8 @@ import { HeroStorage } from '../../Storage/HeroStorage';
 import { calcHeroResource } from '../../Core/HeroBalance';
 import { HeroAllResources } from '../../Core/Hero';
 import { Args } from '../../Queue/Args';
-import { Task } from '../../Queue/TaskProvider';
 import { registerAction } from '../ActionMap';
+import { Task } from '../../Queue/Task';
 
 @registerAction
 export class BalanceHeroResourcesAction extends BaseAction {

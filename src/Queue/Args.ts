@@ -1,6 +1,6 @@
 import { ResourcesInterface } from '../Core/Resources';
 import { CoordinatesInterface } from '../Core/Village';
-import { TaskId } from './TaskProvider';
+import { TaskId } from './TaskId';
 
 export interface Args {
     taskId?: TaskId;

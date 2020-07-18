@@ -4,7 +4,7 @@ import { AggregateLogger, ConsoleLogger, LogLevel, StorageLogger } from './Logge
 import { ActionQueue } from './Queue/ActionQueue';
 import { Executor } from './Executor';
 import { ControlPanel } from './ControlPanel';
-import { DataStorageTaskProvider } from './Queue/DataStorageTaskProvider';
+import { DataStorageTaskProvider } from './Queue/TaskProvider/DataStorageTaskProvider';
 import { Statistics } from './Statistics';
 import { VillageRepository } from './Village/VillageRepository';
 import { VillageFactory } from './Village/VillageFactory';

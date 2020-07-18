@@ -1,9 +1,9 @@
 import { BaseTask, ActionDefinition } from './BaseTask';
 import { UpgradeResourceToLevelAction } from '../Action/UpgradeResourceToLevelAction';
-import { Task } from '../../Queue/TaskProvider';
 import { registerTask } from '../TaskMap';
 import { goToResourceViewPage } from '../ActionBundles';
 import { taskError } from '../../Errors';
+import { Task } from '../../Queue/Task';
 
 @registerTask()
 export class ResourcesToLevelTask extends BaseTask {

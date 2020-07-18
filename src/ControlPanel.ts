@@ -17,12 +17,12 @@ import { DataStorage } from './Storage/DataStorage';
 import { getBuildingPageAttributes, isBuildingPage } from './Page/PageDetector';
 import { ExecutionStorage } from './Storage/ExecutionStorage';
 import { VillageState } from './Village/VillageState';
-import { Task } from './Queue/TaskProvider';
-import { Action } from './Queue/ActionQueue';
 import { VillageFactory } from './Village/VillageFactory';
 import { uniqId } from './Helpers/Identity';
 import { timestamp } from './Helpers/Time';
 import { notify, parseLocation, waitForLoad } from './Helpers/Browser';
+import { Action } from './Queue/Action';
+import { Task } from './Queue/Task';
 
 Vue.use(Vuex);
 

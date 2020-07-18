@@ -12,13 +12,13 @@ import { GrabberManager } from './Grabber/GrabberManager';
 import { Scheduler } from './Scheduler';
 import { Statistics } from './Statistics';
 import { ExecutionStorage } from './Storage/ExecutionStorage';
-import { Action } from './Queue/ActionQueue';
-import { Task } from './Queue/TaskProvider';
 import { createTaskHandler } from './Handler/TaskMap';
 import { VillageFactory } from './Village/VillageFactory';
 import { sleepMicro, timestamp } from './Helpers/Time';
 import { markPage, waitForLoad } from './Helpers/Browser';
 import { createActionHandler } from './Handler/ActionMap';
+import { Action } from './Queue/Action';
+import { Task } from './Queue/Task';
 
 export interface ExecutionSettings {
     pauseTs: number;

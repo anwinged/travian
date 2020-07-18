@@ -3,11 +3,11 @@ import { ActionError, taskError, TryLaterError } from '../../Errors';
 import { grabResourceSlots } from '../../Page/SlotBlock';
 import { UpgradeBuildingTask } from '../Task/UpgradeBuildingTask';
 import { Args } from '../../Queue/Args';
-import { Task } from '../../Queue/TaskProvider';
 import { ResourceSlot } from '../../Core/Slot';
 import { getNumber } from '../../Helpers/Convert';
 import { aroundMinutes } from '../../Helpers/Time';
 import { registerAction } from '../ActionMap';
+import { Task } from '../../Queue/Task';
 
 @registerAction
 export class UpgradeResourceToLevelAction extends BaseAction {

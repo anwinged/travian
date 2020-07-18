@@ -1,9 +1,9 @@
 import { BaseAction } from './BaseAction';
 import { AbortTaskError } from '../../Errors';
 import { Args } from '../../Queue/Args';
-import { Task } from '../../Queue/TaskProvider';
 import { trimPrefix } from '../../Helpers/Convert';
 import { registerAction } from '../ActionMap';
+import { Task } from '../../Queue/Task';
 
 const CONFIG = [
     { level: 0, health: 60 },

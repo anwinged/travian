@@ -1,4 +1,5 @@
-import { TaskList, TaskProvider } from './TaskProvider';
+import { TaskProvider } from './TaskProvider';
+import { TaskList } from '../Task';
 
 export class ArrayTaskProvider implements TaskProvider {
     private tasks: TaskList;

@@ -1,5 +1,7 @@
-import { DataStorage } from '../Storage/DataStorage';
-import { Task, TaskList, TaskProvider, uniqTaskId } from './TaskProvider';
+import { DataStorage } from '../../Storage/DataStorage';
+import { TaskProvider } from './TaskProvider';
+import { Task, TaskList } from '../Task';
+import { uniqTaskId } from '../TaskId';
 
 const QUEUE_NAME = 'queue';
 

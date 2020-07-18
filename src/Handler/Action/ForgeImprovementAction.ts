@@ -1,10 +1,10 @@
 import { BaseAction } from './BaseAction';
 import { GrabError, taskError, TryLaterError } from '../../Errors';
 import { Args } from '../../Queue/Args';
-import { Task } from '../../Queue/TaskProvider';
 import { clickResearchButton } from '../../Page/BuildingPage/ForgePage';
 import { aroundMinutes } from '../../Helpers/Time';
 import { registerAction } from '../ActionMap';
+import { Task } from '../../Queue/Task';
 
 @registerAction
 export class ForgeImprovementAction extends BaseAction {

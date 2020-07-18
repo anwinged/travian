@@ -1,6 +1,6 @@
-import { ImmutableTaskList } from './Queue/TaskProvider';
 import { uniqId } from './Helpers/Identity';
 import { formatDate } from './Helpers/Format';
+import { ImmutableTaskList } from './Queue/Task';
 
 const ID = uniqId();
 

@@ -1,10 +1,10 @@
 import { ActionDefinition, BaseTask } from './BaseTask';
 import { GoToPageAction } from '../Action/GoToPageAction';
 import { UpgradeBuildingTask } from './UpgradeBuildingTask';
-import { ImmutableTaskList, Task } from '../../Queue/TaskProvider';
 import { ForgeImprovementTask } from './ForgeImprovementTask';
 import { path, PathList, uniqPaths } from '../../Helpers/Path';
 import { registerTask } from '../TaskMap';
+import { ImmutableTaskList, Task } from '../../Queue/Task';
 
 @registerTask()
 export class UpdateResourceContractsTask extends BaseTask {

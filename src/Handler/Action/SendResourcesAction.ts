@@ -1,12 +1,12 @@
 import { BaseAction } from './BaseAction';
 import { Args } from '../../Queue/Args';
-import { Task } from '../../Queue/TaskProvider';
 import { clickSendButton, fillSendResourcesForm } from '../../Page/BuildingPage/MarketPage';
 import { ResourceTransferCalculator } from '../../Village/ResourceTransfer';
 import { ResourceTransferStorage } from '../../Storage/ResourceTransferStorage';
 import { Resources } from '../../Core/Resources';
 import { AbortTaskError } from '../../Errors';
 import { registerAction } from '../ActionMap';
+import { Task } from '../../Queue/Task';
 
 @registerAction
 export class SendResourcesAction extends BaseAction {

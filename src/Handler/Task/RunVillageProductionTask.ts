@@ -1,6 +1,6 @@
 import { BaseTask, ActionDefinition } from './BaseTask';
-import { Task } from '../../Queue/TaskProvider';
 import { registerTask } from '../TaskMap';
+import { Task } from '../../Queue/Task';
 
 @registerTask()
 export class RunVillageProductionTask extends BaseTask {

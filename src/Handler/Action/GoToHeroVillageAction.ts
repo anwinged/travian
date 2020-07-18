@@ -3,9 +3,9 @@ import { grabVillageList } from '../../Page/VillageBlock';
 import { grabHeroVillage } from '../../Page/HeroPage';
 import { HeroStorage } from '../../Storage/HeroStorage';
 import { Args } from '../../Queue/Args';
-import { Task } from '../../Queue/TaskProvider';
 import { path } from '../../Helpers/Path';
 import { registerAction } from '../ActionMap';
+import { Task } from '../../Queue/Task';
 
 @registerAction
 export class GoToHeroVillageAction extends BaseAction {

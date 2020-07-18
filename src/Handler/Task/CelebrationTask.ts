@@ -1,10 +1,10 @@
 import { ActionDefinition, BaseTask } from './BaseTask';
 import { GoToPageAction } from '../Action/GoToPageAction';
-import { Task } from '../../Queue/TaskProvider';
 import { path } from '../../Helpers/Path';
 import { CelebrationAction } from '../Action/CelebrationAction';
 import { registerTask } from '../TaskMap';
 import { ProductionQueue } from '../../Core/ProductionQueue';
+import { Task } from '../../Queue/Task';
 
 @registerTask({ queue: ProductionQueue.Celebration })
 export class CelebrationTask extends BaseTask {

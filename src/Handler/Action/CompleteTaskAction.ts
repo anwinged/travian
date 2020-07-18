@@ -1,7 +1,7 @@
 import { BaseAction } from './BaseAction';
 import { Args } from '../../Queue/Args';
-import { Task } from '../../Queue/TaskProvider';
 import { registerAction } from '../ActionMap';
+import { Task } from '../../Queue/Task';
 
 @registerAction
 export class CompleteTaskAction extends BaseAction {

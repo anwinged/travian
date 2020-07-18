@@ -1,18 +1,9 @@
 import { ConsoleLogger, Logger } from '../Logger';
 import { DataStorage } from '../Storage/DataStorage';
-import { Args } from './Args';
+import { Action, ActionList, ImmutableActionList } from './Action';
 
 const NAMESPACE = 'actions.v1';
 const QUEUE_NAME = 'queue';
-
-export interface Action {
-    name: string;
-    args: Args;
-}
-
-type ActionList = Array<Action>;
-
-export type ImmutableActionList = ReadonlyArray<Action>;
 
 export class ActionQueue {
     private storage: DataStorage;

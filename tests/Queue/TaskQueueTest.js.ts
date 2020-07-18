@@ -1,10 +1,10 @@
 import { it, describe } from 'mocha';
 import { expect } from 'chai';
 
-import { Task } from '../../src/Queue/TaskProvider';
 import { TaskQueue } from '../../src/Queue/TaskQueue';
 import { NullLogger } from '../../src/Logger';
-import { ArrayTaskProvider } from '../../src/Queue/ArrayTaskProvider';
+import { ArrayTaskProvider } from '../../src/Queue/TaskProvider/ArrayTaskProvider';
+import { Task } from '../../src/Queue/Task';
 
 describe('Task Queue', function() {
     it('Can get task from queue', function() {

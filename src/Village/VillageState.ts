@@ -5,11 +5,12 @@ import { calcGatheringTimings, GatheringTime } from '../Core/GatheringTimings';
 import { VillageRepositoryInterface } from './VillageRepository';
 import { VillageNotFound } from '../Errors';
 import { OrderedProductionQueues, ProductionQueue } from '../Core/ProductionQueue';
-import { isInQueue, TaskCore, TaskId } from '../Queue/TaskProvider';
 import { VillageTaskCollection } from './VillageTaskCollection';
 import { TrainTroopTask } from '../Handler/Task/TrainTroopTask';
 import { Args } from '../Queue/Args';
 import { timestamp } from '../Helpers/Time';
+import { isInQueue, TaskCore } from '../Queue/Task';
+import { TaskId } from '../Queue/TaskId';
 
 export interface TaskState {
     id: TaskId;

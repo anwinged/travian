@@ -2,17 +2,19 @@ import { TaskQueue } from './Queue/TaskQueue';
 import { BalanceHeroResourcesTask } from './Handler/Task/BalanceHeroResourcesTask';
 import { Logger } from './Logger';
 import { GrabVillageStateTask } from './Handler/Task/GrabVillageStateTask';
-import { Action, ActionQueue, ImmutableActionList } from './Queue/ActionQueue';
+import { ActionQueue } from './Queue/ActionQueue';
 import { UpdateResourceContractsTask } from './Handler/Task/UpdateResourceContractsTask';
 import { SendResourcesTask } from './Handler/Task/SendResourcesTask';
 import { Args } from './Queue/Args';
-import { ImmutableTaskList, Task, TaskId, uniqTaskId, withTime } from './Queue/TaskProvider';
 import { VillageRepositoryInterface } from './Village/VillageRepository';
 import { VillageFactory } from './Village/VillageFactory';
 import { RunVillageProductionTask } from './Handler/Task/RunVillageProductionTask';
 import { isProductionTask } from './Handler/TaskMap';
 import { around } from './Helpers/Random';
 import { timestamp } from './Helpers/Time';
+import { Action, ImmutableActionList } from './Queue/Action';
+import { ImmutableTaskList, Task, withTime } from './Queue/Task';
+import { TaskId, uniqTaskId } from './Queue/TaskId';
 
 interface NextExecution {
     task?: Task;

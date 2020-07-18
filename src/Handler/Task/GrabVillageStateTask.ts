@@ -1,7 +1,7 @@
 import { BaseTask, ActionDefinition } from './BaseTask';
 import { scanAllVillagesBundle } from '../ActionBundles';
-import { Task } from '../../Queue/TaskProvider';
 import { registerTask } from '../TaskMap';
+import { Task } from '../../Queue/Task';
 
 @registerTask()
 export class GrabVillageStateTask extends BaseTask {
