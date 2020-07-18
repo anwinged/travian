@@ -11,8 +11,11 @@ function main() {
     const container = new Container(TxtVersion);
     const modeDetector = new ModeDetector();
 
-    if (modeDetector.isAuto()) {
-        modeDetector.setAuto();
+    if (modeDetector.isBlankMode()) {
+        modeDetector.setBlankMode();
+        logger.info('AUTO MANAGEMENT OFF');
+    } else if (modeDetector.isExecutorMode()) {
+        modeDetector.setExecutorMode();
         logger.info('AUTO MANAGEMENT ON');
         const executor = container.executor;
         executor.run();

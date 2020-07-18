@@ -7,6 +7,8 @@
       </h1>
     </div>
     <div class="actions-block">
+      <a :href="executorLink()" target="_blank">exec</a>
+      <a :href="blankLink()" target="_blank">blank</a>
       <a href="#" v-on:click.prevent="pause">
         pause
         <span
@@ -21,6 +23,7 @@
 
 <script>
 import { Mutations } from './Store';
+import { ManagementMode, ModeDetector } from '../ModeDetector';
 
 export default {
   data() {
@@ -40,6 +43,12 @@ export default {
     },
     toggleLogs() {
       this.$store.commit(Mutations.toggleLogs);
+    },
+    executorLink() {
+      return ModeDetector.makeLink(ManagementMode.Executor);
+    },
+    blankLink() {
+      return ModeDetector.makeLink(ManagementMode.Blank);
     },
   },
 };
