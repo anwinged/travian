@@ -10,8 +10,8 @@ import {
 } from './Page/SlotBlock';
 import Vue from 'vue';
 import Vuex from 'vuex';
-import DashboardApp from './DashboardView/Dashboard.vue';
-import { createStore } from './DashboardView/Store';
+import DashboardApp from './Dashboard/Dashboard.vue';
+import { createStore } from './Dashboard/Store';
 import { ConsoleLogger, Logger } from './Logger';
 import { DataStorage } from './Storage/DataStorage';
 import { getBuildingPageAttributes, isBuildingPage } from './Page/PageDetector';
