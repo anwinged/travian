@@ -29,33 +29,33 @@
             <td class="right">
               <filling
                 :value="villageState.resources.lumber"
-                :warning="villageState.storage.optimumFullness.lumber"
-                :critical="villageState.storage.criticalFullness.lumber"
-                :full="villageState.storage.capacity.lumber"
+                :warning="villageState.warehouse.optimumFullness.lumber"
+                :critical="villageState.warehouse.criticalFullness.lumber"
+                :full="villageState.warehouse.capacity.lumber"
               ></filling>
             </td>
             <td class="right">
               <filling
                 :value="villageState.resources.clay"
-                :warning="villageState.storage.optimumFullness.clay"
-                :critical="villageState.storage.criticalFullness.clay"
-                :full="villageState.storage.capacity.clay"
+                :warning="villageState.warehouse.optimumFullness.clay"
+                :critical="villageState.warehouse.criticalFullness.clay"
+                :full="villageState.warehouse.capacity.clay"
               ></filling>
             </td>
             <td class="right">
               <filling
                 :value="villageState.resources.iron"
-                :warning="villageState.storage.optimumFullness.iron"
-                :critical="villageState.storage.criticalFullness.iron"
-                :full="villageState.storage.capacity.iron"
+                :warning="villageState.warehouse.optimumFullness.iron"
+                :critical="villageState.warehouse.criticalFullness.iron"
+                :full="villageState.warehouse.capacity.iron"
               ></filling>
             </td>
             <td class="right">
               <filling
                 :value="villageState.resources.crop"
-                :warning="villageState.storage.optimumFullness.crop"
-                :critical="villageState.storage.criticalFullness.crop"
-                :full="villageState.storage.capacity.crop"
+                :warning="villageState.warehouse.optimumFullness.crop"
+                :critical="villageState.warehouse.criticalFullness.crop"
+                :full="villageState.warehouse.capacity.crop"
               ></filling>
             </td>
             <td class="right" v-text="storageTime(villageState)"></td>
@@ -140,8 +140,8 @@ export default {
       return path(name, args);
     },
     storageTime(villageState) {
-      const toZero = villageState.storage.timeToZero;
-      const toFull = villageState.storage.timeToFull;
+      const toZero = villageState.warehouse.timeToZero;
+      const toFull = villageState.warehouse.timeToFull;
       return this.renderGatheringTime(toFull.never ? toZero : toFull);
     },
     renderTimeInSeconds(value) {

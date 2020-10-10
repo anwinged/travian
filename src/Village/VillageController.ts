@@ -71,7 +71,7 @@ export class VillageController {
     }
 
     getOverflowResources(): Resources {
-        const limit = this.state.storage.optimumFullness;
+        const limit = this.state.warehouse.optimumFullness;
         const currentResources = this.state.resources;
 
         return currentResources.sub(limit).max(Resources.zero());
@@ -80,7 +80,7 @@ export class VillageController {
     getFreeResources(): Resources {
         const mode = this.state.settings.receiveResourcesMode;
         const requirementResources = this.state.required.resources;
-        const optimumToStoreResources = this.state.storage.optimumFullness;
+        const optimumToStoreResources = this.state.warehouse.optimumFullness;
 
         switch (mode) {
             case ReceiveResourcesMode.Required:
@@ -106,7 +106,7 @@ export class VillageController {
 
     getRequiredResources(): Resources {
         const mode = this.state.settings.receiveResourcesMode;
-        const optimumToStoreResources = this.state.storage.optimumFullness;
+        const optimumToStoreResources = this.state.warehouse.optimumFullness;
         const requirementResources = this.state.required.resources;
 
         switch (mode) {
@@ -118,7 +118,7 @@ export class VillageController {
     }
 
     private calcRequiredResources(targetResources: Resources): Resources {
-        const optimumToStoreResources = this.state.storage.optimumFullness;
+        const optimumToStoreResources = this.state.warehouse.optimumFullness;
         const currentResources = this.state.resources;
         const incomingResources = this.state.incomingResources;
 
@@ -130,7 +130,7 @@ export class VillageController {
     }
 
     getAvailableToReceiveResources(): Resources {
-        const optimumToStoreResources = this.state.storage.optimumFullness;
+        const optimumToStoreResources = this.state.warehouse.optimumFullness;
         const currentResources = this.state.resources;
 
         return optimumToStoreResources.sub(currentResources).max(Resources.zero());
@@ -229,7 +229,7 @@ export class VillageController {
             return;
         }
 
-        // Check, if storage is building now
+        // Check, if warehouse is building now
         const underConstruction = storageSlots.find((s) => s.isUnderConstruction);
         if (underConstruction !== undefined) {
             return;
@@ -237,7 +237,7 @@ export class VillageController {
 
         const tasks = this.state.tasks;
 
-        // Check, if we have storage is in building queue
+        // Check, if we have warehouse is in building queue
         const storageBuildIds = storageSlots.map((s) => s.buildId);
         for (let buildId of storageBuildIds) {
             const upgradeTask = tasks.find(

@@ -87,7 +87,7 @@ interface VillageOwnState {
      */
     resources: Resources;
     performance: Resources;
-    storage: VillageWarehouseState;
+    warehouse: VillageWarehouseState;
     queues: Array<VillageProductionQueueState>;
     tasks: Array<TaskState>;
     firstReadyTask: TaskState | undefined;
@@ -295,7 +295,7 @@ function createVillageOwnState(
         village,
         resources,
         performance,
-        storage: storageState,
+        warehouse: storageState,
         required: makeResourceState(requiredResources, resources, performance),
         tasks,
         queues,
@@ -322,20 +322,21 @@ function createVillageOwnStates(
 }
 
 function createVillageState(
-    state: VillageOwnState,
-    ownStates: VillageOwnStateDictionary
+    ownState: VillageOwnState,
+    otherOwnStates: VillageOwnStateDictionary
 ): VillageState {
-    const villageIds = Object.keys(ownStates).map((k) => +k);
-    const commitments = villageIds.reduce((memo, shipmentVillageId) => {
-        const shipmentVillageState = ownStates[shipmentVillageId];
+    const otherVillageIds = Object.keys(otherOwnStates).map((key) => +key);
+    const reducer = (memo: Resources, shipmentVillageId: number) => {
+        const shipmentVillageState = otherOwnStates[shipmentVillageId];
         const shipmentVillageRequired = shipmentVillageState.required;
         const shipmentVillageIncoming = shipmentVillageState.incomingResources;
         const targetVillageMissing = shipmentVillageRequired.balance
             .add(shipmentVillageIncoming)
             .min(Resources.zero());
         return memo.add(targetVillageMissing);
-    }, Resources.zero());
-    return { ...state, commitments };
+    };
+    const commitments = otherVillageIds.reduce(reducer, Resources.zero());
+    return { ...ownState, commitments };
 }
 
 function getVillageStates(

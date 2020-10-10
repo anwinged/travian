@@ -24,7 +24,7 @@ export class BalanceHeroResourcesAction extends BaseAction {
         const requirements = [
             thisVillageState.required.balance,
             thisVillageState.commitments,
-            thisVillageState.resources.sub(thisVillageState.storage.capacity),
+            thisVillageState.resources.sub(thisVillageState.warehouse.capacity),
         ];
 
         console.log('Requirements');
