@@ -19,7 +19,7 @@ export function createMapper<T>(options: ObjectMapperOptions<T>): ObjectMapper<T
     }
 
     if (factory) {
-        return plain => {
+        return (plain) => {
             let item = factory();
             if (typeof plain === 'object' && typeof item === 'object') {
                 return Object.assign(item, plain) as T;

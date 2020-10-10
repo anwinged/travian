@@ -22,7 +22,7 @@ export class UpgradeResourceToLevelAction extends BaseAction {
         const requiredLevel = getNumber(args.level);
 
         const notUpgraded = deposits.filter(
-            dep => !dep.isUnderConstruction && requiredLevel > dep.level
+            (dep) => !dep.isUnderConstruction && requiredLevel > dep.level
         );
 
         if (notUpgraded.length === 0) {
@@ -59,7 +59,7 @@ export class UpgradeResourceToLevelAction extends BaseAction {
         return (
             undefined ===
             tasks.find(
-                task =>
+                (task) =>
                     task.name === UpgradeBuildingTask.name &&
                     task.args.villageId === villageId &&
                     task.args.buildId === dep.buildId

@@ -42,10 +42,7 @@ export class Statistics {
 
     private getTopStatKeys(stat: ActionStatistics) {
         const keys = Object.keys(stat);
-        return keys
-            .sort()
-            .reverse()
-            .slice(0, KEEP_RECORD_COUNT);
+        return keys.sort().reverse().slice(0, KEEP_RECORD_COUNT);
     }
 
     getActionStatistics(): ActionStatistics {

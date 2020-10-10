@@ -36,8 +36,8 @@ export default {
   },
   computed: {
     ...mapState({
-      isLogsVisible: state => state.views.logs,
-      isVillageEditorVisible: state => state.views.villageEditor,
+      isLogsVisible: (state) => state.views.logs,
+      isVillageEditorVisible: (state) => state.views.villageEditor,
     }),
     isSecondaryDashboardVisible() {
       return this.isLogsVisible || this.isVillageEditorVisible;

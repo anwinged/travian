@@ -45,7 +45,7 @@ function createCelebrationButton(
         <a id="${id}" href="#">Праздновать</a>
     </div>`);
 
-    jQuery(`#${id}`).on('click', evt => {
+    jQuery(`#${id}`).on('click', (evt) => {
         evt.preventDefault();
         onClickHandler(resources, idx);
     });

@@ -13,7 +13,7 @@ export class VillageRepository implements VillageRepositoryInterface {
     }
 
     get(villageId: number): Village {
-        const village = this.all().find(vlg => vlg.id === villageId);
+        const village = this.all().find((vlg) => vlg.id === villageId);
         if (!village) {
             throw new VillageNotFound('Active village not found');
         }
@@ -21,7 +21,7 @@ export class VillageRepository implements VillageRepositoryInterface {
     }
 
     getByCrd(crd: Coordinates): Village {
-        const village = this.all().find(vlg => vlg.crd.eq(crd));
+        const village = this.all().find((vlg) => vlg.crd.eq(crd));
         if (!village) {
             throw new VillageNotFound('Village not found');
         }
@@ -29,7 +29,7 @@ export class VillageRepository implements VillageRepositoryInterface {
     }
 
     getActive(): Village {
-        const village = this.all().find(vlg => vlg.active);
+        const village = this.all().find((vlg) => vlg.active);
         if (!village) {
             throw new VillageNotFound('Active village not found');
         }

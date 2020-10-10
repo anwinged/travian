@@ -220,7 +220,7 @@ function createTaskQueueStates(
     storage: VillageStorage
 ) {
     let result: Array<VillageProductionQueueState> = [];
-    const possibleTasks = tasks.filter(task => task.canBeBuilt);
+    const possibleTasks = tasks.filter((task) => task.canBeBuilt);
     for (let taskQueueInfo of getGroupedByQueueTasks(possibleTasks, storage)) {
         result.push(createProductionQueueState(taskQueueInfo, warehouse));
     }
@@ -230,12 +230,14 @@ function createTaskQueueStates(
 function getReadyForProductionTask(
     queues: ReadonlyArray<VillageProductionQueueState>
 ): TaskState | undefined {
-    const firstReadyQueue = queues.find(queue => queue.isWaiting);
+    const firstReadyQueue = queues.find((queue) => queue.isWaiting);
     if (!firstReadyQueue) {
         return undefined;
     }
 
-    return firstReadyQueue.tasks.find(task => task.name === TrainTroopTask.name || task.canBeBuilt);
+    return firstReadyQueue.tasks.find(
+        (task) => task.name === TrainTroopTask.name || task.canBeBuilt
+    );
 }
 
 function getTaskResources(task: TaskCore | undefined): Resources {
@@ -284,7 +286,7 @@ function createVillageOwnState(
     const storageState = makeStorageState(resources, storageResources, performance);
     const tasks = taskCollection
         .getTasks()
-        .map(t => makeTaskState(t, storageState.optimumFullness));
+        .map((t) => makeTaskState(t, storageState.optimumFullness));
     const queues = createTaskQueueStates(storageState, tasks, storage);
     const firstReadyTask = getReadyForProductionTask(queues);
     const requiredResources = getTaskResources(firstReadyTask);
@@ -323,7 +325,7 @@ function createVillageState(
     state: VillageOwnState,
     ownStates: VillageOwnStateDictionary
 ): VillageState {
-    const villageIds = Object.keys(ownStates).map(k => +k);
+    const villageIds = Object.keys(ownStates).map((k) => +k);
     const commitments = villageIds.reduce((memo, shipmentVillageId) => {
         const shipmentVillageState = ownStates[shipmentVillageId];
         const shipmentVillageRequired = shipmentVillageState.required;
@@ -342,7 +344,7 @@ function getVillageStates(
     taskCollectionFactory: VillageTaskCollectionFactory
 ): Array<VillageState> {
     const ownStates = createVillageOwnStates(villages, storageFactory, taskCollectionFactory);
-    return villages.map(village => createVillageState(ownStates[village.id], ownStates));
+    return villages.map((village) => createVillageState(ownStates[village.id], ownStates));
 }
 
 interface VillageStorageFactory {
@@ -382,7 +384,7 @@ export class VillageStateFactory {
             this.storageFactory,
             this.taskCollectionFactory
         );
-        const needle = states.find(s => s.id === villageId);
+        const needle = states.find((s) => s.id === villageId);
         if (!needle) {
             throw new VillageNotFound(`Village ${villageId} not found`);
         }

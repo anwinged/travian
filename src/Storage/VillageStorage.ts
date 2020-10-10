@@ -74,7 +74,7 @@ export class VillageStorage {
     storeIncomingMerchants(merchants: ReadonlyArray<IncomingMerchant>): void {
         this.storage.set(
             INCOMING_MERCHANTS_KEY,
-            merchants.map(m => ({ ...m.resources, ts: m.ts }))
+            merchants.map((m) => ({ ...m.resources, ts: m.ts }))
         );
     }
 

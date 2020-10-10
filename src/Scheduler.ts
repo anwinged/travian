@@ -141,10 +141,10 @@ export class Scheduler {
         let alreadyHasTask;
         if (args.villageId) {
             alreadyHasTask = this.taskQueue.has(
-                t => t.name === name && t.args.villageId === args.villageId
+                (t) => t.name === name && t.args.villageId === args.villageId
             );
         } else {
-            alreadyHasTask = this.taskQueue.has(t => t.name === name);
+            alreadyHasTask = this.taskQueue.has((t) => t.name === name);
         }
 
         if (!alreadyHasTask) {
@@ -153,7 +153,7 @@ export class Scheduler {
     }
 
     removeTask(taskId: TaskId) {
-        this.taskQueue.remove(t => t.id === taskId);
+        this.taskQueue.remove((t) => t.id === taskId);
         this.actionQueue.clear();
     }
 
@@ -168,7 +168,7 @@ export class Scheduler {
     }
 
     postponeTask(taskId: TaskId, seconds: number) {
-        const task = this.taskQueue.seeItems().find(t => t.id === taskId);
+        const task = this.taskQueue.seeItems().find((t) => t.id === taskId);
         if (!task) {
             return;
         }
@@ -179,7 +179,7 @@ export class Scheduler {
             this.removeTask(taskId);
         } else {
             const modifyTime = withTime(timestamp() + seconds);
-            this.taskQueue.modify(t => t.id === taskId, modifyTime);
+            this.taskQueue.modify((t) => t.id === taskId, modifyTime);
         }
     }
 

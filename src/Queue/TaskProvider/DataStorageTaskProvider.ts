@@ -24,7 +24,7 @@ export class DataStorageTaskProvider implements TaskProvider {
 
         const storedItems = serialized as Array<{ [key: string]: any }>;
 
-        return storedItems.map(i => {
+        return storedItems.map((i) => {
             const task = new Task(uniqTaskId(), 0, '', {});
             return Object.assign(task, i);
         });

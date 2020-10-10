@@ -26,7 +26,7 @@ export function createBuildButton(
         const resElement = $el.find('.resourceWrapper .resource');
         const resources = grabResourcesFromList(resElement);
         $el.append(`<div style="padding: 8px"><a id="${btnId}" href="#">Построить</a></div>`);
-        jQuery(`#${btnId}`).on('click', evt => {
+        jQuery(`#${btnId}`).on('click', (evt) => {
             evt.preventDefault();
             onClickHandler(buildTypeId, resources);
         });
@@ -50,17 +50,14 @@ export function createUpgradeButton(onClickHandler: (resources: Resources) => vo
     const btn = `<div style="padding: 8px"><a id="${id}" href="#">В очередь</a></div>`;
     upgradeContainer.append(btn);
     const resources = grabContractResources();
-    jQuery(`#${id}`).on('click', evt => {
+    jQuery(`#${id}`).on('click', (evt) => {
         evt.preventDefault();
         onClickHandler(resources);
     });
 }
 
 export function grabResourcesFromList($els: JQuery) {
-    const getText = (n: number) =>
-        jQuery($els.get(n))
-            .find('.value')
-            .text();
+    const getText = (n: number) => jQuery($els.get(n)).find('.value').text();
     const grab = (n: number) => getNumber(getText(n));
     return new Resources(grab(0), grab(1), grab(2), grab(3));
 }

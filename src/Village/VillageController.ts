@@ -171,19 +171,21 @@ export class VillageController {
         const resourceSlots = this.storage.getResourceSlots();
         const tasks = this.taskCollection.getTasks();
 
-        const cropSlots = resourceSlots.filter(s => s.type === ResourceType.Crop && !s.isMaxLevel);
+        const cropSlots = resourceSlots.filter(
+            (s) => s.type === ResourceType.Crop && !s.isMaxLevel
+        );
         if (cropSlots.length === 0) {
             return;
         }
 
         // Check, if crop field is building now
-        const underContraction = cropSlots.find(s => s.isUnderConstruction);
+        const underContraction = cropSlots.find((s) => s.isUnderConstruction);
         if (underContraction !== undefined) {
             return;
         }
 
         // Check, if we already have crop task in queue
-        const cropBuildIds = cropSlots.map(s => s.buildId);
+        const cropBuildIds = cropSlots.map((s) => s.buildId);
         for (let buildId of cropBuildIds) {
             const upgradeTask = tasks.find(
                 isBuildingPlanned(UpgradeBuildingTask.name, buildId, undefined)
@@ -207,11 +209,11 @@ export class VillageController {
     }
 
     private planWarehouseBuilding(): void {
-        this.planStorageBuilding(WAREHOUSE_ID, t => !t.isEnoughWarehouseCapacity);
+        this.planStorageBuilding(WAREHOUSE_ID, (t) => !t.isEnoughWarehouseCapacity);
     }
 
     private planGranaryBuilding(): void {
-        this.planStorageBuilding(GARNER_ID, t => !t.isEnoughGranaryCapacity);
+        this.planStorageBuilding(GARNER_ID, (t) => !t.isEnoughGranaryCapacity);
     }
 
     private planStorageBuilding(
@@ -221,14 +223,14 @@ export class VillageController {
         const buildingSlots = this.storage.getBuildingSlots();
 
         const storageSlots = buildingSlots.filter(
-            s => s.buildTypeId === buildTypeId && !s.isMaxLevel
+            (s) => s.buildTypeId === buildTypeId && !s.isMaxLevel
         );
         if (storageSlots.length === 0) {
             return;
         }
 
         // Check, if storage is building now
-        const underConstruction = storageSlots.find(s => s.isUnderConstruction);
+        const underConstruction = storageSlots.find((s) => s.isUnderConstruction);
         if (underConstruction !== undefined) {
             return;
         }
@@ -236,7 +238,7 @@ export class VillageController {
         const tasks = this.state.tasks;
 
         // Check, if we have storage is in building queue
-        const storageBuildIds = storageSlots.map(s => s.buildId);
+        const storageBuildIds = storageSlots.map((s) => s.buildId);
         for (let buildId of storageBuildIds) {
             const upgradeTask = tasks.find(
                 isBuildingPlanned(UpgradeBuildingTask.name, buildId, buildTypeId)

@@ -43,7 +43,7 @@ export function createStore(villageFactory: VillageFactory) {
             },
         },
         getters: {
-            reverseLogs: state => {
+            reverseLogs: (state) => {
                 return state.logs.slice().reverse();
             },
         },

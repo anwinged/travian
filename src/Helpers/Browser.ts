@@ -1,7 +1,7 @@
 import * as URLParse from 'url-parse';
 
 export async function waitForLoad() {
-    return new Promise(resolve => jQuery(resolve));
+    return new Promise((resolve) => jQuery(resolve));
 }
 
 export function parseLocation(location?: string | undefined) {

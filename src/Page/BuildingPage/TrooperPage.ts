@@ -23,7 +23,7 @@ export function createTrainTroopButtons(
         );
         const resElement = $el.find('.resourceWrapper .resource');
         const resources = grabResourcesFromList(resElement);
-        jQuery(`#${id}`).on('click', evt => {
+        jQuery(`#${id}`).on('click', (evt) => {
             evt.preventDefault();
             const input = $el.find(`input[name="t${troopId}"]`);
             const count = getNumber(input.val());

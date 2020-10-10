@@ -46,7 +46,7 @@ export class BuildingPageController {
         this.logger.info('BUILD PAGE DETECTED', 'ID', this.attributes.buildId, this.attributes);
 
         if (buildTypeId) {
-            createUpgradeButton(res => this.onScheduleUpgradeBuilding(res));
+            createUpgradeButton((res) => this.onScheduleUpgradeBuilding(res));
         } else {
             createBuildButton((buildTypeId, res) => this.onScheduleBuildBuilding(buildTypeId, res));
         }
@@ -126,7 +126,7 @@ export class BuildingPageController {
 
     private onSendResources(coordinates: Coordinates) {
         const villageId = grabActiveVillageId();
-        const targetVillage = grabVillageList().find(v => v.crd.eq(coordinates));
+        const targetVillage = grabVillageList().find((v) => v.crd.eq(coordinates));
         this.scheduler.scheduleTask(SendResourcesTask.name, {
             villageId: villageId,
             targetVillageId: targetVillage?.id,

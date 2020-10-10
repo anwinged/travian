@@ -6,7 +6,7 @@ const NAMESPACE = 'travian:v1';
 const storage = localStorage;
 
 function join(...parts: Array<string>) {
-    return parts.map(p => p.replace(/[:]+$/g, '').replace(/^[:]+/g, '')).join(':');
+    return parts.map((p) => p.replace(/[:]+$/g, '').replace(/^[:]+/g, '')).join(':');
 }
 
 export class DataStorage {

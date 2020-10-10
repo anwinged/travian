@@ -44,9 +44,7 @@ export class SendOnAdventureAction extends BaseAction {
     private checkConfig(adventure: Adventure, health: number) {
         for (let conf of CONFIG) {
             if (adventure.level === conf.level && health >= conf.health) {
-                return jQuery(adventure.el)
-                    .find('td.goTo .gotoAdventure')
-                    .trigger('click');
+                return jQuery(adventure.el).find('td.goTo .gotoAdventure').trigger('click');
             }
         }
     }
@@ -55,11 +53,7 @@ export class SendOnAdventureAction extends BaseAction {
         const adventures: Array<Adventure> = [];
 
         jQuery('tr[id^=adventure]').each((index, el) => {
-            const imgClass =
-                jQuery(el)
-                    .find('.difficulty img')
-                    .attr('class')
-                    ?.toString() || '';
+            const imgClass = jQuery(el).find('.difficulty img').attr('class')?.toString() || '';
             const level = Number(trimPrefix(imgClass, 'adventureDifficulty'));
             if (!isNaN(level)) {
                 adventures.push({ el, level: level });

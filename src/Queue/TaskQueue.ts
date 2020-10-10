@@ -19,7 +19,7 @@ export class TaskQueue {
     }
 
     get(ts: number): Task | undefined {
-        const readyItems = this.getItems().filter(t => t.ts <= ts);
+        const readyItems = this.getItems().filter((t) => t.ts <= ts);
         if (readyItems.length === 0) {
             return undefined;
         }
@@ -27,7 +27,7 @@ export class TaskQueue {
     }
 
     findById(taskId: TaskId): Task | undefined {
-        const [matched, _] = this.split(t => t.id === taskId);
+        const [matched, _] = this.split((t) => t.id === taskId);
         return matched.shift();
     }
 
@@ -58,7 +58,7 @@ export class TaskQueue {
     private split(predicate: (t: Task) => boolean): [TaskList, TaskList] {
         const matched: TaskList = [];
         const other: TaskList = [];
-        this.getItems().forEach(t => {
+        this.getItems().forEach((t) => {
             if (predicate(t)) {
                 matched.push(t);
             } else {

@@ -23,7 +23,7 @@ interface TaskMap {
 const taskMap: TaskMap = {};
 
 export function registerTask(options: TaskOptions = {}) {
-    return function(ctor: Function) {
+    return function (ctor: Function) {
         taskMap[ctor.name] = {
             ctor,
             queue: options.queue,
@@ -55,7 +55,7 @@ export function createTaskHandler(
 /**
  * List on non intersected task queue predicates.
  */
-const TASK_TYPE_PREDICATES: Array<TaskNamePredicate> = OrderedProductionQueues.map(queue => {
+const TASK_TYPE_PREDICATES: Array<TaskNamePredicate> = OrderedProductionQueues.map((queue) => {
     return (taskName: string) => getProductionQueue(taskName) === queue;
 });
 

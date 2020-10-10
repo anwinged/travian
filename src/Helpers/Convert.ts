@@ -7,7 +7,7 @@ export function elClassId(classes: string | undefined, prefix: string): number |
         return undefined;
     }
     let result: number | undefined = undefined;
-    classes.split(/\s/).forEach(part => {
+    classes.split(/\s/).forEach((part) => {
         const match = part.match(new RegExp(prefix + '(\\d+)'));
         if (match) {
             result = toNumber(match[1]);

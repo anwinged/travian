@@ -12,7 +12,7 @@ export class UpdateResourceContractsTask extends BaseTask {
         const villages = this.factory.getAllVillages();
 
         const tasks = villages
-            .map(v => this.factory.createTaskCollection(v.id).getTasks())
+            .map((v) => this.factory.createTaskCollection(v.id).getTasks())
             .reduce((acc, tasks) => acc.concat(tasks), []);
 
         const paths = uniqPaths([
@@ -20,7 +20,7 @@ export class UpdateResourceContractsTask extends BaseTask {
             ...this.walkImprovementTask(tasks),
         ]);
 
-        return paths.map(p => ({
+        return paths.map((p) => ({
             name: GoToPageAction.name,
             args: { path: path(p.name, p.query) },
         }));
@@ -28,8 +28,10 @@ export class UpdateResourceContractsTask extends BaseTask {
 
     private walkUpgradeTasks(tasks: ImmutableTaskList): PathList {
         return tasks
-            .filter(t => t.name === UpgradeBuildingTask.name && t.args.villageId && t.args.buildId)
-            .map(t => ({
+            .filter(
+                (t) => t.name === UpgradeBuildingTask.name && t.args.villageId && t.args.buildId
+            )
+            .map((t) => ({
                 name: '/build.php',
                 query: { newdid: t.args.villageId, id: t.args.buildId },
             }));
@@ -37,8 +39,10 @@ export class UpdateResourceContractsTask extends BaseTask {
 
     private walkImprovementTask(tasks: ImmutableTaskList): PathList {
         return tasks
-            .filter(t => t.name === ForgeImprovementTask.name && t.args.villageId && t.args.buildId)
-            .map(t => ({
+            .filter(
+                (t) => t.name === ForgeImprovementTask.name && t.args.villageId && t.args.buildId
+            )
+            .map((t) => ({
                 name: '/build.php',
                 query: { newdid: t.args.villageId, id: t.args.buildId },
             }));

@@ -18,8 +18,8 @@ function slotElements(prefix: string): Array<SlotElement> {
 
 function showSlotIds(prefix: string, buildingIds: Array<number>): void {
     const slots = slotElements(prefix);
-    slots.forEach(slot => {
-        const upCount = buildingIds.filter(id => id === slot.buildId).length;
+    slots.forEach((slot) => {
+        const upCount = buildingIds.filter((id) => id === slot.buildId).length;
         const $slotEl = jQuery(slot.el);
         const $labelEl = $slotEl.find('.labelLayer');
         const oldLabel = $labelEl.data('oldLabel') || $labelEl.text();
@@ -53,10 +53,10 @@ export function showBuildingSlotIds(buildingIds: number[]): void {
 
 function onSlotCtrlClick(prefix: string, onClickHandler: (buildId: number) => void): void {
     const slots = slotElements(prefix);
-    slots.forEach(slot => {
+    slots.forEach((slot) => {
         jQuery(slot.el)
             .find('.labelLayer')
-            .on('click', evt => {
+            .on('click', (evt) => {
                 if (evt.ctrlKey) {
                     evt.preventDefault();
                     evt.stopPropagation();

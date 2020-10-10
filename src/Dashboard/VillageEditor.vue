@@ -27,7 +27,7 @@ import { mapState } from 'vuex';
 export default {
   computed: {
     ...mapState({
-      villageName: state => state.villageSettings.villageName,
+      villageName: (state) => state.villageSettings.villageName,
     }),
     sendResourcesThreshold: {
       get() {

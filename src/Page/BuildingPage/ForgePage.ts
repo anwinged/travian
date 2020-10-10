@@ -22,7 +22,7 @@ function createResearchButton($researchBlockEl: JQuery, onClickHandler: Research
         <a id="${id}" href="#">Исследовать</a>
     </div>`);
 
-    jQuery(`#${id}`).on('click', evt => {
+    jQuery(`#${id}`).on('click', (evt) => {
         evt.preventDefault();
         onClickHandler(resources, unitId);
     });

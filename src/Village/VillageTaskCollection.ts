@@ -24,13 +24,13 @@ export class VillageTaskCollection {
 
     private modifyTasks(predicate: (t: Task) => boolean, modifier: (t: Task) => Task): void {
         const tasks = this.getTasks();
-        const modified = tasks.map(t => (predicate(t) ? modifier(t) : t));
+        const modified = tasks.map((t) => (predicate(t) ? modifier(t) : t));
         this.storage.storeTaskList(modified);
     }
 
     private removeTasks(predicate: (t: Task) => boolean): void {
         const tasks = this.getTasks();
-        const remaining = tasks.filter(t => !predicate(t));
+        const remaining = tasks.filter((t) => !predicate(t));
         this.storage.storeTaskList(remaining);
     }
 
@@ -55,12 +55,12 @@ export class VillageTaskCollection {
     }
 
     removeTask(taskId: TaskId) {
-        this.removeTasks(t => t.id === taskId);
+        this.removeTasks((t) => t.id === taskId);
     }
 
     upTask(taskId: TaskId): void {
         const tasks = this.storage.getTasks();
-        const index = tasks.findIndex(t => t.id === taskId);
+        const index = tasks.findIndex((t) => t.id === taskId);
         if (index < 0 || index === 0) {
             return;
         }
@@ -71,7 +71,7 @@ export class VillageTaskCollection {
 
     downTask(taskId: TaskId) {
         const tasks = this.storage.getTasks();
-        const index = tasks.findIndex(t => t.id === taskId);
+        const index = tasks.findIndex((t) => t.id === taskId);
         if (index < 0 || index === tasks.length - 1) {
             return;
         }
@@ -82,7 +82,7 @@ export class VillageTaskCollection {
 
     postponeTask(taskId: TaskId, seconds: number) {
         const modifyTime = withTime(timestamp() + seconds);
-        this.modifyTasks(task => task.id === taskId, modifyTime);
+        this.modifyTasks((task) => task.id === taskId, modifyTime);
     }
 
     updateResourcesInTasks(resources: Resources, attr: ContractAttributes): void {

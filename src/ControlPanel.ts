@@ -113,12 +113,12 @@ export class ControlPanel {
             this.villageFactory
                 .createTaskCollection(villageId)
                 .getTasks()
-                .filter(t => t.name === UpgradeBuildingTask.name)
-                .map(t => t.args.buildId || 0);
+                .filter((t) => t.name === UpgradeBuildingTask.name)
+                .map((t) => t.args.buildId || 0);
 
         if (p.pathname === '/dorf1.php') {
             showResourceSlotIds(getBuildingsInQueue());
-            onResourceSlotCtrlClick(buildId => {
+            onResourceSlotCtrlClick((buildId) => {
                 this.onSlotCtrlClick(villageId, buildId);
                 showResourceSlotIds(getBuildingsInQueue());
             });
@@ -126,7 +126,7 @@ export class ControlPanel {
 
         if (p.pathname === '/dorf2.php') {
             showBuildingSlotIds(getBuildingsInQueue());
-            onBuildingSlotCtrlClick(buildId => {
+            onBuildingSlotCtrlClick((buildId) => {
                 this.onSlotCtrlClick(villageId, buildId);
                 showBuildingSlotIds(getBuildingsInQueue());
             });
@@ -151,7 +151,7 @@ export class ControlPanel {
             el: `#${appId}`,
             data: gameState,
             store: createStore(villageFactory),
-            render: h => h(DashboardApp),
+            render: (h) => h(DashboardApp),
         });
     }
 

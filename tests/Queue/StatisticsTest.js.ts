@@ -15,15 +15,15 @@ class MemoryStatisticsStorage implements StatisticsStorageInterface {
     }
 }
 
-describe('Statistics', function() {
-    it('Can save statistics item', function() {
+describe('Statistics', function () {
+    it('Can save statistics item', function () {
         const storage = new MemoryStatisticsStorage();
         const statistics = new Statistics(storage);
         statistics.incrementAction(1588408294);
         expect(Object.keys(statistics.getActionStatistics())).to.has.lengthOf(1);
     });
 
-    it('Can trim statistics', function() {
+    it('Can trim statistics', function () {
         const storage = new MemoryStatisticsStorage();
         const statistics = new Statistics(storage);
         const baseTime = 1588408294;

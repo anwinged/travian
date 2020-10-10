@@ -47,7 +47,7 @@ export class ActionQueue {
 
         const items = serialized as Array<{ [key: string]: any }>;
 
-        return items.map(i => {
+        return items.map((i) => {
             const command = { name: '', args: {} };
             return Object.assign(command, i);
         });
