@@ -164,7 +164,7 @@ export class VillageController {
 
     private planCropBuilding() {
         const performance = this.state.performance;
-        if (performance.crop >= 100) {
+        if (performance.crop >= 30) {
             return;
         }
 

@@ -128,8 +128,12 @@ function makeStorageState(
     storage: Resources,
     performance: Resources
 ): VillageWarehouseState {
-    const optimumFullness = storage.sub(performance.scale(3));
-    const criticalFullness = storage.sub(performance.scale(1));
+    // @fixme Если у героя большая добыча ресурсов, а склад маленький, то значения получаются тож маленькими
+    // @fixme с одной деревней это не прокатывает, и даже не построить склад
+    // const optimumFullness = storage.sub(performance.scale(3));
+    // const criticalFullness = storage.sub(performance.scale(1));
+    const optimumFullness = storage.scale(0.9);
+    const criticalFullness = storage.scale(0.98);
     return {
         resources,
         capacity: storage,

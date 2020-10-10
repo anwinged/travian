@@ -22,6 +22,9 @@ test:
 coverage:
 	tools/npm run coverage
 
+up-server:
+	docker-compose up --detach --remove-orphans
+
 restart-server:
 	docker-compose restart
 

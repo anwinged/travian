@@ -53,9 +53,11 @@ export class Scheduler {
         }
 
         this.createUniqTaskTimer(10 * 60, GrabVillageStateTask.name);
-        this.createUniqTaskTimer(10 * 60, SendResourcesTask.name);
+        // @todo Только если деревень больше одной
+        // this.createUniqTaskTimer(10 * 60, SendResourcesTask.name);
         this.createUniqTaskTimer(10 * 60, BalanceHeroResourcesTask.name);
         this.createUniqTaskTimer(20 * 60, UpdateResourceContractsTask.name);
+        // @todo Нужна отдельная настройка для запуска задачи
         // this.createUniqTaskTimer(60 * 60, SendOnAdventureTask.name);
     }
 
