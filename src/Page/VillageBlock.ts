@@ -1,6 +1,6 @@
 import { GrabError } from '../Errors';
 import { Resources } from '../Core/Resources';
-import { Coordinates, Village, VillageList } from '../Core/Village';
+import { Coordinates, Village } from '../Core/Village';
 import { BuildingQueueInfo } from '../Core/BuildingQueueInfo';
 import { getNumber } from '../Helpers/Convert';
 import { parseLocation } from '../Helpers/Browser';
@@ -13,8 +13,8 @@ function getVillageListItems() {
     return $elements;
 }
 
-export function grabVillageList(): VillageList {
-    const villageList: VillageList = [];
+export function grabVillageList(): Array<Village> {
+    const villageList: Array<Village> = [];
     const $elements = getVillageListItems();
     $elements.each((idx, el) => {
         villageList.push(grabVillageInfo(jQuery(el)));

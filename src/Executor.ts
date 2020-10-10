@@ -25,35 +25,24 @@ export interface ExecutionSettings {
 }
 
 export class Executor {
-    private readonly version: string;
-    private readonly scheduler: Scheduler;
-    private readonly villageFactory: VillageFactory;
-    private readonly grabberManager: GrabberManager;
-    private readonly statistics: Statistics;
     private readonly executionState: ExecutionStorage;
-    private readonly logger: Logger;
 
     constructor(
-        version: string,
-        scheduler: Scheduler,
-        villageFactory: VillageFactory,
-        grabberManager: GrabberManager,
-        statistics: Statistics,
-        logger: Logger
+        private readonly version: string,
+        private readonly scheduler: Scheduler,
+        private readonly villageFactory: VillageFactory,
+        private readonly grabberManager: GrabberManager,
+        private readonly statistics: Statistics,
+        private readonly logger: Logger
     ) {
-        this.version = version;
-        this.scheduler = scheduler;
-        this.villageFactory = villageFactory;
-        this.grabberManager = grabberManager;
-        this.statistics = statistics;
         this.executionState = new ExecutionStorage();
-        this.logger = logger;
     }
 
     async run() {
         await waitForLoad();
         await sleepMicro();
 
+        this.scheduler.scheduleRegularTasks();
         this.renderInfo();
 
         const sleep = createExecutionLoopSleeper();

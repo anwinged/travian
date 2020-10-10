@@ -22,29 +22,15 @@ interface NextExecution {
 }
 
 export class Scheduler {
-    private readonly taskQueue: TaskQueue;
-    private readonly actionQueue: ActionQueue;
-    private readonly villageRepository: VillageRepositoryInterface;
-    private readonly villageControllerFactory: VillageFactory;
-    private readonly logger: Logger;
-
     constructor(
-        taskQueue: TaskQueue,
-        actionQueue: ActionQueue,
-        villageRepository: VillageRepositoryInterface,
-        villageControllerFactory: VillageFactory,
-        logger: Logger
-    ) {
-        this.taskQueue = taskQueue;
-        this.actionQueue = actionQueue;
-        this.villageRepository = villageRepository;
-        this.villageControllerFactory = villageControllerFactory;
-        this.logger = logger;
+        private readonly taskQueue: TaskQueue,
+        private readonly actionQueue: ActionQueue,
+        private readonly villageRepository: VillageRepositoryInterface,
+        private readonly villageControllerFactory: VillageFactory,
+        private readonly logger: Logger
+    ) {}
 
-        // this.taskQueue.push(GrabVillageStateTask.name, {}, timestamp());
-        // this.taskQueue.push(UpdateResourceContractsTask.name, {}, timestamp());
-        // this.taskQueue.push(BalanceHeroResourcesTask.name, {}, timestamp());
-
+    scheduleRegularTasks() {
         const villages = this.villageRepository.all();
         for (let village of villages) {
             this.createUniqTaskTimer(5 * 60, RunVillageProductionTask.name, {
@@ -53,10 +39,12 @@ export class Scheduler {
         }
 
         this.createUniqTaskTimer(10 * 60, GrabVillageStateTask.name);
-        // @todo Только если деревень больше одной
-        // this.createUniqTaskTimer(10 * 60, SendResourcesTask.name);
+        if (villages.length > 1) {
+            this.createUniqTaskTimer(10 * 60, SendResourcesTask.name);
+        }
         this.createUniqTaskTimer(10 * 60, BalanceHeroResourcesTask.name);
         this.createUniqTaskTimer(20 * 60, UpdateResourceContractsTask.name);
+
         // @todo Нужна отдельная настройка для запуска задачи
         // this.createUniqTaskTimer(60 * 60, SendOnAdventureTask.name);
     }

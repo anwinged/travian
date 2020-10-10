@@ -40,8 +40,6 @@ export enum ReceiveResourcesMode {
     Optimum = 'optimum',
 }
 
-export type VillageList = Array<Village>;
-
 export interface VillageSettings {
     sendResourcesThreshold: number;
     sendResourcesMultiplier: number;

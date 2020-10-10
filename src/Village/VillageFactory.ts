@@ -6,11 +6,7 @@ import { VillageState, VillageStateFactory } from './VillageState';
 import { Village } from '../Core/Village';
 
 export class VillageFactory {
-    private readonly villageRepository: VillageRepositoryInterface;
-
-    constructor(villageRepository: VillageRepositoryInterface) {
-        this.villageRepository = villageRepository;
-    }
+    constructor(private readonly villageRepository: VillageRepositoryInterface) {}
 
     getById(villageId: number): IntVillageFactory {
         return this.makeInternalFactory(this.villageRepository.getById(villageId));

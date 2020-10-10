@@ -10,13 +10,7 @@ import { Task, withResources, withTime } from '../Queue/Task';
 import { TaskId, uniqTaskId } from '../Queue/TaskId';
 
 export class VillageTaskCollection {
-    private readonly storage: VillageStorage;
-    private readonly villageId: number;
-
-    constructor(villageId: number, storage: VillageStorage) {
-        this.villageId = villageId;
-        this.storage = storage;
-    }
+    constructor(private readonly villageId: number, private readonly storage: VillageStorage) {}
 
     getTasks(): Array<Task> {
         return this.storage.getTasks();
