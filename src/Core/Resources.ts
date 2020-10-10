@@ -1,5 +1,4 @@
 import { ResourceList, ResourceMapping, ResourceType } from './ResourceType';
-import { ResourceStorage } from './ResourceStorage';
 
 export interface ResourcesInterface {
     lumber: number;
@@ -23,15 +22,6 @@ export class Resources implements ResourcesInterface {
 
     static fromObject(obj: ResourcesInterface): Resources {
         return new Resources(obj.lumber, obj.clay, obj.iron, obj.crop);
-    }
-
-    static fromStorage(storage: ResourceStorage): Resources {
-        return new Resources(
-            storage.warehouse,
-            storage.warehouse,
-            storage.warehouse,
-            storage.granary
-        );
     }
 
     static zero(): Resources {

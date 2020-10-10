@@ -1,7 +1,6 @@
 import { GrabError } from '../Errors';
 import { Resources } from '../Core/Resources';
 import { ResourceType } from '../Core/ResourceType';
-import { ResourceStorage } from '../Core/ResourceStorage';
 import { getNumber } from '../Helpers/Convert';
 
 export function grabVillageResources(): Resources {
@@ -9,14 +8,13 @@ export function grabVillageResources(): Resources {
     const clay = grabResource(ResourceType.Clay);
     const iron = grabResource(ResourceType.Iron);
     const crop = grabResource(ResourceType.Crop);
-
     return new Resources(lumber, clay, iron, crop);
 }
 
-export function grabVillageResourceStorage() {
+export function grabVillageWarehouseCapacity(): Resources {
     const warehouse = grabCapacity('warehouse');
     const granary = grabCapacity('granary');
-    return new ResourceStorage(warehouse, granary);
+    return new Resources(warehouse, warehouse, warehouse, granary);
 }
 
 function findStockBarElement() {

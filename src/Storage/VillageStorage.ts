@@ -1,6 +1,5 @@
 import { DataStorage } from './DataStorage';
 import { Resources, ResourcesInterface } from '../Core/Resources';
-import { ResourceStorage } from '../Core/ResourceStorage';
 import { IncomingMerchant, MerchantsInfo } from '../Core/Market';
 import { VillageSettings, VillageSettingsDefaults } from '../Core/Village';
 import { ProductionQueue } from '../Core/ProductionQueue';
@@ -15,7 +14,7 @@ import { Task } from '../Queue/Task';
 import { uniqTaskId } from '../Queue/TaskId';
 
 const RESOURCES_KEY = 'resources';
-const CAPACITY_KEY = 'capacity';
+const WAREHOUSE_CAPACITY_KEY = 'warehouse_capacity';
 const PERFORMANCE_KEY = 'performance';
 const INCOMING_MERCHANTS_KEY = 'incoming_merchants';
 const MERCHANTS_INFO_KEY = 'merchants_info';
@@ -35,7 +34,7 @@ export class VillageStorage {
         this.storage = new DataStorage(`village.${villageId}`);
     }
 
-    storeResources(resources: Resources) {
+    storeResources(resources: ResourcesInterface) {
         this.storage.set(RESOURCES_KEY, resources);
     }
 
@@ -43,14 +42,12 @@ export class VillageStorage {
         return this.storage.getTyped(RESOURCES_KEY, ResourceOptions);
     }
 
-    storeResourceStorage(storage: ResourceStorage) {
-        this.storage.set(CAPACITY_KEY, storage);
+    storeWarehouseCapacity(warehouse: ResourcesInterface) {
+        this.storage.set(WAREHOUSE_CAPACITY_KEY, warehouse);
     }
 
-    getResourceStorage(): ResourceStorage {
-        let plain = this.storage.get(CAPACITY_KEY);
-        let res = new ResourceStorage(0, 0);
-        return Object.assign(res, plain) as ResourceStorage;
+    getWarehouseCapacity(): Resources {
+        return this.storage.getTyped(WAREHOUSE_CAPACITY_KEY, ResourceOptions);
     }
 
     storeResourcesPerformance(resources: Resources) {

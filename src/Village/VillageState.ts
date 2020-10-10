@@ -123,24 +123,24 @@ function makeResourceState(
     };
 }
 
-function makeStorageState(
+function makeWarehouseState(
     resources: Resources,
-    storage: Resources,
+    capacity: Resources,
     performance: Resources
 ): VillageWarehouseState {
     // @fixme Если у героя большая добыча ресурсов, а склад маленький, то значения получаются тож маленькими
     // @fixme с одной деревней это не прокатывает, и даже не построить склад
-    // const optimumFullness = storage.sub(performance.scale(3));
-    // const criticalFullness = storage.sub(performance.scale(1));
-    const optimumFullness = storage.scale(0.9);
-    const criticalFullness = storage.scale(0.98);
+    // const optimumFullness = capacity.sub(performance.scale(3));
+    // const criticalFullness = capacity.sub(performance.scale(1));
+    const optimumFullness = capacity.scale(0.9);
+    const criticalFullness = capacity.scale(0.98);
     return {
         resources,
-        capacity: storage,
+        capacity,
         performance,
-        balance: storage.sub(resources),
+        balance: capacity.sub(resources),
         timeToZero: timeToFastestResource(resources, Resources.zero(), performance),
-        timeToFull: timeToFastestResource(resources, storage, performance),
+        timeToFull: timeToFastestResource(resources, capacity, performance),
         optimumFullness: optimumFullness,
         criticalFullness: criticalFullness,
         isOverflowing: criticalFullness.anyLower(resources),
@@ -281,9 +281,9 @@ function createVillageOwnState(
 ): VillageOwnState {
     const settings = storage.getSettings();
     const resources = storage.getResources();
-    const storageResources = Resources.fromStorage(storage.getResourceStorage());
+    const capacity = storage.getWarehouseCapacity();
     const performance = storage.getResourcesPerformance();
-    const storageState = makeStorageState(resources, storageResources, performance);
+    const storageState = makeWarehouseState(resources, capacity, performance);
     const tasks = taskCollection
         .getTasks()
         .map((t) => makeTaskState(t, storageState.optimumFullness));
