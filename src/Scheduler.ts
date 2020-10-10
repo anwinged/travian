@@ -106,12 +106,14 @@ export class Scheduler {
             const villageId = task.args.villageId;
 
             // First stage - plan new tasks if needed.
-            const controllerForPlan = this.villageControllerFactory.createController(villageId);
+            const controllerForPlan = this.villageControllerFactory.getById(villageId).controller();
             controllerForPlan.planTasks();
 
             // Second stage - select isReady for production task.
             // We recreate controller, because need new village state.
-            const controllerForSelect = this.villageControllerFactory.createController(villageId);
+            const controllerForSelect = this.villageControllerFactory
+                .getById(villageId)
+                .controller();
             const villageTask = controllerForSelect.getReadyProductionTask();
 
             if (villageTask) {
@@ -129,7 +131,7 @@ export class Scheduler {
 
     scheduleTask(name: string, args: Args, ts?: number | undefined): void {
         if (isProductionTask(name) && args.villageId) {
-            const controller = this.villageControllerFactory.createController(args.villageId);
+            const controller = this.villageControllerFactory.getById(args.villageId).controller();
             controller.addTask(name, args);
         } else {
             this.logger.info('Schedule task', name, args, ts);
@@ -161,7 +163,7 @@ export class Scheduler {
         const task = this.taskQueue.findById(taskId);
         const villageId = task ? task.args.villageId : undefined;
         if (villageId) {
-            const controller = this.villageControllerFactory.createController(villageId);
+            const controller = this.villageControllerFactory.getById(villageId).controller();
             controller.removeTask(taskId);
         }
         this.removeTask(taskId);
@@ -174,7 +176,9 @@ export class Scheduler {
         }
 
         if (isProductionTask(task.name) && task.args.villageId) {
-            const controller = this.villageControllerFactory.createController(task.args.villageId);
+            const controller = this.villageControllerFactory
+                .getById(task.args.villageId)
+                .controller();
             controller.postponeTask(taskId, seconds);
             this.removeTask(taskId);
         } else {

@@ -24,8 +24,8 @@ export class GrabberManager {
     }
 
     private createGrabbers(): Array<Grabber> {
-        const storage = this.factory.createStorageForActiveVillage();
-        const taskCollection = this.factory.createTaskCollectionForActiveVillage();
+        const storage = this.factory.active().storage();
+        const taskCollection = this.factory.active().taskCollection();
         const grabbers: Array<Grabber> = [];
         grabbers.push(new VillageResourceGrabber(taskCollection, storage));
         grabbers.push(new VillageOverviewPageGrabber(taskCollection, storage));

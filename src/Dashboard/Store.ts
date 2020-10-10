@@ -76,7 +76,7 @@ export function createStore(villageFactory: VillageFactory) {
         },
         actions: {
             [Actions.OpenVillageEditor]({ commit }, { villageId }) {
-                const state = villageFactory.createState(villageId);
+                const state = villageFactory.getById(villageId).state();
                 const settings = state.settings;
                 commit(Mutations.SetVillageSettings, {
                     villageId: state.id,
@@ -89,7 +89,7 @@ export function createStore(villageFactory: VillageFactory) {
             [Actions.SaveVillageSettings]({ state }) {
                 const villageName = state.villageSettings.villageName;
                 const villageId = state.villageSettings.villageId;
-                const villageState = villageFactory.createState(villageId);
+                const villageState = villageFactory.getById(villageId).state();
                 const newSettings: VillageSettings = {
                     sendResourcesThreshold:
                         state.villageSettings.sendResourcesThreshold ||
@@ -104,19 +104,19 @@ export function createStore(villageFactory: VillageFactory) {
                 notify(`Настройки для ${villageName} сохранены`);
             },
             [Actions.ToggleVillageReceiveMode]({}, { villageId }) {
-                const controller = villageFactory.createController(villageId);
+                const controller = villageFactory.getById(villageId).controller();
                 controller.toggleReceiveResourcesMode();
             },
             [Actions.RemoveVillageTask]({}, { villageId, taskId }) {
-                const controller = villageFactory.createController(villageId);
+                const controller = villageFactory.getById(villageId).controller();
                 controller.removeTask(taskId);
             },
             [Actions.UpVillageTask]({}, { villageId, taskId }) {
-                const controller = villageFactory.createController(villageId);
+                const controller = villageFactory.getById(villageId).controller();
                 controller.upTask(taskId);
             },
             [Actions.DownVillageTask]({}, { villageId, taskId }) {
-                const controller = villageFactory.createController(villageId);
+                const controller = villageFactory.getById(villageId).controller();
                 controller.downTask(taskId);
             },
         },

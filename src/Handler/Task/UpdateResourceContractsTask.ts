@@ -12,7 +12,7 @@ export class UpdateResourceContractsTask extends BaseTask {
         const villages = this.factory.getAllVillages();
 
         const tasks = villages
-            .map((v) => this.factory.createTaskCollection(v.id).getTasks())
+            .map((v) => this.factory.getById(v.id).taskCollection().getTasks())
             .reduce((acc, tasks) => acc.concat(tasks), []);
 
         const paths = uniqPaths([

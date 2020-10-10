@@ -111,7 +111,8 @@ export class ControlPanel {
 
         const getBuildingsInQueue = () =>
             this.villageFactory
-                .createTaskCollection(villageId)
+                .getById(villageId)
+                .taskCollection()
                 .getTasks()
                 .filter((t) => t.name === UpgradeBuildingTask.name)
                 .map((t) => t.args.buildId || 0);
@@ -136,7 +137,7 @@ export class ControlPanel {
             const buildPage = new BuildingPageController(
                 this.scheduler,
                 getBuildingPageAttributes(),
-                this.villageFactory.createController(villageId)
+                this.villageFactory.getById(villageId).controller()
             );
             buildPage.run();
         }

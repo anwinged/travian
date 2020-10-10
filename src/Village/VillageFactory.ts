@@ -1,71 +1,68 @@
 import { VillageController } from './VillageController';
 import { VillageStorage } from '../Storage/VillageStorage';
-import { VillageRepository } from './VillageRepository';
+import { VillageRepositoryInterface } from './VillageRepository';
 import { VillageTaskCollection } from './VillageTaskCollection';
 import { VillageState, VillageStateFactory } from './VillageState';
 import { Village } from '../Core/Village';
 
 export class VillageFactory {
-    private readonly villageRepository: VillageRepository;
+    private readonly villageRepository: VillageRepositoryInterface;
 
-    constructor(villageRepository: VillageRepository) {
+    constructor(villageRepository: VillageRepositoryInterface) {
         this.villageRepository = villageRepository;
+    }
+
+    getById(villageId: number): IntVillageFactory {
+        return this.makeInternalFactory(this.villageRepository.getById(villageId));
+    }
+
+    active(): IntVillageFactory {
+        return this.makeInternalFactory(this.villageRepository.getActive());
+    }
+
+    private makeInternalFactory(village: Village): IntVillageFactory {
+        return new IntVillageFactory(village, new VillageStateFactory());
     }
 
     getAllVillages(): Array<Village> {
         return this.villageRepository.all();
     }
 
-    getVillage(villageId: number): Village {
-        return this.villageRepository.get(villageId);
-    }
-
-    createStorage(villageId: number): VillageStorage {
-        const village = this.villageRepository.get(villageId);
-        return new VillageStorage(village.id);
-    }
-
-    createStorageForActiveVillage(): VillageStorage {
-        const village = this.villageRepository.getActive();
-        return this.createStorage(village.id);
-    }
-
-    createTaskCollection(villageId: number): VillageTaskCollection {
-        const village = this.villageRepository.get(villageId);
-        return new VillageTaskCollection(village.id, this.createStorage(villageId));
-    }
-
-    createTaskCollectionForActiveVillage(): VillageTaskCollection {
-        const village = this.villageRepository.getActive();
-        return this.createTaskCollection(village.id);
-    }
-
-    createState(villageId: number): VillageState {
-        const village = this.villageRepository.get(villageId);
-        const stateFactory = new VillageStateFactory(
-            this.villageRepository,
-            (id: number) => this.createStorage(id),
-            (id: number) => this.createTaskCollection(id)
-        );
-        return stateFactory.getVillageState(village.id);
-    }
-
     getAllVillageStates(): Array<VillageState> {
-        const stateFactory = new VillageStateFactory(
-            this.villageRepository,
-            (id: number) => this.createStorage(id),
-            (id: number) => this.createTaskCollection(id)
-        );
-        return stateFactory.getAllVillageStates();
+        return this.villageRepository
+            .all()
+            .map((village) => this.makeInternalFactory(village).state());
+    }
+}
+
+class IntVillageFactory {
+    constructor(
+        private readonly village: Village,
+        private readonly stateFactory: VillageStateFactory
+    ) {}
+
+    short(): Village {
+        return this.village;
     }
 
-    createController(villageId: number): VillageController {
-        const village = this.villageRepository.get(villageId);
+    storage(): VillageStorage {
+        return new VillageStorage(this.village.id);
+    }
+
+    taskCollection(): VillageTaskCollection {
+        return new VillageTaskCollection(this.village.id, this.storage());
+    }
+
+    state(): VillageState {
+        return this.stateFactory.getVillageState(this.village, this.storage());
+    }
+
+    controller(): VillageController {
         return new VillageController(
-            village.id,
-            this.createStorage(village.id),
-            this.createTaskCollection(village.id),
-            this.createState(village.id)
+            this.village.id,
+            this.storage(),
+            this.taskCollection(),
+            this.state()
         );
     }
 }

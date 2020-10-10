@@ -19,11 +19,10 @@ export class BalanceHeroResourcesAction extends BaseAction {
             return;
         }
 
-        const thisVillageState = this.villageFactory.createState(thisVillageId);
+        const thisVillageState = this.villageFactory.getById(thisVillageId).state();
 
         const requirements = [
             thisVillageState.required.balance,
-            thisVillageState.commitments,
             thisVillageState.resources.sub(thisVillageState.warehouse.capacity),
         ];
 

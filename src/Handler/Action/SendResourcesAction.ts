@@ -14,8 +14,8 @@ export class SendResourcesAction extends BaseAction {
         const storage = new ResourceTransferStorage();
         const savedReport = storage.getReport();
 
-        const fromVillage = this.villageFactory.getVillage(savedReport.fromVillageId);
-        const toVillage = this.villageFactory.getVillage(savedReport.toVillageId);
+        const fromVillage = this.villageFactory.getById(savedReport.fromVillageId).short();
+        const toVillage = this.villageFactory.getById(savedReport.toVillageId).short();
 
         const coordinates = toVillage.crd;
 

@@ -30,8 +30,8 @@ export class ResourceTransferCalculator {
     }
 
     calc(fromVillageId: number, toVillageId: number): ResourceTransferReport {
-        const sender = this.factory.createController(fromVillageId);
-        const recipient = this.factory.createController(toVillageId);
+        const sender = this.factory.getById(fromVillageId).controller();
+        const recipient = this.factory.getById(toVillageId).controller();
 
         let [senderReadyResources, recipientNeedResources] = this.getTransferResourcePair(
             sender,

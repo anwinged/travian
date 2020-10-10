@@ -4,6 +4,8 @@ import { VillageNotFound } from '../Errors';
 
 export interface VillageRepositoryInterface {
     all(): Array<Village>;
+    getById(villageId: number): Village;
+    getByCrd(crd: Coordinates): Village;
     getActive(): Village;
 }
 
@@ -12,7 +14,7 @@ export class VillageRepository implements VillageRepositoryInterface {
         return grabVillageList();
     }
 
-    get(villageId: number): Village {
+    getById(villageId: number): Village {
         const village = this.all().find((vlg) => vlg.id === villageId);
         if (!village) {
             throw new VillageNotFound('Active village not found');
