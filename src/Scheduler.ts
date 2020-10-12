@@ -119,8 +119,10 @@ export class Scheduler {
 
     scheduleTask(name: string, args: Args, ts?: number | undefined): void {
         if (isProductionTask(name) && args.villageId) {
-            const controller = this.villageControllerFactory.getById(args.villageId).controller();
-            controller.addTask(name, args);
+            const taskCollection = this.villageControllerFactory
+                .getById(args.villageId)
+                .taskCollection();
+            taskCollection.addTask(name, args);
         } else {
             this.logger.info('Schedule task', name, args, ts);
             this.taskQueue.add(new Task(uniqTaskId(), ts || timestamp(), name, args));

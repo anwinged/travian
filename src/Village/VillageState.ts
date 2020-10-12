@@ -145,8 +145,8 @@ function createProductionQueueState(
     const taskEndingTimestamp = taskQueueState.finishTs;
     const resources = warehouseState.resources;
     const performance = warehouseState.performance;
-    const firstTaskResources = tasks.slice(0, 1).reduce(taskResourceReducer, Resources.zero());
-    const allTaskResources = tasks.reduce(taskResourceReducer, Resources.zero());
+    const firstTaskResources = getTotalTaskCollectionResources(tasks.slice(0, 1));
+    const allTaskResources = getTotalTaskCollectionResources(tasks);
 
     const currentTimestamp = timestamp();
 
@@ -220,10 +220,14 @@ function getTotalTaskResources(task: TaskCore | undefined): Resources {
     return Resources.zero();
 }
 
-function taskResourceReducer(resources: Resources, task: TaskCore) {
-    return task.args.resources
-        ? resources.add(Resources.fromObject(task.args.resources))
-        : resources;
+function getTotalTaskCollectionResources(tasks: ReadonlyArray<TaskState>): Resources {
+    const reducer = (memo: Resources, task: TaskState): Resources => {
+        const count = task.args.count || 1;
+        return task.args.resources
+            ? memo.add(Resources.fromObject(task.args.resources).scale(count))
+            : memo;
+    };
+    return tasks.reduce(reducer, Resources.zero());
 }
 
 function makeTaskState(task: TaskCore, maxResourcesForTask: Resources): TaskState {
@@ -234,7 +238,6 @@ function makeTaskState(task: TaskCore, maxResourcesForTask: Resources): TaskStat
     const isEnoughGranaryCapacity = maxResourcesForTask.allGreaterOrEqual(
         new Resources(0, 0, 0, taskResources.crop)
     );
-
     const canBeBuilt = isEnoughWarehouseCapacity && isEnoughGranaryCapacity;
 
     return {
@@ -253,7 +256,7 @@ function createVillageState(village: Village, storage: VillageStorage): VillageS
     const capacity = storage.getWarehouseCapacity();
     const performance = storage.getResourcesPerformance();
     const warehouse = makeWarehouseState(resources, capacity, performance);
-    const tasks = storage.getTasks().map((t) => makeTaskState(t, warehouse.optimumFullness));
+    const tasks = storage.getTasks().map((task) => makeTaskState(task, warehouse.optimumFullness));
     const queues = createTaskQueueStates(warehouse, tasks, storage);
     const firstReadyTask = getReadyForProductionTask(queues);
     const firstTaskResources = getTotalTaskResources(firstReadyTask);

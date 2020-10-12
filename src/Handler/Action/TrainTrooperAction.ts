@@ -30,13 +30,20 @@ export class TrainTrooperAction extends BaseAction {
         }
 
         if (nextToTrainCount > 0) {
-            this.scheduler.scheduleTask(TrainTroopTask.name, {
-                ...task.args,
-                count: nextToTrainCount,
-            });
+            this.scheduleNextTask(task, nextToTrainCount);
         }
 
         fillTrainCount(troopId, readyToTrainCount);
         clickTrainButton();
+    }
+
+    private scheduleNextTask(prevTask: Task, nextToTrainCount: number) {
+        const villageId = prevTask.args.villageId || taskError('Empty village id');
+        const taskName = prevTask.name;
+        const taskCollection = this.villageFactory.getById(villageId).taskCollection();
+        taskCollection.addTaskAsFirst(taskName, {
+            ...prevTask.args,
+            count: nextToTrainCount,
+        });
     }
 }
