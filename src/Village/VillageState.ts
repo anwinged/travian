@@ -3,7 +3,6 @@ import { Resources } from '../Core/Resources';
 import { VillageStorage } from '../Storage/VillageStorage';
 import { calcGatheringTimings, GatheringTime } from '../Core/GatheringTimings';
 import { OrderedProductionQueues, ProductionQueue } from '../Core/ProductionQueue';
-import { TrainTroopTask } from '../Handler/Task/TrainTroopTask';
 import { Args } from '../Queue/Args';
 import { timestamp } from '../Helpers/Time';
 import { isInQueue, TaskCore } from '../Queue/Task';
@@ -221,9 +220,7 @@ function getReadyForProductionTask(
         return undefined;
     }
 
-    return firstReadyQueue.tasks.find(
-        (task) => task.name === TrainTroopTask.name || task.canBeBuilt
-    );
+    return firstReadyQueue.tasks.find((task) => task.canBeBuilt);
 }
 
 function getTaskResources(task: TaskCore | undefined): Resources {

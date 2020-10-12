@@ -17,13 +17,12 @@ import { Task } from '../../Queue/Task';
 export class TrainTrooperAction extends BaseAction {
     async run(args: Args, task: Task): Promise<any> {
         const troopId = args.troopId || taskError('No troop id');
-        const trainCount = args.trainCount || taskError('No troop train count');
-        const troopResources = args.troopResources || taskError('No troop resources');
+        const trainCount = args.count || taskError('No count');
 
         const availableCount = getAvailableCount(troopId);
         const desiredCount = randomInRange(3, 12);
 
-        const readyToTrainCount = Math.min(availableCount, trainCount, desiredCount);
+        const readyToTrainCount = Math.min(trainCount, availableCount, desiredCount);
         const nextToTrainCount = trainCount - readyToTrainCount;
 
         if (readyToTrainCount <= 0) {
@@ -33,8 +32,7 @@ export class TrainTrooperAction extends BaseAction {
         if (nextToTrainCount > 0) {
             this.scheduler.scheduleTask(TrainTroopTask.name, {
                 ...task.args,
-                trainCount: nextToTrainCount,
-                resources: Resources.fromObject(troopResources).scale(nextToTrainCount),
+                count: nextToTrainCount,
             });
         }
 

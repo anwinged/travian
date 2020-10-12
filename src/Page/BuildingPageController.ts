@@ -23,6 +23,7 @@ import { createCelebrationButtons } from './BuildingPage/GuildHallPage';
 import { CelebrationTask } from '../Handler/Task/CelebrationTask';
 import { VillageController } from '../Village/VillageController';
 import { notify } from '../Helpers/Browser';
+import { Args } from '../Queue/Args';
 
 export class BuildingPageController {
     private scheduler: Scheduler;
@@ -109,19 +110,18 @@ export class BuildingPageController {
         notify(`Upgrading ${buildId} scheduled`);
     }
 
-    private onScheduleTrainTroopers(troopId: number, resources: Resources, trainCount: number) {
-        const args = {
+    private onScheduleTrainTroopers(troopId: number, resources: Resources, count: number) {
+        const args: Args = {
             villageId: grabActiveVillageId(),
             buildId: this.attributes.buildId,
             buildTypeId: this.attributes.buildTypeId,
             sheetId: this.attributes.sheetId,
+            resources,
             troopId,
-            trainCount,
-            troopResources: resources,
-            resources: resources.scale(trainCount),
+            count,
         };
         this.villageController.addTask(TrainTroopTask.name, args);
-        notify(`Training ${trainCount} troopers scheduled`);
+        notify(`Training ${count} troopers scheduled`);
     }
 
     private onSendResources(coordinates: Coordinates) {
