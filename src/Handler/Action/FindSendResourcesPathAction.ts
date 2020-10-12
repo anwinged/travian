@@ -1,12 +1,6 @@
 import { BaseAction } from './BaseAction';
-import { FailTaskError, taskError, TryLaterError } from '../../Errors';
-import { Resources } from '../../Core/Resources';
-import { Coordinates } from '../../Core/Village';
+import { FailTaskError } from '../../Errors';
 import { Args } from '../../Queue/Args';
-import { clickSendButton, fillSendResourcesForm } from '../../Page/BuildingPage/MarketPage';
-import { VillageState } from '../../Village/VillageState';
-import { MerchantsInfo } from '../../Core/Market';
-import { goToMarketSendResourcesPage, goToResourceViewPage } from '../ActionBundles';
 import {
     compareReports,
     ResourceTransferCalculator,
@@ -15,7 +9,6 @@ import {
 import { ResourceTransferStorage } from '../../Storage/ResourceTransferStorage';
 import { path } from '../../Helpers/Path';
 import { MARKET_ID } from '../../Core/Buildings';
-import { aroundMinutes, timestamp } from '../../Helpers/Time';
 import { registerAction } from '../ActionMap';
 import { Task } from '../../Queue/Task';
 

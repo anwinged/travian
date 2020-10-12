@@ -22,7 +22,9 @@ export class BalanceHeroResourcesAction extends BaseAction {
         const thisVillageState = this.villageFactory.getById(thisVillageId).state();
 
         const requirements = [
+            // current balance of village
             thisVillageState.required.balance,
+            //
             thisVillageState.resources.sub(thisVillageState.warehouse.capacity),
         ];
 

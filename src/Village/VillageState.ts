@@ -8,45 +8,6 @@ import { timestamp } from '../Helpers/Time';
 import { isInQueue, TaskCore } from '../Queue/Task';
 import { TaskId } from '../Queue/TaskId';
 
-export interface TaskState {
-    id: TaskId;
-    name: string;
-    args: Args;
-    isEnoughWarehouseCapacity: boolean;
-    isEnoughGranaryCapacity: boolean;
-    canBeBuilt: boolean;
-}
-
-export interface TaskQueueState {
-    queue: ProductionQueue;
-    tasks: ReadonlyArray<TaskState>;
-    finishTs: number;
-}
-
-interface VillageProductionQueueState {
-    queue: ProductionQueue;
-    tasks: ReadonlyArray<TaskState>;
-    isActive: boolean;
-    isWaiting: boolean;
-    currentTaskFinishTimestamp: number;
-    currentTaskFinishSeconds: number;
-    firstTask: ResourceLineState;
-    allTasks: ResourceLineState;
-    taskCount: number;
-}
-
-interface VillageWarehouseState {
-    resources: Resources;
-    capacity: Resources;
-    balance: Resources;
-    performance: Resources;
-    timeToZero: GatheringTime;
-    timeToFull: GatheringTime;
-    optimumFullness: Resources;
-    criticalFullness: Resources;
-    isOverflowing: boolean;
-}
-
 /**
  * State of one or more tasks, which required some resources.
  */
@@ -69,6 +30,45 @@ interface ResourceLineState {
     active: boolean;
 }
 
+export interface TaskState {
+    id: TaskId;
+    name: string;
+    args: Args;
+    isEnoughWarehouseCapacity: boolean;
+    isEnoughGranaryCapacity: boolean;
+    canBeBuilt: boolean;
+}
+
+interface TaskQueueState {
+    queue: ProductionQueue;
+    tasks: ReadonlyArray<TaskState>;
+    finishTs: number;
+}
+
+interface ProductionQueueState {
+    queue: ProductionQueue;
+    tasks: ReadonlyArray<TaskState>;
+    isActive: boolean;
+    isWaiting: boolean;
+    currentTaskFinishTimestamp: number;
+    currentTaskFinishSeconds: number;
+    firstTask: ResourceLineState;
+    allTasks: ResourceLineState;
+    taskCount: number;
+}
+
+interface WarehouseState {
+    resources: Resources;
+    capacity: Resources;
+    balance: Resources;
+    performance: Resources;
+    timeToZero: GatheringTime;
+    timeToFull: GatheringTime;
+    optimumFullness: Resources;
+    criticalFullness: Resources;
+    isOverflowing: boolean;
+}
+
 export interface VillageState {
     /**
      * Village id
@@ -83,8 +83,8 @@ export interface VillageState {
      */
     resources: Resources;
     performance: Resources;
-    warehouse: VillageWarehouseState;
-    queues: Array<VillageProductionQueueState>;
+    warehouse: WarehouseState;
+    queues: Array<ProductionQueueState>;
     tasks: Array<TaskState>;
     firstReadyTask: TaskState | undefined;
     /**
@@ -95,24 +95,24 @@ export interface VillageState {
     settings: VillageSettings;
 }
 
-function makeResourceState(
-    resources: Resources,
+function makeResourceLineState(
+    desired: Resources,
     current: Resources,
     performance: Resources
 ): ResourceLineState {
     return {
-        resources,
-        balance: current.sub(resources),
-        time: timeToAllResources(current, resources, performance),
-        active: !resources.empty(),
+        resources: desired,
+        balance: current.sub(desired),
+        time: calcGatheringTimings(current, desired, performance).slowest,
+        active: !desired.empty(),
     };
 }
 
 function makeWarehouseState(
-    resources: Resources,
+    current: Resources,
     capacity: Resources,
     performance: Resources
-): VillageWarehouseState {
+): WarehouseState {
     // @fixme Если у героя большая добыча ресурсов, а склад маленький, то значения получаются тож маленькими
     // @fixme с одной деревней это не прокатывает, и даже не построить склад
     // const optimumFullness = capacity.sub(performance.scale(3));
@@ -120,34 +120,16 @@ function makeWarehouseState(
     const optimumFullness = capacity.scale(0.9);
     const criticalFullness = capacity.scale(0.98);
     return {
-        resources,
+        resources: current,
         capacity,
         performance,
-        balance: capacity.sub(resources),
-        timeToZero: timeToFastestResource(resources, Resources.zero(), performance),
-        timeToFull: timeToFastestResource(resources, capacity, performance),
-        optimumFullness: optimumFullness,
-        criticalFullness: criticalFullness,
-        isOverflowing: criticalFullness.anyLower(resources),
+        balance: capacity.sub(current),
+        timeToZero: calcGatheringTimings(current, Resources.zero(), performance).fastest,
+        timeToFull: calcGatheringTimings(current, capacity, performance).fastest,
+        optimumFullness,
+        criticalFullness,
+        isOverflowing: criticalFullness.anyLower(current),
     };
-}
-
-function timeToAllResources(
-    current: Resources,
-    desired: Resources,
-    performance: Resources
-): GatheringTime {
-    const timings = calcGatheringTimings(current, desired, performance);
-    return timings.slowest;
-}
-
-function timeToFastestResource(
-    current: Resources,
-    desired: Resources,
-    performance: Resources
-): GatheringTime {
-    const timings = calcGatheringTimings(current, desired, performance);
-    return timings.fastest;
 }
 
 function calcIncomingResources(storage: VillageStorage): Resources {
@@ -156,13 +138,13 @@ function calcIncomingResources(storage: VillageStorage): Resources {
 
 function createProductionQueueState(
     taskQueueState: TaskQueueState,
-    storage: VillageWarehouseState
-): VillageProductionQueueState {
+    warehouseState: WarehouseState
+): ProductionQueueState {
     const queue = taskQueueState.queue;
     const tasks = taskQueueState.tasks;
     const taskEndingTimestamp = taskQueueState.finishTs;
-    const resources = storage.resources;
-    const performance = storage.performance;
+    const resources = warehouseState.resources;
+    const performance = warehouseState.performance;
     const firstTaskResources = tasks.slice(0, 1).reduce(taskResourceReducer, Resources.zero());
     const allTaskResources = tasks.reduce(taskResourceReducer, Resources.zero());
 
@@ -178,8 +160,8 @@ function createProductionQueueState(
             taskEndingTimestamp ? taskEndingTimestamp - currentTimestamp : 0,
             0
         ),
-        firstTask: makeResourceState(firstTaskResources, resources, performance),
-        allTasks: makeResourceState(allTaskResources, resources, performance),
+        firstTask: makeResourceLineState(firstTaskResources, resources, performance),
+        allTasks: makeResourceLineState(allTaskResources, resources, performance),
         taskCount: tasks.length,
     };
 }
@@ -200,12 +182,12 @@ function getGroupedByQueueTasks(
 }
 
 function createTaskQueueStates(
-    warehouse: VillageWarehouseState,
+    warehouse: WarehouseState,
     tasks: ReadonlyArray<TaskState>,
     storage: VillageStorage
 ) {
-    let result: Array<VillageProductionQueueState> = [];
-    const possibleTasks = tasks.filter((task) => task.canBeBuilt);
+    let result: Array<ProductionQueueState> = [];
+    const possibleTasks = tasks.filter((taskState) => taskState.canBeBuilt);
     for (let taskQueueInfo of getGroupedByQueueTasks(possibleTasks, storage)) {
         result.push(createProductionQueueState(taskQueueInfo, warehouse));
     }
@@ -213,7 +195,7 @@ function createTaskQueueStates(
 }
 
 function getReadyForProductionTask(
-    queues: ReadonlyArray<VillageProductionQueueState>
+    queues: ReadonlyArray<ProductionQueueState>
 ): TaskState | undefined {
     const firstReadyQueue = queues.find((queue) => queue.isWaiting);
     if (!firstReadyQueue) {
@@ -226,6 +208,14 @@ function getReadyForProductionTask(
 function getTaskResources(task: TaskCore | undefined): Resources {
     if (task && task.args.resources) {
         return Resources.fromObject(task.args.resources);
+    }
+    return Resources.zero();
+}
+
+function getTotalTaskResources(task: TaskCore | undefined): Resources {
+    if (task && task.args.resources) {
+        const count = task.args.count || 1;
+        return Resources.fromObject(task.args.resources).scale(count);
     }
     return Resources.zero();
 }
@@ -262,18 +252,18 @@ function createVillageState(village: Village, storage: VillageStorage): VillageS
     const resources = storage.getResources();
     const capacity = storage.getWarehouseCapacity();
     const performance = storage.getResourcesPerformance();
-    const storageState = makeWarehouseState(resources, capacity, performance);
-    const tasks = storage.getTasks().map((t) => makeTaskState(t, storageState.optimumFullness));
-    const queues = createTaskQueueStates(storageState, tasks, storage);
+    const warehouse = makeWarehouseState(resources, capacity, performance);
+    const tasks = storage.getTasks().map((t) => makeTaskState(t, warehouse.optimumFullness));
+    const queues = createTaskQueueStates(warehouse, tasks, storage);
     const firstReadyTask = getReadyForProductionTask(queues);
-    const requiredResources = getTaskResources(firstReadyTask);
+    const firstTaskResources = getTotalTaskResources(firstReadyTask);
     return {
         id: village.id,
         village,
         resources,
         performance,
-        warehouse: storageState,
-        required: makeResourceState(requiredResources, resources, performance),
+        warehouse,
+        required: makeResourceLineState(firstTaskResources, resources, performance),
         tasks,
         queues,
         firstReadyTask,
