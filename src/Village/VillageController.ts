@@ -5,12 +5,14 @@ import { Resources } from '../Core/Resources';
 import { MerchantsInfo } from '../Core/Market';
 import { VillageStorage } from '../Storage/VillageStorage';
 import { ReceiveResourcesMode } from '../Core/Village';
-import { ResourceType } from '../Core/ResourceType';
-import { UpgradeBuildingTask } from '../Handler/Task/UpgradeBuildingTask';
 import { GARNER_ID, WAREHOUSE_ID } from '../Core/Buildings';
-import { first } from '../Helpers/Collection';
-import { isBuildingPlanned } from '../Queue/Task';
 import { TaskId } from '../Queue/TaskId';
+import { CropBuildingPlan } from '../Plan/CropBuildingPlan';
+import { WarehouseBuildingPlan } from '../Plan/WarehouseBuildingPlan';
+
+export interface ConstructionPlan {
+    execute(): void;
+}
 
 export class VillageController {
     private readonly villageId: number;
@@ -157,105 +159,20 @@ export class VillageController {
         if (this.state.tasks.length >= 100) {
             return;
         }
-        this.planCropBuilding();
-        this.planWarehouseBuilding();
-        this.planGranaryBuilding();
-    }
-
-    private planCropBuilding() {
-        const performance = this.state.performance;
-        if (performance.crop >= 30) {
-            return;
-        }
-
-        const resourceSlots = this.storage.getResourceSlots();
-        const tasks = this.taskCollection.getTasks();
-
-        const cropSlots = resourceSlots.filter(
-            (s) => s.type === ResourceType.Crop && !s.isMaxLevel
-        );
-        if (cropSlots.length === 0) {
-            return;
-        }
-
-        // Check, if crop field is building now
-        const underContraction = cropSlots.find((s) => s.isUnderConstruction);
-        if (underContraction !== undefined) {
-            return;
-        }
-
-        // Check, if we already have crop task in queue
-        const cropBuildIds = cropSlots.map((s) => s.buildId);
-        for (let buildId of cropBuildIds) {
-            const upgradeTask = tasks.find(
-                isBuildingPlanned(UpgradeBuildingTask.name, buildId, undefined)
-            );
-            if (upgradeTask !== undefined) {
-                return;
-            }
-        }
-
-        // Find ready for building slots and sort them by level
-        cropSlots.sort((s1, s2) => s1.level - s2.level);
-
-        const targetCropBuildId = first(cropSlots)?.buildId;
-        if (!targetCropBuildId) {
-            return;
-        }
-
-        this.taskCollection.addTaskAsFirst(UpgradeBuildingTask.name, {
-            buildId: targetCropBuildId,
-        });
-    }
-
-    private planWarehouseBuilding(): void {
-        this.planStorageBuilding(WAREHOUSE_ID, (t) => !t.isEnoughWarehouseCapacity);
-    }
-
-    private planGranaryBuilding(): void {
-        this.planStorageBuilding(GARNER_ID, (t) => !t.isEnoughGranaryCapacity);
-    }
-
-    private planStorageBuilding(
-        buildTypeId: number,
-        checkNeedEnlargeFunc: (task: TaskState) => boolean
-    ): void {
-        const buildingSlots = this.storage.getBuildingSlots();
-
-        const storageSlots = buildingSlots.filter(
-            (s) => s.buildTypeId === buildTypeId && !s.isMaxLevel
-        );
-        if (storageSlots.length === 0) {
-            return;
-        }
-
-        // Check, if warehouse is building now
-        const underConstruction = storageSlots.find((s) => s.isUnderConstruction);
-        if (underConstruction !== undefined) {
-            return;
-        }
-
-        const tasks = this.state.tasks;
-
-        // Check, if we have warehouse is in building queue
-        const storageBuildIds = storageSlots.map((s) => s.buildId);
-        for (let buildId of storageBuildIds) {
-            const upgradeTask = tasks.find(
-                isBuildingPlanned(UpgradeBuildingTask.name, buildId, buildTypeId)
-            );
-            if (upgradeTask !== undefined) {
-                return;
-            }
-        }
-
-        const needStorageEnlargeTasks = tasks.filter(checkNeedEnlargeFunc);
-        if (needStorageEnlargeTasks.length === 0) {
-            return;
-        }
-
-        const firstSlot = first(storageSlots);
-        if (firstSlot) {
-            this.addTask(UpgradeBuildingTask.name, { buildId: firstSlot.buildId, buildTypeId });
-        }
+        new CropBuildingPlan(this.state, this.storage, this.taskCollection).execute();
+        new WarehouseBuildingPlan(
+            WAREHOUSE_ID,
+            (t) => !t.isEnoughWarehouseCapacity,
+            this.state,
+            this.storage,
+            this.taskCollection
+        ).execute();
+        new WarehouseBuildingPlan(
+            GARNER_ID,
+            (t) => !t.isEnoughGranaryCapacity,
+            this.state,
+            this.storage,
+            this.taskCollection
+        ).execute();
     }
 }

@@ -15,6 +15,7 @@ export interface Args {
     troopId?: number;
     troopResources?: ResourcesInterface;
     trainCount?: number;
+    count?: number;
     resources?: ResourcesInterface;
     coordinates?: CoordinatesInterface;
     unitId?: number;
