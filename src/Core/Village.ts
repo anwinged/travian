@@ -19,6 +19,10 @@ export class Coordinates implements CoordinatesInterface {
     eq(other: CoordinatesInterface): boolean {
         return this.x === other.x && this.y === other.y;
     }
+
+    dist(other: CoordinatesInterface): number {
+        return Math.sqrt(Math.pow(this.x - other.x, 2) + Math.pow(this.y - other.y, 2));
+    }
 }
 
 export class Village {

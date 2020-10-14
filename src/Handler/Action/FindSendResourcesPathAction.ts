@@ -12,6 +12,8 @@ import { MARKET_ID } from '../../Core/Buildings';
 import { registerAction } from '../ActionMap';
 import { Task } from '../../Queue/Task';
 
+const MAX_VILLAGE_DISTANCE = 25;
+
 @registerAction
 export class FindSendResourcesPathAction extends BaseAction {
     async run(args: Args, task: Task): Promise<any> {
@@ -21,7 +23,8 @@ export class FindSendResourcesPathAction extends BaseAction {
         const villages = this.villageFactory.getAllVillages();
         for (let fromVillage of villages) {
             for (let toVillage of villages) {
-                if (fromVillage.id !== toVillage.id) {
+                const dist = fromVillage.crd.dist(toVillage.crd);
+                if (fromVillage.id !== toVillage.id && dist < MAX_VILLAGE_DISTANCE) {
                     reports.push(calculator.calc(fromVillage.id, toVillage.id));
                 }
             }
