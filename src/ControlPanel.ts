@@ -23,6 +23,8 @@ import { timestamp } from './Helpers/Time';
 import { notify, parseLocation, waitForLoad } from './Helpers/Browser';
 import { Action } from './Queue/Action';
 import { Task } from './Queue/Task';
+import { HeroAttributes } from './Core/Hero';
+import { HeroStorage } from './Storage/HeroStorage';
 
 Vue.use(Vuex);
 
@@ -31,6 +33,7 @@ interface GameState {
     version: string;
     activeVillageState: VillageState | undefined;
     villageStates: ReadonlyArray<VillageState>;
+    heroAttr: HeroAttributes;
     taskList: ReadonlyArray<Task>;
     actionList: ReadonlyArray<Action>;
     pauseSeconds: number;
@@ -64,17 +67,20 @@ export class ControlPanel {
         const villageFactory = this.villageFactory;
 
         const executionState = new ExecutionStorage();
+        const heroStorage = new HeroStorage();
 
         const state: GameState = {
             name: 'Control',
             version: this.version,
             activeVillageState: undefined,
             villageStates: [],
+            heroAttr: HeroAttributes.default(),
             taskList: [],
             actionList: [],
             pauseSeconds: 0,
 
             refresh() {
+                this.heroAttr = heroStorage.getAttributes();
                 this.taskList = scheduler.getTaskItems();
                 this.actionList = scheduler.getActionItems();
                 const { pauseTs } = executionState.getExecutionSettings();

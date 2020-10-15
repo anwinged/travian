@@ -86,7 +86,10 @@ export class Container {
         this._grabberManager =
             this._grabberManager ||
             (() => {
-                return new GrabberManager(this.villageFactory);
+                return new GrabberManager(
+                    this.villageFactory,
+                    new ConsoleLogger(GrabberManager.name)
+                );
             })();
         return this._grabberManager;
     }

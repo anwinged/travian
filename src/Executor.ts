@@ -165,12 +165,8 @@ export class Executor {
     }
 
     private runGrabbers() {
-        try {
-            this.logger.info('Rug grabbers');
-            this.grabberManager.grab();
-        } catch (e) {
-            this.logger.warn('Grabbers fails with', e.message);
-        }
+        this.logger.info('Rug grabbers');
+        this.grabberManager.grab();
     }
 }
 

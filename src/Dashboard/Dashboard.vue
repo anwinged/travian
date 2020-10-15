@@ -1,8 +1,9 @@
 <template>
   <main id="dashboard" v-on:keyup.76="toggleLogs">
     <section id="dashboard-primary">
-      <hdr></hdr>
+      <hdr />
       <village-state-list />
+      <hero-view />
       <hr class="separator" />
       <task-list />
     </section>
@@ -21,10 +22,12 @@ import LogList from './LogList';
 import { mapState } from 'vuex';
 import { Mutations } from './Store';
 import VillageEditor from './VillageEditor';
+import HeroView from './HeroView';
 export default {
   components: {
     'village-editor': VillageEditor,
     'hdr': Header,
+    'hero-view': HeroView,
     'task-list': TaskList,
     'village-state-list': VillageStateList,
     'log-list': LogList,

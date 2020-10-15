@@ -8,18 +8,24 @@ import { ForgePageGrabber } from './ForgePageGrabber';
 import { GuildHallPageGrabber } from './GuildHallPageGrabber';
 import { VillageFactory } from '../Village/VillageFactory';
 import { VillageBuildingsPageGrabber } from './VillageBuildingsPageGrabber';
+import { GrabError } from '../Errors';
+import { Logger } from '../Logger';
 
 export class GrabberManager {
-    private factory: VillageFactory;
-
-    constructor(factory: VillageFactory) {
-        this.factory = factory;
-    }
+    constructor(private readonly factory: VillageFactory, private readonly logger: Logger) {}
 
     grab() {
         const grabbers = this.createGrabbers();
         for (let grabber of grabbers) {
-            grabber.grab();
+            try {
+                grabber.grab();
+            } catch (e) {
+                if (e instanceof GrabError) {
+                    this.logger.warn('Grabbers fails with', e.message);
+                } else {
+                    throw e;
+                }
+            }
         }
     }
 
