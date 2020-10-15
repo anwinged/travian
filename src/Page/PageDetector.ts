@@ -21,6 +21,11 @@ export function isHeroPage() {
     return p.pathname === '/hero.php';
 }
 
+export function isAdventurePage() {
+    const p = parseLocation();
+    return p.pathname === '/hero.php' && p.query.t === '3';
+}
+
 export function getBuildingPageAttributes(): BuildingPageAttributes {
     if (!isBuildingPage()) {
         throw Error('Not building page');
