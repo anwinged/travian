@@ -52,6 +52,17 @@ export class VillageTaskCollection {
         this.removeTasks((t) => t.id === taskId);
     }
 
+    makeFirst(taskId: TaskId): void {
+        const tasks = this.storage.getTasks();
+        const index = tasks.findIndex((t) => t.id === taskId);
+        if (index < 0 || index === 0) {
+            return;
+        }
+        const movedTask = tasks.splice(index, 1)[0];
+        tasks.unshift(movedTask);
+        this.storage.storeTaskList(tasks);
+    }
+
     upTask(taskId: TaskId): void {
         const tasks = this.storage.getTasks();
         const index = tasks.findIndex((t) => t.id === taskId);

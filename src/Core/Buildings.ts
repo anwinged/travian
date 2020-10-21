@@ -8,3 +8,4 @@ export const HORSE_STABLE_ID = 20;
 export const GUILD_HALL_ID = 24;
 export const EMBASSY_ID = 25;
 export const PALACE_ID = 26;
+export const TRAPPER_ID = 36;

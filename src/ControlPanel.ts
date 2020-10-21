@@ -14,7 +14,12 @@ import DashboardApp from './Dashboard/Dashboard.vue';
 import { createStore } from './Dashboard/Store';
 import { ConsoleLogger, Logger } from './Logger';
 import { DataStorage } from './Storage/DataStorage';
-import { getBuildingPageAttributes, isAdventurePage, isBuildingPage } from './Page/PageDetector';
+import {
+    getBuildingPageAttributes,
+    isAdventurePage,
+    isBuildingPage,
+    isTrapperPage,
+} from './Page/PageDetector';
 import { ExecutionStorage } from './Storage/ExecutionStorage';
 import { VillageState } from './Village/VillageState';
 import { VillageFactory } from './Village/VillageFactory';
@@ -26,6 +31,7 @@ import { Task } from './Queue/Task';
 import { HeroAttributes } from './Core/Hero';
 import { HeroStorage } from './Storage/HeroStorage';
 import { showAdventureDifficulty } from './Page/AdventurePage';
+import { getTrapStats } from './Page/BuildingPage/TrapperPage';
 
 Vue.use(Vuex);
 
@@ -151,6 +157,10 @@ export class ControlPanel {
 
         if (isAdventurePage()) {
             showAdventureDifficulty();
+        }
+
+        if (isTrapperPage()) {
+            console.log('TRAPS', getTrapStats());
         }
 
         this.createControlPanel(state, villageFactory);

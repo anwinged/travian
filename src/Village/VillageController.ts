@@ -56,6 +56,10 @@ export class VillageController {
         this.taskCollection.upTask(taskId);
     }
 
+    makeFirst(taskId: TaskId) {
+        this.taskCollection.makeFirst(taskId);
+    }
+
     downTask(taskId: TaskId) {
         this.taskCollection.downTask(taskId);
     }

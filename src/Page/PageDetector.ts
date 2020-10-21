@@ -1,4 +1,4 @@
-import { FORGE_ID, GUILD_HALL_ID, MARKET_ID } from '../Core/Buildings';
+import { FORGE_ID, GUILD_HALL_ID, MARKET_ID, TRAPPER_ID } from '../Core/Buildings';
 import { elClassId, getNumber } from '../Helpers/Convert';
 import { parseLocation } from '../Helpers/Browser';
 
@@ -64,4 +64,12 @@ export function isGuildHallPage(): boolean {
     }
     const { buildTypeId } = getBuildingPageAttributes();
     return buildTypeId === GUILD_HALL_ID;
+}
+
+export function isTrapperPage(): boolean {
+    if (!isBuildingPage()) {
+        return false;
+    }
+    const { buildTypeId } = getBuildingPageAttributes();
+    return buildTypeId === TRAPPER_ID;
 }

@@ -24,6 +24,7 @@ export enum Actions {
     RemoveVillageTask = 'remove_village_task',
     UpVillageTask = 'up_village_task',
     DownVillageTask = 'down_village_task',
+    MakeFirstVillageTask = 'make_first_village_task',
 }
 
 export function createStore(villageFactory: VillageFactory) {
@@ -110,6 +111,10 @@ export function createStore(villageFactory: VillageFactory) {
             [Actions.RemoveVillageTask]({}, { villageId, taskId }) {
                 const controller = villageFactory.getById(villageId).controller();
                 controller.removeTask(taskId);
+            },
+            [Actions.MakeFirstVillageTask]({}, { villageId, taskId }) {
+                const controller = villageFactory.getById(villageId).controller();
+                controller.makeFirst(taskId);
             },
             [Actions.UpVillageTask]({}, { villageId, taskId }) {
                 const controller = villageFactory.getById(villageId).controller();

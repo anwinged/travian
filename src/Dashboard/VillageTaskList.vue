@@ -3,6 +3,9 @@
     <tr v-for="task in tasks">
       <td class="col-name" v-text="taskLabel(task)" :title="task.name + ', ' + task.id"></td>
       <td class="col-actions">
+        <a href="#" class="action" @click.prevent="makeFirstTask(task.id)" title="Сделать первой"
+          >fst</a
+        >
         <a href="#" class="action" @click.prevent="upTask(task.id)" title="Поднять задачу">up</a>
         <a href="#" class="action" @click.prevent="downTask(task.id)" title="Опустить задачу">dn</a>
         <a href="#" class="action" @click.prevent="removeTask(task.id)" title="Удалить задачу">x</a>
@@ -38,6 +41,9 @@ export default {
         taskStatus = '(' + taskStatus + ') ';
       }
       return taskStatus + task.name;
+    },
+    makeFirstTask(taskId) {
+      this.$store.dispatch(Actions.MakeFirstVillageTask, { villageId: this.villageId, taskId });
     },
     upTask(taskId) {
       this.$store.dispatch(Actions.UpVillageTask, { villageId: this.villageId, taskId });
