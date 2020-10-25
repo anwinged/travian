@@ -39,7 +39,8 @@ export class WarehouseBuildingPlan implements ConstructionPlan {
 
         const firstSlot = first(storageSlots);
         if (firstSlot) {
-            this.taskCollection.addTask(UpgradeBuildingTask.name, {
+            // @todo change to "add task before first required"
+            this.taskCollection.addTaskAsFirst(UpgradeBuildingTask.name, {
                 buildId: firstSlot.buildId,
                 buildTypeId: this.buildTypeId,
             });

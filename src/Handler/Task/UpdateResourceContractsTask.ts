@@ -5,6 +5,9 @@ import { ForgeImprovementTask } from './ForgeImprovementTask';
 import { path, PathList, uniqPaths } from '../../Helpers/Path';
 import { registerTask } from '../TaskMap';
 import { ImmutableTaskList, Task } from '../../Queue/Task';
+import * as _ from 'underscore';
+
+const MAX_PATHS = 5;
 
 @registerTask()
 export class UpdateResourceContractsTask extends BaseTask {
@@ -15,10 +18,14 @@ export class UpdateResourceContractsTask extends BaseTask {
             .map((v) => this.factory.getById(v.id).taskCollection().getTasks())
             .reduce((acc, tasks) => acc.concat(tasks), []);
 
-        const paths = uniqPaths([
+        let paths = uniqPaths([
             ...this.walkUpgradeTasks(tasks),
             ...this.walkImprovementTask(tasks),
         ]);
+
+        if (paths.length > MAX_PATHS) {
+            paths = _.sample(paths, MAX_PATHS);
+        }
 
         return paths.map((p) => ({
             name: GoToPageAction.name,
